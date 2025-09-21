@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ogrenci.tam_ad }} - Analizler{% endblock %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card edevlet-card-body edevlet-panel mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">{{ ogrenci.tam_ad }} - Yapay Zeka Analizleri</h5>
+                    <div>
+                        <a href="{{ urls.ogrenci_profil }}" class="btn btn-secondary btn-sm">
+                            <i class="fa fa-arrow-left"></i> Öğrenci Sayfasına Dön
+                        </a>
+                        <a href="{{ urls.yeni_analiz }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-plus"></i> Yeni Analiz
+                        </a>
+                        <a href="{{ urls.duygu_analizi }}" class="btn btn-info btn-sm">
+                            <i class="fa fa-comment"></i> Duygu Analizi
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Öğrenci Bilgileri</h5>
+                                    <hr>
+                                    <div class="mb-2">
+                                        <strong>Numara:</strong> {{ ogrenci.numara }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Ad Soyad:</strong> {{ ogrenci.tam_ad }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Sınıf:</strong> {{ ogrenci.sinif }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Cinsiyet:</strong> {{ ogrenci.cinsiyet }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>İlerleme:</strong> {{ "%.1f"|format(ogrenci.genel_ilerleme()) }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <!-- Akademik Analizler -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title">Akademik Risk Analizleri</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if analizler %}
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tarih</th>
+                                                    <th>Analiz Türü</th>
+                                                    <th>Risk Seviyesi</th>
+                                                    <th>Yorumlar</th>
+                                                    <th>İşlemler</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for analiz in analizler %}
+                                                <tr>
+                                                    <td>{{ analiz.analiz_tarihi|format_date }}</td>
+                                                    <td>{{ analiz.analiz.analiz_adi }}</td>
+                                                    <td>
+                                                        {% if analiz.risk_seviyesi > 0.7 %}
+                                                        <span class="badge bg-danger">Yüksek ({{ "%.2f"|format(analiz.risk_seviyesi*100) }}%)</span>
+                                                        {% elif analiz.risk_seviyesi > 0.3 %}
+                                                        <span class="badge bg-warning text-dark">Orta ({{ "%.2f"|format(analiz.risk_seviyesi*100) }}%)</span>
+                                                        {% else %}
+                                                        <span class="badge bg-success">Düşük ({{ "%.2f"|format(analiz.risk_seviyesi*100) }}%)</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ analiz.yorumlar }}</td>
+                                                    <td>
+                                                        <a href="{{ url_for('yapay_zeka_asistan.analiz_oneriler', analiz_id=analiz.id) }}" class="btn btn-sm btn-info">
+                                                            <i class="fa fa-lightbulb"></i> Öneriler
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <div class="alert alert-info">
+                                        Bu öğrenci için henüz akademik risk analizi yapılmamış.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Duygu Analizleri -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Duygu Analizleri</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if duygu_analizleri %}
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tarih</th>
+                                                    <th>Kaynak</th>
+                                                    <th>Baskın Duygu</th>
+                                                    <th>Puanlar</th>
+                                                    <th>Metin</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for analiz in duygu_analizleri %}
+                                                <tr>
+                                                    <td>{{ analiz.analiz_tarihi|format_date }}</td>
+                                                    <td>{{ analiz.metin_kaynagi }}</td>
+                                                    <td>
+                                                        {% if analiz.baskın_duygu == 'olumlu' %}
+                                                        <span class="badge bg-success">Olumlu</span>
+                                                        {% elif analiz.baskın_duygu == 'olumsuz' %}
+                                                        <span class="badge bg-danger">Olumsuz</span>
+                                                        {% else %}
+                                                        <span class="badge bg-secondary">Nötr</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <small>
+                                                            Olumlu: {{ "%.0f"|format(analiz.olumlu_skor*100) }}% | 
+                                                            Olumsuz: {{ "%.0f"|format(analiz.olumsuz_skor*100) }}% |
+                                                            Nötr: {{ "%.0f"|format(analiz.notr_skor*100) }}%
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-secondary" 
+                                                                data-bs-toggle="popover" 
+                                                                data-bs-trigger="focus" 
+                                                                title="Analiz Edilen Metin" 
+                                                                data-bs-content="{{ analiz.metin }}">
+                                                            Metni Göster
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <div class="alert alert-info">
+                                        Bu öğrenci için henüz duygu analizi yapılmamış.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tooltip ve popoverları etkinleştir
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl)
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

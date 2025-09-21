@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Öğrenci Takip Platformu - Dijital Rehberlik Hizmetleri{% endblock %}
+
+{% block content %}
+<!-- Yeni Modern Ana Sayfa -->
+
+<!-- Hero Section - Video Background ile Daha Etkileyici -->
+<section class="hero-modern">
+    <div class="hero-overlay"></div>
+    <video autoplay muted loop class="hero-video">
+        <source src="https://cdn.dribbble.com/uploads/48226/original/b8bd4e4273cceae2889d9d259b04f732.mp4?1689028949" type="video/mp4">
+    </video>
+    <div class="container hero-container">
+        <div class="row align-items-center">
+            <div class="col-lg-7" data-aos="fade-up">
+                <h1 class="hero-title-modern">Eğitimde Yeni Nesil <span class="text-gradient">Dijital Dönüşüm</span></h1>
+                <p class="hero-subtitle-modern">Yapay zeka destekli rehberlik sistemi ile öğrencilerinizin akademik başarılarını ve kişisel gelişimlerini maksimize edin. Veri odaklı bir yaklaşımla eğitim kalitesini artırın.</p>
+                <div class="hero-buttons">
+                    <a href="/ogrenci_yonetimi/" class="btn btn-primary btn-lg">
+                        <span>Hemen Başlayın</span>
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    <a href="#moduller" class="btn-video ms-3">
+                        <span class="btn-video-icon">
+                            <i class="fas fa-th-large"></i>
+                        </span>
+                        <span class="btn-video-text">Modüller</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block" data-aos="fade-left" data-aos-delay="200">
+                <div class="hero-image-wrapper">
+                    <img src="https://cdn.dribbble.com/users/2547176/screenshots/15816470/media/5ede794d090b956a7aac924762d4d387.png" alt="Dijital Rehberlik Platformu" class="hero-image">
+                    <div class="floating-card card-stats">
+                        <div class="float-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="float-content">
+                            <div class="float-title">Başarı Analizi</div>
+                            <div class="float-value">%{{ ortalama_ilerleme|round(1) }} Artış</div>
+                        </div>
+                    </div>
+                    <div class="floating-card card-users">
+                        <div class="float-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="float-content">
+                            <div class="float-title">Aktif Kullanıcı</div>
+                            <div class="float-value">{{ ogrenci_sayisi }}+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,170.7C960,160,1056,160,1152,170.7C1248,181,1344,203,1392,213.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- İstatistikler - Daha Dinamik Görünüm -->
+<section class="stats-modern py-5">
+    <div class="container">
+        <div class="stats-wrapper">
+            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="100">
+                <div class="stat-icon-circle bg-primary-light">
+                    <i class="fas fa-user-graduate text-primary"></i>
+                </div>
+                <div class="stat-modern-content">
+                    <div class="stat-modern-value">{{ ogrenci_sayisi }}</div>
+                    <div class="stat-modern-title">Aktif Öğrenci</div>
+                </div>
+            </div>
+            
+            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="200">
+                <div class="stat-icon-circle bg-success-light">
+                    <i class="fas fa-book text-success"></i>
+                </div>
+                <div class="stat-modern-content">
+                    <div class="stat-modern-value">{{ ders_sayisi }}</div>
+                    <div class="stat-modern-title">Ders</div>
+                </div>
+            </div>
+            
+            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="300">
+                <div class="stat-icon-circle bg-info-light">
+                    <i class="fas fa-list text-info"></i>
+                </div>
+                <div class="stat-modern-content">
+                    <div class="stat-modern-value">{{ konu_sayisi }}</div>
+                    <div class="stat-modern-title">Konu</div>
+                </div>
+            </div>
+            
+            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="400">
+                <div class="stat-icon-circle bg-accent-light">
+                    <i class="fas fa-chart-line text-accent"></i>
+                </div>
+                <div class="stat-modern-content">
+                    <div class="stat-modern-value">%{{ ortalama_ilerleme|round(1) }}</div>
+                    <div class="stat-modern-title">Başarı Oranı</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hızlı erişim menüsü -->
+<section class="quick-access py-6" id="moduller">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h6 class="section-pre-title">HIZLI ERİŞİM</h6>
+            <h2 class="section-title-modern">Tüm Modüllere Kolay Erişim</h2>
+            <p class="section-description">Platformumuzun tüm özelliklerine buradan ulaşabilirsiniz</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="quick-access-title">Öğrenci Yönetimi</h3>
+                    <p class="quick-access-desc">Öğrenci kayıtları, detaylı profil yönetimi ve sınıf organizasyonu</p>
+                    <div class="quick-access-actions">
+                        <a href="/ogrenci_yonetimi/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Listele
+                        </a>
+                        <a href="/ogrenci_yonetimi/ekle" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Ekle
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="quick-access-title">Görüşme Yönetimi</h3>
+                    <p class="quick-access-desc">Öğrenci ve veli görüşmeleri, planlama ve kayıt sistemi</p>
+                    <div class="quick-access-actions">
+                        <a href="/gorusme_defteri/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Görüşmeler
+                        </a>
+                        <a href="/gorusme_defteri/ekle" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Yeni
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="quick-access-title">Ders Konu Yönetimi</h3>
+                    <p class="quick-access-desc">Ders ve konu yapılandırması, müfredat takibi</p>
+                    <div class="quick-access-actions">
+                        <a href="/ders_konu_yonetimi/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Dersler
+                        </a>
+                        <a href="/ders_konu_yonetimi/ekle" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Yeni
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="400">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="quick-access-title">Çalışma Programı</h3>
+                    <p class="quick-access-desc">Kişiselleştirilmiş çalışma programları ve takip sistemi</p>
+                    <div class="quick-access-actions">
+                        <a href="/calisma_programi/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Programlar
+                        </a>
+                        <a href="/calisma_programi/program_olustur" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Oluştur
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="500">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="quick-access-title">Deneme Sınavları</h3>
+                    <p class="quick-access-desc">Deneme sınavı sonuçları ve analiz raporları</p>
+                    <div class="quick-access-actions">
+                        <a href="/deneme_sinavlari/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Sınavlar
+                        </a>
+                        <a href="/deneme_sinavlari/ekle" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Ekle
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="600">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="quick-access-title">Raporlar</h3>
+                    <p class="quick-access-desc">Kapsamlı raporlar ve veri analizi</p>
+                    <div class="quick-access-actions">
+                        <a href="/rapor_yonetimi/ilerleme_raporu" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-line me-2"></i> İlerleme
+                        </a>
+                        <a href="/rapor_yonetimi/gorusme_raporu" class="btn btn-primary">
+                            <i class="fas fa-comments me-2"></i> Görüşme
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="700">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-poll"></i>
+                    </div>
+                    <h3 class="quick-access-title">Anket Yönetimi</h3>
+                    <p class="quick-access-desc">Özelleştirilebilir anketler ve değerlendirmeler</p>
+                    <div class="quick-access-actions">
+                        <a href="/anket_yonetimi/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Anketler
+                        </a>
+                        <a href="/anket_yonetimi/yeni_anket" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Yeni
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="800">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="quick-access-title">Etkinlik Kayıt</h3>
+                    <p class="quick-access-desc">Etkinlik planlama ve katılım takibi</p>
+                    <div class="quick-access-actions">
+                        <a href="/etkinlik_kayit/" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i> Etkinlikler
+                        </a>
+                        <a href="/etkinlik_kayit/ekle" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Ekle
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="900">
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="quick-access-title">Sistem Ayarları</h3>
+                    <p class="quick-access-desc">Parametre yönetimi ve sistem yapılandırması</p>
+                    <div class="quick-access-actions">
+                        <a href="/parametre_yonetimi/" class="btn btn-outline-primary">
+                            <i class="fas fa-wrench me-2"></i> Parametreler
+                        </a>
+                        <a href="/yapay_zeka_asistan/" class="btn btn-primary">
+                            <i class="fas fa-robot me-2"></i> YZ Asistan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modern Footer -->
+<footer class="footer-modern">
+    <div class="container">
+        <div class="footer-modern-top">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="footer-brand">
+                        <h3 class="footer-brand-name">Öğrenci<span class="text-primary">Takip</span></h3>
+                        <p class="footer-brand-description">Türkiye'nin lider dijital rehberlik ve öğrenci takip platformu. Yapay zeka destekli analiz ve raporlama özellikleriyle eğitimde fark yaratın.</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="#" class="footer-social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="footer-social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="footer-social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="footer-social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4 mb-md-0">
+                    <h5 class="footer-title">Platformumuz</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Modüller</a></li>
+                        <li><a href="#" class="footer-link">Entegrasyonlar</a></li>
+                        <li><a href="#" class="footer-link">Kurumsal Çözümler</a></li>
+                        <li><a href="#" class="footer-link">Gelecek Özellikler</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4 mb-md-0">
+                    <h5 class="footer-title">Destek</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Yardım Merkezi</a></li>
+                        <li><a href="#" class="footer-link">Eğitim Videoları</a></li>
+                        <li><a href="#" class="footer-link">SSS</a></li>
+                        <li><a href="#" class="footer-link">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4 mb-md-0">
+                    <h5 class="footer-title">Yasal</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Gizlilik Politikası</a></li>
+                        <li><a href="#" class="footer-link">Kullanım Şartları</a></li>
+                        <li><a href="#" class="footer-link">KVKK</a></li>
+                        <li><a href="#" class="footer-link">Çerez Politikası</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <h5 class="footer-title">İletişim</h5>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <a href="tel:+902161234567" class="footer-link">
+                                <i class="fas fa-phone-alt me-2"></i> +90 216 123 45 67
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:info@ogrencitakip.com" class="footer-link">
+                                <i class="fas fa-envelope me-2"></i> info@ogrencitakip.com
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="footer-link">
+                                <i class="fas fa-map-marker-alt me-2"></i> İstanbul, Türkiye
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-modern-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="footer-copyright">© 2025 ÖğrenciTakip. Tüm hakları saklıdır.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="footer-legal-links">
+                        <a href="#" class="footer-legal-link">Gizlilik</a>
+                        <a href="#" class="footer-legal-link">Şartlar</a>
+                        <a href="#" class="footer-legal-link">Çerezler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

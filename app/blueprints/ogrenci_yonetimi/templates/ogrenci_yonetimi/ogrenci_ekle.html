@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}{% if ogrenci %}Öğrenci Düzenle{% else %}Yeni Öğrenci Ekle{% endif %} - YKS Çalışma Programı Takip Sistemi{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('ogrenci_yonetimi.liste') }}">Öğrenci Yönetimi</a></li>
+<li class="breadcrumb-item active">{% if ogrenci %}Öğrenci Düzenle{% else %}Yeni Öğrenci Ekle{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+<!-- Modern Öğrenci Formu -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center">
+            {% if ogrenci %}
+            <i class="fas fa-user-edit me-2"></i>
+            <span>ÖĞRENCİ DÜZENLE</span>
+            {% else %}
+            <i class="fas fa-user-plus me-2"></i>
+            <span>YENİ ÖĞRENCİ EKLE</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="border rounded">
+                    <div class="bg-light p-3 border-bottom">
+                        <div class="fw-bold text-primary">
+                            {% if ogrenci %}
+                            <i class="fas fa-info-circle me-2"></i> ÖĞRENCİ BİLGİ FORMU - DÜZENLEME
+                            {% else %}
+                            <i class="fas fa-info-circle me-2"></i> ÖĞRENCİ BİLGİ FORMU - YENİ KAYIT
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <form method="post" class="needs-validation" novalidate>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="numara" class="form-label fw-bold text-primary">Öğrenci Numarası <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="numara" name="numara" value="{{ ogrenci.numara if ogrenci else '' }}" required>
+                                        <div class="invalid-feedback">
+                                            Lütfen öğrenci numarasını girin.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ad" class="form-label fw-bold text-primary">Ad <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="ad" name="ad" value="{{ ogrenci.ad if ogrenci else '' }}" required>
+                                        <div class="invalid-feedback">
+                                            Lütfen adı girin.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="telefon" class="form-label fw-bold text-primary">Telefon</label>
+                                        <input type="tel" class="form-control" id="telefon" name="telefon" value="{{ ogrenci.telefon if ogrenci and ogrenci.telefon else '' }}">
+                                        <div class="form-text small">İsteğe bağlı alan</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="sinif" class="form-label fw-bold text-primary">Sınıf <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="sinif" name="sinif" value="{{ ogrenci.sinif if ogrenci else '' }}" required>
+                                        <div class="invalid-feedback">
+                                            Lütfen sınıf bilgisini girin.
+                                        </div>
+                                        <div class="form-text small">Örnek: 9-A, 10/B, 11. Sınıf, Mezun, 12-C, vb.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="soyad" class="form-label fw-bold text-primary">Soyad <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="soyad" name="soyad" value="{{ ogrenci.soyad if ogrenci else '' }}" required>
+                                        <div class="invalid-feedback">
+                                            Lütfen soyadı girin.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="eposta" class="form-label fw-bold text-primary">E-posta</label>
+                                        <input type="email" class="form-control" id="eposta" name="eposta" value="{{ ogrenci.eposta if ogrenci and ogrenci.eposta else '' }}">
+                                        <div class="form-text small">İsteğe bağlı alan</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4 mt-2">
+                                <label class="form-label fw-bold text-primary">Cinsiyet <span class="text-danger">*</span></label>
+                                <div class="d-flex">
+                                    <div class="form-check me-4">
+                                        <input class="form-check-input" type="radio" name="cinsiyet" id="erkek" value="Erkek" 
+                                               {% if ogrenci and ogrenci.cinsiyet == 'Erkek' %}checked{% endif %} required>
+                                        <label class="form-check-label" for="erkek">Erkek</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="cinsiyet" id="kiz" value="Kız" 
+                                               {% if ogrenci and ogrenci.cinsiyet == 'Kız' %}checked{% endif %} required>
+                                        <label class="form-check-label" for="kiz">Kız</label>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Lütfen cinsiyet seçin.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Zorunlu Alan Bilgisi -->
+                            <div class="alert alert-light border mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-info-circle text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-danger">*</span> işaretli alanların doldurulması zorunludur.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{% if ogrenci %}{{ url_for('ogrenci_yonetimi.profil', ogrenci_id=ogrenci.id) }}{% else %}{{ url_for('ogrenci_yonetimi.liste') }}{% endif %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> İptal
+                                </a>
+                                <button type="submit" class="modern-action-btn">
+                                    <i class="fas fa-save me-1"></i> 
+                                    {% if ogrenci %}Değişiklikleri Kaydet{% else %}Öğrenciyi Ekle{% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

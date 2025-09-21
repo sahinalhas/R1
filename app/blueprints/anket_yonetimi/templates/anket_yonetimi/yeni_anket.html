@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Yeni Anket Oluştur{% endblock %}
+
+{% block content %}
+<!-- Yeni Anket Oluşturma Formu -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-clipboard-list me-2"></i>
+                <span>YENİ ANKET OLUŞTUR</span>
+            </div>
+            <a href="{{ url_for('anket_yonetimi.index') }}" class="modern-action-btn">
+                <i class="fas fa-arrow-left me-1"></i> Anketlere Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="modern-panel">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="modern-card mb-4">
+                    <div class="modern-card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
+                            <span class="text-primary">Anket Bilgileri</span>
+                        </div>
+                    </div>
+                    <div class="modern-card-body">
+                        <form action="{{ url_for('anket_yonetimi.yeni_anket') }}" method="post">
+                            <div class="mb-3">
+                                <label for="baslik" class="modern-form-label">Anket Başlığı</label>
+                                <input type="text" class="form-control modern-form-control" id="baslik" name="baslik" 
+                                       placeholder="Anket başlığını girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="anket_turu_id" class="modern-form-label">Anket Türü</label>
+                                <select class="form-select modern-form-control" id="anket_turu_id" name="anket_turu_id" required>
+                                    <option value="">-- Anket Türü Seçin --</option>
+                                    {% for tur in anket_turleri %}
+                                        <option value="{{ tur.id }}">{{ tur.tur_adi }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if not anket_turleri %}
+                                    <div class="form-text text-danger mt-1">
+                                        <i class="fas fa-exclamation-triangle me-1"></i> 
+                                        Hiç anket türü tanımlanmamış! Önce 
+                                        <a href="{{ url_for('anket_yonetimi.anket_turleri') }}">anket türü ekleyin</a>.
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="aciklama" class="modern-form-label">Açıklama</label>
+                                <textarea class="form-control modern-form-control" id="aciklama" name="aciklama" 
+                                          rows="3" placeholder="Anket hakkında açıklayıcı bilgi (isteğe bağlı)"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="modern-action-btn w-100 py-2" 
+                                       {% if not anket_turleri %}disabled{% endif %}>
+                                    <i class="fas fa-save me-1"></i> Anketi Oluştur
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">Bilgi</p>
+                            <p class="mb-0">Anketi oluşturduktan sonra sorular ekleyebileceksiniz.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form doğrulama
+        const form = document.querySelector('form');
+        const baslik = document.getElementById('baslik');
+        const anketTuru = document.getElementById('anket_turu_id');
+        
+        form.addEventListener('submit', function(event) {
+            if (!baslik.value.trim()) {
+                event.preventDefault();
+                alert('Lütfen bir anket başlığı girin.');
+                baslik.focus();
+            }
+            else if (!anketTuru.value) {
+                event.preventDefault();
+                alert('Lütfen bir anket türü seçin.');
+                anketTuru.focus();
+            }
+        });
+    });
+</script>
+{% endblock %}

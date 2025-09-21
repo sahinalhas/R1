@@ -1,0 +1,1272 @@
+{% extends "base.html" %}
+
+{% block title %}Konu Takibi - {{ ogrenci.ad }} {{ ogrenci.soyad }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Yeni Modern Tasarım Stili */
+    :root {
+        --primary-color: #4f46e5;
+        --primary-light: #6366f1;
+        --primary-dark: #4338ca;
+        --secondary-color: #10b981;
+        --secondary-light: #34d399;
+        --secondary-dark: #059669;
+        --warning-color: #f59e0b;
+        --warning-light: #fbbf24;
+        --warning-dark: #d97706;
+        --danger-color: #ef4444;
+        --text-dark: #1f2937;
+        --text-medium: #4b5563;
+        --text-light: #6b7280;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --border-radius: 0.5rem;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --transition: all 0.2s ease;
+    }
+    
+    /* Konteynır ve Grid Yapısı */
+    .main-container {
+        background-color: var(--gray-50);
+        margin: -1rem -1.5rem;
+        padding: 1.5rem;
+        min-height: calc(100vh - 80px);
+    }
+    
+    /* Üst Bölüm - Başlık ve İstatistikler */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.25rem;
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid transparent;
+        transition: var(--transition);
+    }
+    
+    .stat-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+    
+    .stat-card.primary {
+        border-left-color: var(--primary-color);
+    }
+    
+    .stat-card.success {
+        border-left-color: var(--secondary-color);
+    }
+    
+    .stat-card.warning {
+        border-left-color: var(--warning-color);
+    }
+    
+    .stat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    
+    .stat-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-medium);
+    }
+    
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+    }
+    
+    .stat-icon.primary {
+        background-color: var(--primary-color);
+    }
+    
+    .stat-icon.success {
+        background-color: var(--secondary-color);
+    }
+    
+    .stat-icon.warning {
+        background-color: var(--warning-color);
+    }
+    
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-detail {
+        font-size: 0.875rem;
+        color: var(--text-light);
+    }
+    
+    .progress-container {
+        width: 100%;
+        height: 6px;
+        background-color: var(--gray-200);
+        border-radius: 10px;
+        margin-top: 0.5rem;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        border-radius: 10px;
+    }
+    
+    .progress-bar.primary {
+        background-color: var(--primary-color);
+    }
+    
+    .progress-bar.success {
+        background-color: var(--secondary-color);
+    }
+    
+    .progress-bar.warning {
+        background-color: var(--warning-color);
+    }
+    
+    /* Ana Panel Yapısı */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 1.25rem;
+    }
+    
+    /* Ders Listesi Paneli */
+    .courses-panel {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        height: fit-content;
+    }
+    
+    .panel-header {
+        padding: 1.25rem;
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .panel-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .course-search {
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        position: relative;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-400);
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 0.625rem 1rem 0.625rem 2rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--gray-300);
+        font-size: 0.875rem;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .course-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .course-item {
+        position: relative;
+    }
+    
+    .course-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: var(--primary-color);
+    }
+    
+    .course-item.active .course-link {
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+    
+    .course-link {
+        display: flex;
+        padding: 1rem;
+        text-decoration: none;
+        color: var(--text-dark);
+        border-bottom: 1px solid var(--gray-200);
+        transition: var(--transition);
+    }
+    
+    .course-link:hover {
+        background-color: var(--gray-50);
+    }
+    
+    .course-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.875rem;
+        flex-shrink: 0;
+        color: white;
+        background-color: var(--primary-light);
+    }
+    
+    .course-icon.all {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    }
+    
+    .course-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .course-name {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        color: var(--text-dark);
+        margin-bottom: 0.375rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .course-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .progress-track {
+        flex: 1;
+        height: 4px;
+        background-color: var(--gray-200);
+        border-radius: 2px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+    }
+    
+    .progress-text {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        white-space: nowrap;
+    }
+    
+    /* Konular Paneli */
+    .topics-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    
+    .filters-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        padding: 1.25rem;
+    }
+    
+    .filter-top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+    .topic-search-container {
+        flex: 1;
+        max-width: 400px;
+        position: relative;
+    }
+    
+    .topic-search {
+        width: 100%;
+        padding: 0.625rem 1rem 0.625rem 2.25rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--gray-300);
+        font-size: 0.875rem;
+    }
+    
+    .topic-search:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .topic-search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-400);
+    }
+    
+    .sort-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .sort-label {
+        font-size: 0.875rem;
+        color: var(--text-medium);
+    }
+    
+    .sort-select {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--gray-300);
+        font-size: 0.875rem;
+        color: var(--text-dark);
+        background-color: white;
+    }
+    
+    .sort-select:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .filter-divider {
+        height: 1px;
+        background-color: var(--gray-200);
+        margin: 1rem 0;
+    }
+    
+    .filter-buttons {
+        display: flex;
+        gap: 0.75rem;
+    }
+    
+    .filter-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--gray-100);
+        border: 1px solid var(--gray-200);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-medium);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+    
+    .filter-btn:hover {
+        background-color: var(--gray-200);
+        color: var(--text-dark);
+        text-decoration: none;
+    }
+    
+    .filter-btn.active {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+    
+    .filter-btn.active.completed {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+    
+    .filter-btn.active.pending {
+        background-color: var(--warning-color);
+        border-color: var(--warning-color);
+    }
+    
+    /* Konular Grid */
+    .topics-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.625rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        background-color: var(--gray-100);
+        color: var(--text-medium);
+    }
+    
+    .section-link {
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .section-link:hover {
+        color: var(--primary-dark);
+        text-decoration: none;
+    }
+    
+    .topics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+    
+    .topic-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: var(--transition);
+        border: 1px solid var(--gray-200);
+        position: relative;
+    }
+    
+    .topic-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+    
+    .topic-card.completed {
+        border-left: 4px solid var(--secondary-color);
+    }
+    
+    .topic-card-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        position: relative;
+    }
+    
+    .topic-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: var(--text-medium);
+        margin-right: 0.75rem;
+    }
+    
+    .topic-card.completed .topic-number {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--secondary-color);
+    }
+    
+    .topic-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        padding-right: 1.5rem;
+    }
+    
+    .topic-status {
+        position: absolute;
+        right: 1rem;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--warning-color);
+    }
+    
+    .topic-status.completed {
+        background-color: var(--secondary-color);
+    }
+    
+    .topic-card-body {
+        padding: 1rem;
+    }
+    
+    .topic-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .meta-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+        background-color: var(--gray-100);
+        font-size: 0.75rem;
+        color: var(--text-medium);
+    }
+    
+    .topic-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .form-check {
+        margin: 0;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+    
+    .number-inputs {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .input-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .input-label {
+        font-size: 0.75rem;
+        color: var(--text-light);
+    }
+    
+    .number-input {
+        width: 100%;
+        padding: 0.375rem 0.5rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        text-align: center;
+    }
+    
+    .number-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    /* Boş Durum */
+    .empty-state {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--gray-300);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-text {
+        font-size: 1.125rem;
+        color: var(--text-medium);
+        margin-bottom: 1.5rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .empty-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 0.9375rem;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+    
+    .empty-button:hover {
+        background-color: var(--primary-dark);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    /* Kaydet Butonu */
+    .save-button {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: var(--secondary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        border: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 10;
+    }
+    
+    .save-button:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    .save-button:focus {
+        outline: none;
+    }
+    
+    /* Mobil Yan Panel */
+    .sidebar-toggle {
+        display: none;
+        margin-bottom: 1rem;
+    }
+    
+    .toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1rem;
+        background-color: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.375rem;
+        color: var(--text-medium);
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .close-sidebar {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        margin-left: auto;
+    }
+    
+    /* Duyarlı Tasarım */
+    @media (max-width: 992px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .courses-panel {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            z-index: 1050;
+            transition: left 0.3s ease;
+        }
+        
+        .courses-panel.show {
+            left: 0;
+        }
+        
+        .sidebar-toggle {
+            display: block;
+        }
+        
+        .panel-header {
+            display: flex;
+            align-items: center;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .topics-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-top {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .topic-search-container {
+            max-width: none;
+        }
+        
+        .filter-buttons {
+            justify-content: space-between;
+        }
+        
+        .filter-btn {
+            flex: 1;
+            padding: 0.5rem;
+            justify-content: center;
+            font-size: 0.8125rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .main-container {
+            padding: 1rem;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .save-button {
+            bottom: 1.5rem;
+            right: 1.5rem;
+        }
+        
+        .filter-buttons {
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            flex: none;
+            width: calc(50% - 0.375rem);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- İstatistikler routes.py tarafından hesaplanıp şablona aktarılıyor: tamamlanan_konular, toplam_konular, cozulen_sorular, dogru_sorular -->
+
+<div class="main-container">
+    <div class="page-header">
+        <h1 class="page-title">{{ ogrenci.ad }} {{ ogrenci.soyad }} - Konu Takibi</h1>
+        
+        <a href="{{ url_for('rapor_yonetimi.ilerleme_raporu_pdf', ogrenci_id=ogrenci.id) }}" class="btn btn-outline-danger" target="_blank">
+            <i class="fas fa-file-pdf me-1"></i> İlerleme Raporu
+        </a>
+    </div>
+    
+    <!-- İstatistik Kartları -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-card-header">
+                <div class="stat-title">Tamamlanan Konular</div>
+                <div class="stat-icon primary">
+                    <i class="fas fa-tasks"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ tamamlanan_konular }}/{{ toplam_konular }}</div>
+            <div class="stat-detail">Konuların {{ ((tamamlanan_konular / toplam_konular * 100) if toplam_konular > 0 else 0) | round(1) }}%'i tamamlandı</div>
+            <div class="progress-container">
+                <div class="progress-bar primary" style="width: {{ (tamamlanan_konular / toplam_konular * 100) if toplam_konular > 0 else 0 }}%;"></div>
+            </div>
+        </div>
+        
+        <div class="stat-card success">
+            <div class="stat-card-header">
+                <div class="stat-title">Çözülen Sorular</div>
+                <div class="stat-icon success">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ cozulen_sorular }}</div>
+            <div class="stat-detail">{{ dogru_sorular }} doğru ({{ ((dogru_sorular / cozulen_sorular * 100) if cozulen_sorular > 0 else 0) | round(1) }}% başarı oranı)</div>
+            <div class="progress-container">
+                <div class="progress-bar success" style="width: {{ (dogru_sorular / cozulen_sorular * 100) if cozulen_sorular > 0 else 0 }}%;"></div>
+            </div>
+        </div>
+        
+        <div class="stat-card warning">
+            <div class="stat-card-header">
+                <div class="stat-title">Derslerin Durumu</div>
+                <div class="stat-icon warning">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ ders_konulari|length }}</div>
+            <div class="stat-detail">{{ dersler|length }} ders programda</div>
+        </div>
+    </div>
+    
+    <!-- Ana İçerik Grid -->
+    <div class="content-grid">
+        <!-- Sol Panel - Ders Listesi -->
+        <div class="courses-panel" id="coursesPanel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-book-open"></i>
+                    <span>Dersler</span>
+                </div>
+                <button class="close-sidebar d-lg-none" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="course-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="courseSearch" class="search-input" placeholder="Ders ara...">
+            </div>
+            
+            <ul class="course-list">
+                <li class="course-item {% if not secili_ders_id %}active{% endif %}">
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, durum=secili_durum) }}" class="course-link">
+                        <div class="course-icon all">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="course-info">
+                            <div class="course-name">Tüm Dersler</div>
+                            <div class="course-progress">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: {{ (tamamlanan_konular / toplam_konular * 100) if toplam_konular > 0 else 0 }}%;"></div>
+                                </div>
+                                <div class="progress-text">{{ tamamlanan_konular }}/{{ toplam_konular }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                
+                {% for ders in dersler %}
+                {% set ders_konular = ders_konulari.get(ders.id, {'konular': []}) %}
+                {% set completed_count = 0 %}
+                {% set total_count = ders_konular.konular|length if ders_konular.konular else 0 %}
+                {% for k in ders_konular.konular %}
+                    {% if k.takip and k.takip.tamamlandi %}
+                        {% set completed_count = completed_count + 1 %}
+                    {% endif %}
+                {% endfor %}
+                <li class="course-item {% if secili_ders_id == ders.id %}active{% endif %}" data-course-name="{{ ders.ad|lower }}">
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=ders.id, durum=secili_durum) }}" class="course-link">
+                        <div class="course-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="course-info">
+                            <div class="course-name">{{ ders.ad }}</div>
+                            <div class="course-progress">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: {{ (completed_count / total_count * 100) if total_count > 0 else 0 }}%;"></div>
+                                </div>
+                                <div class="progress-text">{{ completed_count }}/{{ total_count }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <!-- Sağ Panel - Konular -->
+        <div class="topics-panel">
+            <!-- Mobil Menü Açma Butonu -->
+            <div class="sidebar-toggle">
+                <button class="toggle-btn" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                    <span>Ders Listesi</span>
+                </button>
+            </div>
+            
+            <!-- Filtreleme ve Arama Kartı -->
+            <div class="filters-card">
+                <div class="filter-top">
+                    <div class="topic-search-container">
+                        <i class="fas fa-search topic-search-icon"></i>
+                        <input type="text" id="topicSearch" class="topic-search" placeholder="Konu ara...">
+                    </div>
+                    
+                    <div class="sort-container">
+                        <label for="sortTopics" class="sort-label">Sırala:</label>
+                        <select id="sortTopics" class="sort-select">
+                            <option value="number">Sıra No</option>
+                            <option value="name">Konu Adı</option>
+                            <option value="status">Durum</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-divider"></div>
+                
+                <div class="filter-buttons">
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=secili_ders_id) }}" 
+                       class="filter-btn {% if not secili_durum %}active{% endif %}">
+                        <i class="fas fa-th-list"></i>
+                        <span>Tüm Konular</span>
+                    </a>
+                    
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=secili_ders_id, durum='tamamlanan') }}" 
+                       class="filter-btn {% if secili_durum == 'tamamlanan' %}active completed{% endif %}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Tamamlananlar</span>
+                    </a>
+                    
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=secili_ders_id, durum='tamamlanmayan') }}" 
+                       class="filter-btn {% if secili_durum == 'tamamlanmayan' %}active pending{% endif %}">
+                        <i class="fas fa-hourglass-half"></i>
+                        <span>Devam Edenler</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Konular İçeriği -->
+            <form id="konuTakipForm" method="post">
+                {% if ders_konulari|length > 0 %}
+                    <div class="topics-container">
+                        {% for ders_id, ders_bilgi in ders_konulari.items() %}
+                            {% if not secili_ders_id or secili_ders_id == ders_id %}
+                                <div class="topic-section">
+                                    {% if not secili_ders_id %}
+                                    <div class="section-header">
+                                        <div class="section-title">
+                                            <i class="fas fa-book text-primary"></i>
+                                            <span>{{ ders_bilgi.ders.ad }}</span>
+                                            <span class="section-badge">{{ ders_bilgi.konular|length }} konu</span>
+                                        </div>
+                                        <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=ders_id, durum=secili_durum) }}" class="section-link">
+                                            Bu dersin tüm konuları
+                                            <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="topics-grid">
+                                        {% for konu_bilgi in ders_bilgi.konular %}
+                                        <div class="topic-card {% if konu_bilgi.takip and konu_bilgi.takip.tamamlandi %}completed{% endif %}" id="konu-item-{{ konu_bilgi.konu.id }}" data-topic-name="{{ konu_bilgi.konu.ad|lower }}" data-topic-number="{{ konu_bilgi.konu.sira }}">
+                                            <div class="topic-card-header">
+                                                <div class="topic-number">{{ konu_bilgi.konu.sira }}</div>
+                                                <h3 class="topic-title">{{ konu_bilgi.konu.ad }}</h3>
+                                                <div class="topic-status {% if konu_bilgi.takip and konu_bilgi.takip.tamamlandi %}completed{% endif %}"></div>
+                                            </div>
+                                            
+                                            <div class="topic-card-body">
+                                                <div class="topic-meta">
+                                                    <div class="meta-badge">
+                                                        <i class="far fa-clock"></i>
+                                                        <span>{{ konu_bilgi.konu.tahmini_sure }} dk</span>
+                                                    </div>
+                                                    
+                                                    <div class="meta-badge">
+                                                        <i class="fas fa-question-circle"></i>
+                                                        <span>{{ konu_bilgi.takip.cozulen_soru or 0 }} soru</span>
+                                                    </div>
+                                                    
+                                                    {% if (konu_bilgi.takip.cozulen_soru or 0) > 0 %}
+                                                    <div class="meta-badge">
+                                                        <i class="fas fa-check"></i>
+                                                        <span>{{ (konu_bilgi.takip.dogru_soru or 0) }} doğru</span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                
+                                                <div class="topic-form">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" 
+                                                            id="tamamlandi_{{ konu_bilgi.konu.id }}" 
+                                                            name="konu_{{ konu_bilgi.konu.id }}_tamamlandi" 
+                                                            {% if konu_bilgi.takip and konu_bilgi.takip.tamamlandi %}checked{% endif %}>
+                                                        <label class="form-check-label" for="tamamlandi_{{ konu_bilgi.konu.id }}">
+                                                            Tamamlandı
+                                                        </label>
+                                                    </div>
+                                                    
+                                                    <div class="number-inputs">
+                                                        <div class="input-group">
+                                                            <label class="input-label" for="cozulen_{{ konu_bilgi.konu.id }}">Çözülen:</label>
+                                                            <input type="number" class="number-input" 
+                                                                id="cozulen_{{ konu_bilgi.konu.id }}" 
+                                                                name="konu_{{ konu_bilgi.konu.id }}_cozulen_soru" 
+                                                                value="{{ konu_bilgi.takip.cozulen_soru or 0 }}" min="0">
+                                                        </div>
+                                                        
+                                                        <div class="input-group">
+                                                            <label class="input-label" for="dogru_{{ konu_bilgi.konu.id }}">Doğru:</label>
+                                                            <input type="number" class="number-input" 
+                                                                id="dogru_{{ konu_bilgi.konu.id }}" 
+                                                                name="konu_{{ konu_bilgi.konu.id }}_dogru_soru" 
+                                                                value="{{ konu_bilgi.takip.dogru_soru or 0 }}" 
+                                                                min="0" 
+                                                                max="{{ konu_bilgi.takip.cozulen_soru or 0 }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <p class="empty-text">
+                            Henüz bu öğrenci için ders programı oluşturulmamış. Önce haftalık ders planı oluşturun.
+                        </p>
+                        <a href="{{ url_for('calisma_programi.haftalik_plan', ogrenci_id=ogrenci.id) }}" class="empty-button">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Haftalık Ders Planı Oluştur</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    
+    <!-- Sabit Kaydet Butonu -->
+    <button type="submit" form="konuTakipForm" class="save-button" title="Değişiklikleri Kaydet">
+        <i class="fas fa-save"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Çözülen soru değiştiğinde, doğru sayısının maksimumunu ayarla
+    const cozulenInputs = document.querySelectorAll('input[id^="cozulen_"]');
+    cozulenInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const id = this.id.split('_')[1];
+            const dogruInput = document.getElementById('dogru_' + id);
+            dogruInput.max = this.value;
+            
+            // Eğer doğru sayısı çözülen soru sayısından fazlaysa düzelt
+            if (parseInt(dogruInput.value) > parseInt(this.value)) {
+                dogruInput.value = this.value;
+            }
+        });
+    });
+    
+    // Tamamlandı checkbox'una tıklandığında kartı güncelle
+    const checkboxes = document.querySelectorAll('input[id^="tamamlandi_"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const id = this.id.split('_')[1];
+            const card = document.getElementById('konu-item-' + id);
+            
+            if (this.checked) {
+                card.classList.add('completed');
+                // Durum göstergesini güncelle
+                const statusDot = card.querySelector('.topic-status');
+                if (statusDot) {
+                    statusDot.classList.add('completed');
+                }
+            } else {
+                card.classList.remove('completed');
+                // Durum göstergesini güncelle
+                const statusDot = card.querySelector('.topic-status');
+                if (statusDot) {
+                    statusDot.classList.remove('completed');
+                }
+            }
+        });
+    });
+    
+    // Ders Arama İşlevi
+    const courseSearchInput = document.getElementById('courseSearch');
+    if (courseSearchInput) {
+        courseSearchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            document.querySelectorAll('.course-item').forEach(item => {
+                const courseName = item.getAttribute('data-course-name');
+                if (!courseName) return;
+                
+                if (courseName.toLowerCase().includes(searchText) || searchText === '') {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Konu Arama İşlevi
+    const topicSearchInput = document.getElementById('topicSearch');
+    if (topicSearchInput) {
+        topicSearchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            document.querySelectorAll('.topic-card').forEach(card => {
+                const topicName = card.getAttribute('data-topic-name');
+                if (!topicName) return;
+                
+                if (topicName.includes(searchText) || searchText === '') {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Konu Sıralama İşlevi
+    const sortTopicsSelect = document.getElementById('sortTopics');
+    if (sortTopicsSelect) {
+        sortTopicsSelect.addEventListener('change', function() {
+            const sortBy = this.value;
+            
+            document.querySelectorAll('.topics-grid').forEach(grid => {
+                const topicCards = Array.from(grid.querySelectorAll('.topic-card'));
+                
+                topicCards.sort((a, b) => {
+                    if (sortBy === 'name') {
+                        const nameA = a.getAttribute('data-topic-name');
+                        const nameB = b.getAttribute('data-topic-name');
+                        return nameA.localeCompare(nameB);
+                    } else if (sortBy === 'status') {
+                        const statusA = a.classList.contains('completed');
+                        const statusB = b.classList.contains('completed');
+                        return statusB - statusA; // Tamamlananları önce göster
+                    } else { // number
+                        const numA = parseInt(a.getAttribute('data-topic-number') || 0);
+                        const numB = parseInt(b.getAttribute('data-topic-number') || 0);
+                        return numA - numB;
+                    }
+                });
+                
+                // Sıralanmış kartları yerleştir
+                topicCards.forEach(card => {
+                    grid.appendChild(card);
+                });
+            });
+        });
+    }
+    
+    // Mobil Yan Menü Kontrolü
+    const toggleSidebarButton = document.getElementById('toggleSidebar');
+    const closeSidebarButton = document.getElementById('closeSidebar');
+    const coursesPanel = document.getElementById('coursesPanel');
+    
+    if (toggleSidebarButton && coursesPanel) {
+        toggleSidebarButton.addEventListener('click', function() {
+            coursesPanel.classList.add('show');
+            
+            // Arkaplan overlay ekle
+            const overlay = document.createElement('div');
+            overlay.id = 'sidebarOverlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100vh';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            overlay.style.zIndex = '1049';
+            document.body.appendChild(overlay);
+            
+            // Overlay'a tıklama ile kapatma
+            overlay.addEventListener('click', closeSidebar);
+        });
+    }
+    
+    if (closeSidebarButton && coursesPanel) {
+        closeSidebarButton.addEventListener('click', closeSidebar);
+    }
+    
+    function closeSidebar() {
+        if (coursesPanel) {
+            coursesPanel.classList.remove('show');
+        }
+        
+        // Overlay'ı kaldır
+        const overlay = document.getElementById('sidebarOverlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    }
+    
+    // Sayısal input alanlarında yazı seçimi
+    document.querySelectorAll('.number-input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.select();
+        });
+    });
+});
+</script>
+{% endblock %}

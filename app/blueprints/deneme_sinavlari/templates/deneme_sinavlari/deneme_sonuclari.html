@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Deneme Sınavı Sonuçları - {{ ogrenci.ad }} {{ ogrenci.soyad }}{% endblock %}
+
+{% block content %}
+{% with active_tab='deneme_sonuclari' %}
+    {% include 'student_tabs.html' %}
+{% endwith %}
+
+<!-- Deneme Sınavı Sonuçları İçeriği -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-file-alt me-2"></i>
+                <span>DENEME SINAVI SONUÇLARI</span>
+            </div>
+            <div class="d-flex">
+                <button type="button" class="modern-action-btn" data-bs-toggle="modal" data-bs-target="#yeniDenemeModal">
+                    <i class="fas fa-plus me-1"></i> Yeni Sonuç Ekle
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Deneme Sonuç Listesi -->
+    <div class="col-lg-5 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i> Deneme Sonuçları</h5>
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#yeniDenemeModal">
+                    <i class="fas fa-plus me-1"></i> Yeni Sonuç Ekle
+                </button>
+            </div>
+            <div class="card-body">
+                {% if deneme_sonuclari %}
+                <div class="table-responsive">
+                    <table id="denemeSonucTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Deneme Adı</th>
+                                <th>Tarih</th>
+                                <th>TYT Puanı</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sonuc in deneme_sonuclari %}
+                            <tr>
+                                <td>{{ sonuc.id }}</td>
+                                <td>{{ sonuc.deneme_adi }}</td>
+                                <td>{{ sonuc.tarih|format_date }}</td>
+                                <td>{{ "%.2f"|format(sonuc.puan_tyt) }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#silModal{{ sonuc.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    
+                                    <!-- Silme Onay Modal -->
+                                    <div class="modal fade" id="silModal{{ sonuc.id }}" tabindex="-1" aria-labelledby="silModalLabel{{ sonuc.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="silModalLabel{{ sonuc.id }}">Sonuç Silme Onayı</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>{{ sonuc.deneme_adi }}</strong> deneme sonucunu silmek istediğinizden emin misiniz?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                                                    <form action="{{ url_for('deneme_sinavlari.sil', ogrenci_id=ogrenci.id, deneme_id=sonuc.id) }}" method="post">
+                                                        <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-file-alt fa-3x mb-3"></i>
+                    <p>Henüz deneme sınavı sonucu bulunmamaktadır.</p>
+                    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#yeniDenemeModal">
+                        <i class="fas fa-plus me-1"></i> Yeni Sonuç Ekle
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Grafik ve İstatistikler -->
+    <div class="col-lg-7 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Puan Grafiği</h5>
+            </div>
+            <div class="card-body">
+                {% if deneme_sonuclari %}
+                <div style="height: 300px;">
+                    <canvas id="denemeSonucChart"></canvas>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-chart-line fa-3x mb-3"></i>
+                    <p>Grafik gösterimi için en az bir deneme sonucu eklenmelidir.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- TYT Netleri Grafiği -->
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> TYT Netleri</h5>
+            </div>
+            <div class="card-body">
+                {% if deneme_sonuclari %}
+                <div style="height: 300px;">
+                    <canvas id="tytNetlerChart"></canvas>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                    <p>Grafik gösterimi için en az bir deneme sonucu eklenmelidir.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Deneme Sonucu Ekleme Modal -->
+<div class="modal fade" id="yeniDenemeModal" tabindex="-1" aria-labelledby="yeniDenemeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="yeniDenemeModalLabel">Yeni Deneme Sonucu Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <form method="post" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="deneme_adi" class="form-label">Deneme Adı <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="deneme_adi" name="deneme_adi" required>
+                            <div class="invalid-feedback">
+                                Lütfen deneme adını girin.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tarih" class="form-label">Tarih <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="tarih" name="tarih" required>
+                            <div class="invalid-feedback">
+                                Lütfen tarihi girin.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h6 class="border-bottom pb-2">TYT Netleri</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="net_tyt_turkce" class="form-label">Türkçe (40)</label>
+                            <input type="number" class="form-control" id="net_tyt_turkce" name="net_tyt_turkce" min="0" max="40" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_tyt_sosyal" class="form-label">Sosyal (20)</label>
+                            <input type="number" class="form-control" id="net_tyt_sosyal" name="net_tyt_sosyal" min="0" max="20" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_tyt_matematik" class="form-label">Matematik (40)</label>
+                            <input type="number" class="form-control" id="net_tyt_matematik" name="net_tyt_matematik" min="0" max="40" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_tyt_fen" class="form-label">Fen (20)</label>
+                            <input type="number" class="form-control" id="net_tyt_fen" name="net_tyt_fen" min="0" max="20" step="0.25" value="0">
+                        </div>
+                    </div>
+                    
+                    <h6 class="border-bottom pb-2">AYT Netleri</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="net_ayt_matematik" class="form-label">Matematik (40)</label>
+                            <input type="number" class="form-control" id="net_ayt_matematik" name="net_ayt_matematik" min="0" max="40" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_ayt_fizik" class="form-label">Fizik (14)</label>
+                            <input type="number" class="form-control" id="net_ayt_fizik" name="net_ayt_fizik" min="0" max="14" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_ayt_kimya" class="form-label">Kimya (13)</label>
+                            <input type="number" class="form-control" id="net_ayt_kimya" name="net_ayt_kimya" min="0" max="13" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_ayt_biyoloji" class="form-label">Biyoloji (13)</label>
+                            <input type="number" class="form-control" id="net_ayt_biyoloji" name="net_ayt_biyoloji" min="0" max="13" step="0.25" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="net_ayt_edebiyat" class="form-label">Edebiyat (24)</label>
+                            <input type="number" class="form-control" id="net_ayt_edebiyat" name="net_ayt_edebiyat" min="0" max="24" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_ayt_tarih" class="form-label">Tarih-1 (10)</label>
+                            <input type="number" class="form-control" id="net_ayt_tarih" name="net_ayt_tarih" min="0" max="10" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_ayt_cografya" class="form-label">Coğrafya-1 (6)</label>
+                            <input type="number" class="form-control" id="net_ayt_cografya" name="net_ayt_cografya" min="0" max="6" step="0.25" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="net_ayt_felsefe" class="form-label">Felsefe (12)</label>
+                            <input type="number" class="form-control" id="net_ayt_felsefe" name="net_ayt_felsefe" min="0" max="12" step="0.25" value="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-primary">Sonucu Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sonuç verileri (Chart.js için) -->
+<script>
+    {% if deneme_sonuclari %}
+    // Tarihler ve puanlar
+    const tarihler = {{ tarihler|tojson }};
+    const tyt_puanlar = {{ tyt_puanlar|tojson }};
+    const say_puanlar = {{ say_puanlar|tojson }};
+    const ea_puanlar = {{ ea_puanlar|tojson }};
+    const soz_puanlar = {{ soz_puanlar|tojson }};
+    
+    // TYT Netleri
+    const tyt_turkce_netler = {{ tyt_turkce_netler|tojson }};
+    const tyt_sosyal_netler = {{ tyt_sosyal_netler|tojson }};
+    const tyt_matematik_netler = {{ tyt_matematik_netler|tojson }};
+    const tyt_fen_netler = {{ tyt_fen_netler|tojson }};
+    {% endif %}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<!-- We're not loading charts.js here anymore as it's already in base.html -->
+{% endblock %}

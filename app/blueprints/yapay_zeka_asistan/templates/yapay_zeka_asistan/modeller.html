@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Yapay Zeka Modelleri{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Yapay Zeka Modelleri</h1>
+        <div>
+            <a href="{{ url_for('yapay_zeka_asistan.akademik_risk_modeli_olustur') }}" class="btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Yeni Model Oluştur
+            </a>
+            <a href="{{ url_for('yapay_zeka_asistan.index') }}" class="btn btn-sm btn-secondary shadow-sm">
+                <i class="fas fa-arrow-left fa-sm text-white-50"></i> Asistana Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Mevcut Yapay Zeka Modelleri</h6>
+        </div>
+        <div class="card-body">
+            {% if modeller %}
+            <div class="table-responsive">
+                <table class="table table-bordered" id="modelsTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Model Adı</th>
+                            <th>Türü</th>
+                            <th>Açıklama</th>
+                            <th>Eğitim Doğruluğu</th>
+                            <th>Test Doğruluğu</th>
+                            <th>Durum</th>
+                            <th>Oluşturulma Tarihi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for model in modeller %}
+                        <tr>
+                            <td>{{ model.model_adi }}</td>
+                            <td>{{ model.model_turu }}</td>
+                            <td>{{ model.aciklama|truncate(100) }}</td>
+                            <td>{{ "%.2f"|format(model.egitim_dogrulugu * 100) }}%</td>
+                            <td>{{ "%.2f"|format(model.test_dogrulugu * 100) }}%</td>
+                            <td>
+                                {% if model.aktif %}
+                                <span class="badge badge-success">Aktif</span>
+                                {% else %}
+                                <span class="badge badge-secondary">Pasif</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ model.olusturma_tarihi|format_date }}</td>
+                            <td>
+                                <a href="{{ url_for('yapay_zeka_asistan.model_detay', model_id=model.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-info-circle"></i> Detay
+                                </a>
+                                {% if get_aktif_ogrenci() and model.aktif %}
+                                <a href="{{ url_for('yapay_zeka_asistan.ogrenci_analiz_yap', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-chart-pie"></i> Analiz Et
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <p>Henüz oluşturulmuş yapay zeka modeli bulunmuyor.</p>
+                <a href="{{ url_for('yapay_zeka_asistan.akademik_risk_modeli_olustur') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Yeni Model Oluştur
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Yapay Zeka Modelleri Hakkında</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header">
+                            <h5 class="card-title">Akademik Risk Modeli</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Akademik risk modeli, öğrencilerin deneme sınavlarındaki başarıları, ders çalışma düzenleri ve çeşitli metriklere dayanarak akademik risk altında olup olmadıklarını tahmin eder.</p>
+                            <p class="card-text">Bu model, başarısızlık riski taşıyan öğrencilerin erken tespit edilmesini ve gerekli önlemlerin alınmasını sağlar.</p>
+                            <a href="{{ url_for('yapay_zeka_asistan.akademik_risk_modeli_olustur') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Oluştur
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header">
+                            <h5 class="card-title">Duygu Analizi</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Duygu analizi, öğrencilerin yazdığı kompozisyonlar, anket cevapları veya görüşme notları gibi metinlerdeki duygusal içeriği analiz eder.</p>
+                            <p class="card-text">Bu analiz, öğrencilerin duygusal durumlarını anlamak ve gerektiğinde psikolojik destek sağlamak için kullanılabilir.</p>
+                            {% if get_aktif_ogrenci() %}
+                            <a href="{{ url_for('yapay_zeka_asistan.duygu_analizi_yap', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-primary">
+                                <i class="fas fa-comments"></i> Duygu Analizi Yap
+                            </a>
+                            {% else %}
+                            <button class="btn btn-primary" disabled>
+                                <i class="fas fa-comments"></i> Öğrenci Seçiniz
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#modelsTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json"
+            },
+            "order": [[6, "desc"]]  // Sort by creation date (descending)
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Toplu Konu Ekle - {{ ders.ad }}{% endblock %}
+
+{% block content %}
+<!-- Ders bilgileri üst kart -->
+{% set ders_renk = 'primary' %}
+{% set ders_ikon = 'book' %}
+{% set ders_tip = '' %}
+
+{% if 'TYT' in ders.ad %}
+    {% set ders_renk = 'info' %}
+    {% set ders_ikon = 'check-circle' %}
+    {% set ders_tip = 'TYT' %}
+{% elif 'AYT' in ders.ad %}
+    {% set ders_renk = 'success' %}
+    {% set ders_ikon = 'star' %}
+    {% set ders_tip = 'AYT' %}
+{% elif 'YDT' in ders.ad or 'Dil' in ders.ad or 'İngilizce' in ders.ad or 'Almanca' in ders.ad or 'Fransızca' in ders.ad %}
+    {% set ders_renk = 'warning' %}
+    {% set ders_ikon = 'globe' %}
+    {% set ders_tip = 'YDT' %}
+{% endif %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header Kart -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-white d-flex align-items-center p-4 border-0">
+                <div class="icon-wrapper bg-success bg-opacity-10 rounded-3 p-3 me-3">
+                    <i class="fas fa-file-import fs-4 text-success"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title mb-0 fw-bold">Toplu Konu Ekle</h4>
+                        {% if ders_tip %}
+                        <span class="badge bg-{{ ders_renk }} bg-opacity-10 text-{{ ders_renk }} rounded-pill px-3 py-2 ms-2">{{ ders_tip }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted small mb-0 mt-1">{{ ders.ad }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Kart -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-4">
+                <!-- Açıklama Alert -->
+                <div class="alert alert-primary bg-opacity-10 border-0 rounded-4 mb-4">
+                    <div class="d-flex">
+                        <i class="fas fa-lightbulb fs-4 me-3 text-primary"></i>
+                        <div>
+                            <h6 class="fw-bold mb-2">Toplu Konu Ekleme</h6>
+                            <p class="mb-0">Konuları toplu olarak eklemek için aşağıdaki formatı kullanın:</p>
+                            <div class="mt-2 px-3 py-2 bg-light bg-opacity-50 rounded-3">
+                                <code>Konu Adı [tab] Süre</code> veya <code>Konu Adı [virgül] Süre</code> veya <code>Konu Adı [2+ boşluk] Süre</code>
+                            </div>
+                            <p class="mt-2 mb-0">Her satıra bir konu gelecek şekilde giriş yapın.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Örnek Kart -->
+                <div class="card border-0 bg-light bg-opacity-50 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-transparent border-0 pt-3">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-code me-2 text-primary"></i> Örnek Konu Formatı
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0 bg-white p-3 rounded-3 font-monospace shadow-sm border-0" style="font-size: 0.875rem;">Sayılar        60
+Kümeler 90
+Fonksiyonlar  120
+İstatistik, 45
+Olasılık  60</pre>
+                    </div>
+                </div>
+                
+                <!-- Form -->
+                <form method="post" class="needs-validation" novalidate>
+                    <div class="mb-4">
+                        <label for="konu_listesi" class="form-label fw-medium">Konu Listesi <span class="text-danger">*</span></label>
+                        <div class="shadow-sm rounded-3 overflow-hidden">
+                            <textarea class="form-control font-monospace border-0" id="konu_listesi" name="konu_listesi" rows="12" required placeholder="Konularınızı buraya yazın..."></textarea>
+                        </div>
+                        <div class="invalid-feedback">
+                            Lütfen konu listesini girin.
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="{{ url_for('ders_konu_yonetimi.detay', ders_id=ders.id) }}" class="btn btn-outline-secondary rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-arrow-left me-2"></i> Geri Dön
+                        </a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Konuları Toplu Ekle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Icon wrapper stillemesi */
+    .icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        transition: all 0.2s ease;
+    }
+    
+    /* Yuvarlatılmış köşeler */
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+    
+    /* Input focus stillemesi */
+    .form-control:focus {
+        box-shadow: none;
+        border-color: rgba(var(--bs-primary-rgb), 0.5);
+    }
+    
+    /* Textarea yüksekliği */
+    textarea.form-control {
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}

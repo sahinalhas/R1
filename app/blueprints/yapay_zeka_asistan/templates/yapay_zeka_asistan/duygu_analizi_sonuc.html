@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}Duygu Analizi Sonucu{% endblock %}
+
+{% block styles %}
+<style>
+    .duygular-chart {
+        height: 200px;
+        width: 100%;
+    }
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df!important;
+    }
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a!important;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc!important;
+    }
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e!important;
+    }
+    .border-left-danger {
+        border-left: 0.25rem solid #e74a3b!important;
+    }
+    .text-primary {
+        color: #4e73df!important;
+    }
+    .text-success {
+        color: #1cc88a!important;
+    }
+    .text-info {
+        color: #36b9cc!important;
+    }
+    .text-warning {
+        color: #f6c23e!important;
+    }
+    .text-danger {
+        color: #e74a3b!important;
+    }
+    .kelime-badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+        margin: 2px;
+    }
+    .kelime-badge-olumlu {
+        background-color: #1cc88a;
+    }
+    .kelime-badge-olumsuz {
+        background-color: #e74a3b;
+    }
+    .motivasyon-progress {
+        height: 20px;
+    }
+    .progress-bar-motivasyon {
+        background-color: #4e73df;
+    }
+    .progress-bar-kaygi {
+        background-color: #e74a3b;
+    }
+    .cumle-analiz {
+        padding: 8px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+    }
+    .cumle-olumlu {
+        background-color: rgba(28, 200, 138, 0.1);
+        border-left: 3px solid #1cc88a;
+    }
+    .cumle-olumsuz {
+        background-color: rgba(231, 74, 59, 0.1);
+        border-left: 3px solid #e74a3b;
+    }
+    .cumle-notr {
+        background-color: rgba(54, 185, 204, 0.1);
+        border-left: 3px solid #36b9cc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Duygu Analizi Sonucu</h1>
+        <div>
+            <a href="{{ urls.ogrenci_analizler }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Tüm Analizlere Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Özet Bilgi -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card shadow h-100 py-2 border-left-{{ analiz.baskin_duygu_renk }}">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-{{ analiz.baskin_duygu_renk }} text-uppercase mb-1">
+                                Baskın Duygu
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ analiz.baskin_duygu | capitalize }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-{{ analiz.baskin_duygu_ikon }} fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metin Kaynağı -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card shadow h-100 py-2 border-left-info">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Metin Kaynağı
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ analiz.metin_kaynagi | capitalize }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analiz Tipi -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card shadow h-100 py-2 border-left-primary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Analiz Tipi
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ analiz.analiz_tipi | capitalize }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duygu Yoğunluğu -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card shadow h-100 py-2 border-left-warning">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Duygu Yoğunluğu
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ (analiz.duygu_yogunlugu * 100) | round }}%
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-thermometer-half fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Duygu Dağılımı Grafiği -->
+        <div class="col-xl-6 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Duygu Dağılımı</h6>
+                </div>
+                <div class="card-body">
+                    <div class="duygular-chart">
+                        <canvas id="duygularChart"></canvas>
+                    </div>
+                    <hr>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Olumlu ({{ (analiz.olumlu_skor * 100) | round }}%)
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-danger"></i> Olumsuz ({{ (analiz.olumsuz_skor * 100) | round }}%)
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-info"></i> Nötr ({{ (analiz.notr_skor * 100) | round }}%)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Önemli Kelimeler -->
+        <div class="col-xl-6 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Önemli Kelimeler</h6>
+                </div>
+                <div class="card-body">
+                    {% if analiz.onemli_kelimeler %}
+                        <div class="mb-3">
+                            <p class="mb-2">Metinde duygusal öneme sahip olan kelimeler:</p>
+                            <div>
+                                {% for kelime, bilgi in analiz.onemli_kelimeler.items() %}
+                                    <span class="kelime-badge kelime-badge-{{ bilgi.duygu }}" 
+                                          title="Duygu Skoru: {{ (bilgi.skor * 100) | round }}%">
+                                        {{ kelime }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Bu analiz türünde önemli kelime tespiti bulunmamaktadır.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kapsamlı Analiz Sonuçları (eğer varsa) -->
+    {% if analiz.analiz_tipi == 'kapsamli' %}
+    <div class="row">
+        <!-- Motivasyon ve Kaygı Dengesi -->
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Motivasyon ve Kaygı Dengesi</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h4 class="small font-weight-bold">Motivasyon Skoru <span class="float-right">{{ (analiz.duygu_kategorileri.motivasyon * 100) | round }}%</span></h4>
+                        <div class="progress mb-4">
+                            <div class="progress-bar progress-bar-motivasyon" role="progressbar" style="width: {{ (analiz.duygu_kategorileri.motivasyon * 100) | round }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h4 class="small font-weight-bold">Kaygı Skoru <span class="float-right">{{ (analiz.duygu_kategorileri.kaygi * 100) | round }}%</span></h4>
+                        <div class="progress mb-4">
+                            <div class="progress-bar progress-bar-kaygi" role="progressbar" style="width: {{ (analiz.duygu_kategorileri.kaygi * 100) | round }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert {% if analiz.motivasyon_kaygi_dengesi > 0 %}alert-success{% else %}alert-warning{% endif %}">
+                        {% if analiz.motivasyon_kaygi_dengesi > 0 %}
+                            <i class="fas fa-check-circle"></i> Öğrencinin motivasyon seviyesi, kaygı seviyesinden daha yüksek görünüyor.
+                        {% else %}
+                            <i class="fas fa-exclamation-triangle"></i> Öğrencinin kaygı seviyesi, motivasyon seviyesinden daha yüksek görünüyor.
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cümle Analizleri -->
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Cümle Bazlı Analiz</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Metindeki önemli cümlelerin duygusal analizi:</p>
+                    
+                    <div class="cumle-analizleri-container">
+                        {% for cumle_analiz in analiz.cumle_analizleri %}
+                            <div class="cumle-analiz cumle-{{ cumle_analiz.duygu }}">
+                                <p class="mb-0">{{ cumle_analiz.cumle }}</p>
+                                <small class="text-{{ cumle_analiz.duygu_renk }}">
+                                    <i class="fas fa-{{ cumle_analiz.duygu_ikon }}"></i>
+                                    {{ cumle_analiz.duygu | capitalize }} duygu 
+                                    ({{ (cumle_analiz.skor * 100) | round }}%)
+                                </small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Analiz Edilen Metin -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Analiz Edilen Metin</h6>
+                </div>
+                <div class="card-body">
+                    <div class="border p-3 bg-light rounded">
+                        {{ analiz.metin | nl2br | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Öneriler -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Değerlendirme ve Öneriler</h6>
+                </div>
+                <div class="card-body">
+                    <div id="onerilerId">
+                        <!-- Baskın duyguya göre otomatik öneriler -->
+                        {% if analiz.baskin_duygu == 'olumlu' %}
+                            <div class="alert alert-success">
+                                <h5 class="alert-heading"><i class="fas fa-smile"></i> Olumlu Duygusal Durum</h5>
+                                <p>Öğrencinin metni olumlu duygular içermektedir. Bu durum, öğrencinin motivasyonunun yüksek ve psikolojik durumunun iyi olduğuna işaret edebilir.</p>
+                                <hr>
+                                <p class="mb-0">Öneriler:</p>
+                                <ul class="mb-0">
+                                    <li>Bu olumlu durumu korumak için öğrencinin başarılarını takdir etmeye devam edin.</li>
+                                    <li>Mevcut motivasyonu sürdürmek için öğrencinin ilgi alanlarına yönelik projeler önerin.</li>
+                                    <li>Pozitif pekiştirmeyi sürdürerek öğrencinin öğrenme sürecini destekleyin.</li>
+                                </ul>
+                            </div>
+                        {% elif analiz.baskin_duygu == 'olumsuz' %}
+                            <div class="alert alert-danger">
+                                <h5 class="alert-heading"><i class="fas fa-frown"></i> Olumsuz Duygusal Durum</h5>
+                                <p>Öğrencinin metni olumsuz duygular içermektedir. Bu durum, öğrencinin stres, kaygı veya motivasyon düşüklüğü yaşadığına işaret edebilir.</p>
+                                <hr>
+                                <p class="mb-0">Öneriler:</p>
+                                <ul class="mb-0">
+                                    <li>Öğrenciyle birebir görüşme ayarlayarak duygusal durumunun nedenlerini anlamaya çalışın.</li>
+                                    <li>Kısa vadeli, başarılabileceğini düşündüğü hedefler belirleyerek başarı deneyimlemesini sağlayın.</li>
+                                    <li>Başa çıkma stratejileri ve stres yönetimi teknikleri konusunda destek sunun.</li>
+                                    <li>Gerekirse okul psikolojik danışmanıyla iş birliği yapın.</li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading"><i class="fas fa-meh"></i> Nötr Duygusal Durum</h5>
+                                <p>Öğrencinin metni belirgin bir duygusal yönelim göstermemektedir. Bu durum, öğrencinin duygularını ifade etmekte zorlandığına veya konuya karşı nötr bir tutum sergilediğine işaret edebilir.</p>
+                                <hr>
+                                <p class="mb-0">Öneriler:</p>
+                                <ul class="mb-0">
+                                    <li>Öğrenciyle daha açık iletişim kurarak duygularını ifade etmesi için teşvik edin.</li>
+                                    <li>İlgi alanlarını keşfetmeye yönelik aktiviteler önererek motivasyonunu artırmayı deneyin.</li>
+                                    <li>Farklı öğrenme yöntemleri deneyerek öğrencinin derse katılımını artırın.</li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Kapsamlı analiz için ek öneriler -->
+                        {% if analiz.analiz_tipi == 'kapsamli' and analiz.motivasyon_kaygi_dengesi < 0 %}
+                            <div class="alert alert-warning mt-3">
+                                <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Kaygı-Motivasyon Dengesi Uyarısı</h5>
+                                <p>Öğrencinin kaygı seviyesi motivasyon seviyesinden daha yüksek görünmektedir. Bu durum akademik performansı olumsuz etkileyebilir.</p>
+                                <hr>
+                                <p class="mb-0">Ek Öneriler:</p>
+                                <ul class="mb-0">
+                                    <li>Kaygıyı azaltıcı nefes egzersizleri ve rahatlama teknikleri öğretin.</li>
+                                    <li>Başarı beklentilerini gerçekçi bir seviyeye çekin, küçük adımlarla ilerlemeyi teşvik edin.</li>
+                                    <li>Sınav kaygısıyla başa çıkma stratejileri geliştirmesine yardımcı olun.</li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Duygu dağılımı grafiği
+        var ctx = document.getElementById('duygularChart').getContext('2d');
+        var duygularChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Olumlu', 'Olumsuz', 'Nötr'],
+                datasets: [{
+                    data: [
+                        {{ analiz.olumlu_skor * 100 }}, 
+                        {{ analiz.olumsuz_skor * 100 }}, 
+                        {{ analiz.notr_skor * 100 }}
+                    ],
+                    backgroundColor: [
+                        '#1cc88a',  // success - olumlu
+                        '#e74a3b',  // danger - olumsuz
+                        '#36b9cc'   // info - nötr
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,2201 @@
+/* YKS Çalışma Programı Takip Sistemi - Ana Stil Dosyası - Modern Sürüm */
+
+/* Modern Resmi Stil Elemanları */
+.modern-section {
+    margin-bottom: 1.5rem;
+}
+
+.modern-section-title {
+    background-color: #0b3d91; /* Lacivert */
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px 4px 0 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-left: 4px solid #e30a17; /* Kırmızı */
+}
+
+.modern-panel {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 1.25rem;
+}
+
+.modern-action-btn {
+    background-color: #0b3d91;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.modern-action-btn:hover {
+    background-color: #072a66;
+    color: white;
+    text-decoration: none;
+}
+
+.modern-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.modern-filter-btn:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #212529;
+    text-decoration: none;
+}
+
+.modern-filter-btn.active {
+    background-color: #0b3d91;
+    border-color: #0b3d91;
+    color: white;
+}
+
+.modern-card {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.modern-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modern-card-header {
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modern-card-body {
+    padding: 1rem;
+}
+
+/* Modern Tablo Stili */
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #dee2e6;
+    font-size: 0.9rem;
+}
+
+.modern-table thead {
+    background-color: #f8f9fa;
+}
+
+.modern-table th {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+    text-align: left;
+    color: #0b3d91;
+}
+
+.modern-table td {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    vertical-align: middle;
+}
+
+.modern-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.modern-table tr:hover {
+    background-color: #e9ecef;
+}
+
+/* RESIZE KOL STİLLERİ */
+.lesson-block {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  cursor: ns-resize;
+  background-color: rgba(255,255,255,0.5);
+  border-radius: 0 0 6px 6px;
+  opacity: 0.4;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.lesson-block:hover .resize-handle {
+  opacity: 1;
+  background-color: rgba(79, 70, 229, 0.3);
+}
+
+/* Ders kartları için modern stiller */
+.ders-item {
+  padding: 5px 8px;
+  font-size: 0.75rem;
+  background-color: rgba(79, 70, 229, 0.9);
+  border-radius: 6px;
+  cursor: grab;
+  user-select: none;
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.01em;
+}
+
+.ders-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.ders-item:active {
+  cursor: grabbing;
+}
+
+.ders-item.hidden {
+  display: none;
+}
+
+/* Ders wrapper (ders kartı ve süre bilgisi için) */
+.ders-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110px; 
+  margin-bottom: 0;
+}
+
+/* Ders süre bilgileri daha yakın olsun */
+.ders-sure {
+  margin-top: 0 !important;
+  font-size: 0.65rem !important;
+  line-height: 1;
+  color: #888 !important;
+}
+
+/* Ders süre butonları için stiller */
+.ders-sure-buton {
+  padding: 6px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 120px;
+  text-align: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Ders süre bilgileri için stiller */
+#ders-saat-bilgileri .list-group-item {
+  transition: all 0.2s ease;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid transparent;
+}
+
+#ders-saat-bilgileri .list-group-item:hover {
+  transform: translateX(2px);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+#ders-saat-bilgileri h6 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+
+#ders-saat-bilgileri .badge {
+  font-size: 0.65rem;
+  padding: 0.25em 0.5em;
+  font-weight: 600;
+}
+
+#ders-saat-bilgileri p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+/* Ders renkleri */
+.bg-ders-0 { background-color: #6200ea; }
+.bg-ders-1 { background-color: #e91e63; }
+.bg-ders-2 { background-color: #2e7d32; }
+.bg-ders-3 { background-color: #8e24aa; }
+.bg-ders-4 { background-color: #37474f; }
+.bg-ders-5 { background-color: #c2185b; }
+.bg-ders-6 { background-color: #f57c00; }
+.bg-ders-7 { background-color: #00897b; }
+.bg-ders-8 { background-color: #1565c0; }
+.bg-ders-9 { background-color: #512da8; }
+
+:root {
+  /* Modern kurumsal ve profesyonel renk şeması */
+  --primary-color: #2c3e50;      /* Lacivert (koyu mavi-gri) */
+  --primary-light: #34495e;      /* Açık lacivert */
+  --primary-dark: #1e2a36;       /* Koyu lacivert */
+  --secondary-color: #3498db;    /* Açık mavi */
+  --secondary-light: #5dade2;    /* Daha açık mavi */
+  --secondary-dark: #2874a6;     /* Koyu mavi */
+  --accent-color: #16a085;       /* Yeşil-turkuaz */
+  --warning-color: #f39c12;      /* Amber */
+  --danger-color: #c0392b;       /* Kırmızı */
+  --info-color: #2980b9;         /* Mavi */
+  --success-color: #27ae60;      /* Yeşil */
+  --light-color: #f8f9fa;        /* Açık gri */
+  --dark-color: #2c3e50;         /* Koyu gri */
+  --text-color: #333333;         /* Ana metin */
+  --text-muted: #7f8c8d;         /* Gri metin */
+  --border-color: #ecf0f1;       /* Kenar çizgisi */
+  --bg-light: #f5f7f9;           /* Açık arka plan */
+  --bg-white: #ffffff;           /* Beyaz arka plan */
+  --bg-gradient: linear-gradient(to right, var(--primary-color), var(--primary-dark)); /* Gradyan */
+  
+  /* Gölgeler - Daha belirgin ve modern */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Boyutlar */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --transition: all 0.2s ease;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --sidebar-width: 260px;        /* Hafif daraltılmış sidebar */
+  --sidebar-collapsed-width: 70px;
+  --header-height: 60px;         /* Biraz daha yüksek başlık */
+  --border-radius: 0.5rem;       /* Yuvarlatılmış köşeler */
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-light);
+  line-height: 1.5;
+  font-size: 0.9rem;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Layout */
+.wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Sidebar styles - Kurumsal ve kullanıcı dostu tasarım */
+.sidebar {
+  width: var(--sidebar-width);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1000;
+  background: #f8f9fa;
+  color: var(--text-color);
+  border-right: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease-in-out;
+}
+
+.sidebar-collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+.sidebar-content {
+  padding: 0;
+  height: calc(100vh);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(44, 62, 80, 0.3);
+  border-radius: 10px;
+  opacity: 0.5;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+}
+
+.sidebar-nav-item {
+  margin: 0.3rem 0;
+  padding: 0;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  margin: 0 0.5rem 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-nav-link:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(44, 62, 80, 0.05);
+  transform: translateX(-100%);
+  transition: all 0.3s ease-in-out;
+  z-index: -1;
+}
+
+.sidebar-nav-link:hover:before {
+  width: 100%;
+  transform: translateX(0);
+}
+
+.sidebar-nav-link:hover,
+.sidebar-nav-link.active {
+  background-color: rgba(44, 62, 80, 0.07);
+  color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  font-weight: 600;
+}
+
+.sidebar-nav-link.active {
+  background-color: rgba(44, 62, 80, 0.1);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-nav-icon {
+  margin-right: 0.9rem;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  opacity: 0.95;
+  font-size: 1rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-nav-link:hover .sidebar-nav-icon {
+  transform: translateY(-2px);
+}
+
+.sidebar-nav-link.active .sidebar-nav-icon {
+  color: var(--secondary-color);
+}
+
+.sidebar-nav-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
+
+.sidebar-collapsed .sidebar-nav-text,
+.sidebar-collapsed .sidebar-toggle span,
+.sidebar-collapsed .submenu-icon {
+  display: none;
+}
+
+/* Aktif öğrenci container için özel stil */
+.active-student-container {
+  background-color: rgba(28, 55, 97, 0.05);
+  margin: 0.5rem 0.5rem 1rem 0.5rem !important;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(28, 55, 97, 0.08);
+}
+
+.active-student-container .sidebar-nav-link {
+  border-radius: 6px;
+  margin: 0;
+  background-color: rgba(28, 55, 97, 0.02);
+  border-left: none;
+  border-bottom: 1px solid rgba(28, 55, 97, 0.08);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.active-student-container .sidebar-nav-icon {
+  color: var(--secondary-color);
+}
+
+/* Alt menüler - Modern kullanıcı dostu stil */
+.sidebar-submenu {
+  list-style: none;
+  padding: 0.25rem 0.5rem;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  background-color: rgba(28, 55, 97, 0.02);
+  border-radius: 0 0 6px 6px;
+}
+
+.sidebar-submenu.show {
+  max-height: 700px;
+  padding: 0.5rem;
+}
+
+.sidebar-submenu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+  font-size: 0.82rem;
+  position: relative;
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-submenu-item:hover,
+.sidebar-submenu-item.active {
+  background-color: rgba(28, 55, 97, 0.06);
+  color: var(--primary-color);
+  border-left-color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.sidebar-submenu-item:before {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* Alt menüdeki son öğe için margin yok */
+.sidebar-submenu li:last-child .sidebar-submenu-item {
+  margin-bottom: 0;
+}
+
+/* Sidebar içindeki arama container */
+.sidebar-nav-item.search-container {
+  background-color: rgba(28, 55, 97, 0.02);
+  margin: 0.8rem 0.5rem !important;
+  border-radius: 8px;
+  border: 1px solid rgba(28, 55, 97, 0.08);
+}
+
+/* Submenu icon stil */
+.submenu-icon {
+  transition: transform 0.25s;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+.sidebar-nav-link.active .submenu-icon {
+  transform: rotate(180deg);
+}
+
+.sidebar-toggle {
+  position: fixed;
+  bottom: 16px;
+  left: calc(var(--sidebar-width) - 28px);
+  width: 28px;
+  height: 28px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  z-index: 1001;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+  font-size: 0.7rem;
+}
+
+.sidebar-toggle:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.sidebar-collapsed .sidebar-toggle {
+  left: calc(var(--sidebar-collapsed-width) - 14px);
+}
+
+/* Modern stil başlıkları */
+.sidebar-section-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 1rem 1.5rem 0.5rem;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+/* Modern hoş geldiniz bölümü */
+.modern-welcome {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(28, 55, 97, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.modern-user-icon {
+  font-size: 2.2rem;
+  color: var(--primary-color);
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.modern-welcome-text {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.modern-welcome-help {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Modern form elemanları */
+.modern-form-label {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.modern-form-control {
+  border-color: var(--border-color);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.modern-btn {
+  background-color: var(--primary-color);
+  border-color: var(--primary-dark);
+}
+
+.modern-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.sidebar-divider {
+  height: 0;
+  margin: 0.35rem 0;
+  overflow: hidden;
+  border-top: 1px solid var(--border-color);
+  opacity: 0.6;
+}
+
+/* Main content styles - Google Material Design inspired */
+.main-content {
+  width: calc(100% - var(--sidebar-width));
+  margin-left: var(--sidebar-width);
+  transition: all 0.25s ease-in-out;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-light);
+  padding-top: 0.5rem; /* Reduced top padding */
+}
+
+.main-content-expanded {
+  width: calc(100% - var(--sidebar-collapsed-width));
+  margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Modern Footer styles */
+.footer-modern {
+  background-color: #1a2234;
+  color: #fff;
+  padding-top: 3rem;
+  position: relative;
+}
+
+.footer-modern .footer-brand {
+  margin-bottom: 1.5rem;
+}
+
+.footer-modern .footer-brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.footer-modern .footer-brand-description {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+.footer-modern .footer-social {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.footer-modern .footer-social-link {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.footer-modern .footer-social-link:hover {
+  background-color: var(--primary-color);
+  transform: translateY(-3px);
+  color: #fff;
+}
+
+.footer-modern .footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: #fff;
+}
+
+.footer-modern .footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-modern .footer-link {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.7rem;
+  transition: all 0.3s ease;
+}
+
+.footer-modern .footer-link:hover {
+  color: #fff;
+  text-decoration: none;
+  transform: translateX(3px);
+}
+
+.footer-modern .footer-contact .footer-link {
+  display: flex;
+  align-items: center;
+}
+
+.footer-modern-bottom {
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-modern .footer-copyright {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0;
+}
+
+.footer-modern .footer-legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-modern .footer-legal-link {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.footer-modern .footer-legal-link:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Hızlı erişim kartları için stiller */
+.quick-access-card {
+  padding: 1.75rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-access-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(0,0,0,0.08);
+}
+
+.quick-access-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.quick-access-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  font-size: 1.5rem;
+  color: white;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 3px 12px rgba(52, 152, 219, 0.3);
+}
+
+.quick-access-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+  position: relative;
+  z-index: 1;
+}
+
+.quick-access-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+  flex-grow: 1;
+}
+
+.quick-access-actions {
+  display: flex;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Farklı renk varyasyonları */
+.quick-access-card:nth-child(2n) .quick-access-icon {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  box-shadow: 0 3px 12px rgba(231, 76, 60, 0.3);
+}
+
+.quick-access-card:nth-child(3n) .quick-access-icon {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  box-shadow: 0 3px 12px rgba(46, 204, 113, 0.3);
+}
+
+.quick-access-card:nth-child(4n) .quick-access-icon {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  box-shadow: 0 3px 12px rgba(155, 89, 182, 0.3);
+}
+
+.quick-access-card:nth-child(5n) .quick-access-icon {
+  background: linear-gradient(135deg, #f39c12, #d35400);
+  box-shadow: 0 3px 12px rgba(243, 156, 18, 0.3);
+}
+
+.quick-access-card:nth-child(6n) .quick-access-icon {
+  background: linear-gradient(135deg, #1abc9c, #16a085);
+  box-shadow: 0 3px 12px rgba(26, 188, 156, 0.3);
+}
+
+.quick-access-card:nth-child(2n)::after {
+  background: radial-gradient(circle, rgba(231, 76, 60, 0.1) 0%, rgba(255,255,255,0) 70%);
+}
+
+.quick-access-card:nth-child(3n)::after {
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, rgba(255,255,255,0) 70%);
+}
+
+.quick-access-card:nth-child(4n)::after {
+  background: radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, rgba(255,255,255,0) 70%);
+}
+
+.quick-access-card:nth-child(5n)::after {
+  background: radial-gradient(circle, rgba(243, 156, 18, 0.1) 0%, rgba(255,255,255,0) 70%);
+}
+
+.quick-access-card:nth-child(6n)::after {
+  background: radial-gradient(circle, rgba(26, 188, 156, 0.1) 0%, rgba(255,255,255,0) 70%);
+}
+
+/* Top navbar removed as requested */
+/* Mobile menu button styling */
+.mobile-menu-btn {
+  padding: 0.5rem;
+  color: var(--text-color);
+}
+
+.mobile-menu-btn:hover {
+  color: var(--primary-color);
+}
+
+/* Content area */
+.main-content {
+  display: flex;
+  align-items: center;
+  padding: 0 0.8rem;
+}
+
+/* Page title styles */
+.page-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: -0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Responsive sidebar */
+/* Tablet için responsive düzenlemeler */
+@media (max-width: 992px) {
+  .action-button span {
+    font-size: 0.85rem;
+  }
+  
+  .dashboard-header {
+    padding: 1.5rem;
+  }
+  
+  .header-title h1 {
+    font-size: 1.75rem;
+  }
+  
+  .students-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  .student-card:hover {
+    transform: none; /* Tablet modunda hover efektini kaldır */
+  }
+}
+
+/* Mobil için responsive düzenlemeler */
+@media (max-width: 768px) {
+  .sidebar {
+    margin-left: calc(-1 * var(--sidebar-width));
+    z-index: 1040;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+
+  .sidebar.mobile-active {
+    margin-left: 0;
+  }
+
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .sidebar-toggle {
+    left: 15px;
+    top: 10px;
+  }
+
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1030;
+  }
+
+  .mobile-overlay.active {
+    display: block;
+  }
+  
+  /* Header düzenlemeleri */
+  .dashboard-header {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+  }
+  
+  .header-title {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .header-title h1 {
+    font-size: 1.5rem;
+    justify-content: center;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Arama container düzenlemeleri */
+  .search-wrapper {
+    flex-direction: column;
+  }
+  
+  .search-input {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+  
+  .filter-options {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* Öğrenci grid düzenlemeleri */
+  .students-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* Modal düzenlemeleri */
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+}
+
+/* Navbar styles */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  color: var(--primary-color) !important;
+}
+
+/* Modern Card styles */
+.card {
+  border-radius: var(--radius-lg);
+  border: none;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  background-color: var(--bg-white);
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-3px);
+}
+
+.card-header {
+  background: var(--bg-white);
+  border-bottom: 2px solid var(--primary-color);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 1.5rem;
+  color: var(--primary-color);
+  letter-spacing: 0.01em;
+  position: relative;
+}
+
+.card-header .card-title {
+  margin-bottom: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  position: relative;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  background-color: rgba(245, 247, 251, 0.5);
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 1.5rem;
+}
+
+/* Modern section card */
+.modern-section {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.modern-section-title {
+  background-color: var(--bg-white);
+  color: var(--primary-color);
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-bottom: 2px solid var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.modern-section-title i,
+.modern-section-title .fas,
+.modern-section-title .far,
+.modern-section-title .fal,
+.modern-section-title .fab {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+.modern-section-title span {
+  text-transform: none;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.modern-panel {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+/* Modern Buttons */
+.btn {
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  z-index: 1;
+}
+
+.btn:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.btn:hover:before {
+  transform: translateY(0);
+}
+
+.btn i, .btn .fas, .btn .far, .btn .fal, .btn .fab {
+  margin-right: 0.65rem;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease;
+}
+
+.btn:hover i, .btn:hover .fas, .btn:hover .far, .btn:hover .fal, .btn:hover .fab {
+  transform: translateY(-2px);
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
+}
+
+.btn-primary {
+  background: var(--bg-gradient);
+  color: white;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(120deg, var(--primary-dark), var(--secondary-dark));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+  background-color: var(--secondary-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-success:hover, .btn-success:focus {
+  background-color: #05b084;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.btn-info:hover, .btn-info:focus {
+  background-color: #39a8e0;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.btn-warning:hover, .btn-warning:focus {
+  background-color: #e07700;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover, .btn-danger:focus {
+  background-color: #c42601;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+  color: var(--secondary-color);
+  background-color: transparent;
+  border: 2px solid var(--secondary-color);
+}
+
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+  background-color: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+.btn-light {
+  background-color: var(--light-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.btn-light:hover {
+  background-color: white;
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  box-shadow: none;
+  font-weight: 600;
+  background: none;
+  padding: 0.5rem;
+  border: none;
+}
+
+.btn-link:hover, .btn-link:focus {
+  color: var(--primary-dark);
+  text-decoration: none;
+  background: none;
+}
+
+.btn-link:after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.btn-link:hover:after {
+  width: 100%;
+}
+
+/* Modern action buttons */
+.modern-action-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.65rem 1.2rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+
+.modern-action-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  color: white;
+}
+
+.modern-action-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.modern-action-btn i {
+  margin-right: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.modern-action-btn:hover i {
+  transform: translateY(-1px);
+}
+
+/* Modern Table styles */
+.table {
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-color);
+}
+
+.table th {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-dark);
+  font-weight: 600;
+  vertical-align: middle;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  border-bottom: 1px solid var(--primary-dark);
+}
+
+.table td {
+  vertical-align: middle;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  color: var(--text-color);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(28, 55, 97, 0.05);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(28, 55, 97, 0.02);
+}
+
+/* Modern alternatif tablo stili */
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-color);
+  font-size: 0.85rem;
+}
+
+.modern-table th {
+  background-color: var(--bg-light);
+  color: var(--primary-color);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.7rem 1rem;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.modern-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modern-table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.modern-table tr:hover {
+  background-color: rgba(28, 55, 97, 0.05);
+}
+
+.table .form-check {
+  margin: 0;
+}
+
+/* Modern Forms */
+.form-control {
+  border-radius: 3px;
+  border: 1px solid #ced4da;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+  background-color: var(--bg-white);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(28, 55, 97, 0.1);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: #a0a9b8;
+  font-size: 0.85rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  display: inline-block;
+}
+
+.form-text {
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+/* Modern form styling */
+.modern-form {
+  background-color: white;
+  border-radius: 4px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.modern-form-header {
+  background-color: var(--bg-white);
+  color: var(--primary-color);
+  padding: 0.75rem 1.25rem;
+  margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.modern-form-footer {
+  background-color: #f8f9fa;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem -1.5rem -1.5rem -1.5rem;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Form selects and checkboxes */
+.form-select {
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background-color: var(--bg-white);
+}
+
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Progress bars */
+.progress {
+  height: 0.5rem;
+  border-radius: 1rem;
+  background-color: rgba(59, 130, 246, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.progress-bar {
+  background-color: var(--primary-color);
+  transition: width 0.6s ease;
+}
+
+.progress-sm {
+  height: 0.375rem;
+}
+
+/* Modern hover effects */
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Modern istatistik kartları */
+.stat-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card:before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  transform: rotate(45deg);
+  z-index: -1;
+  transition: transform 0.6s ease;
+}
+
+.stat-card:hover:before {
+  transform: rotate(45deg) translate(50%, 50%);
+}
+
+.stat-icon-container {
+  min-width: 92px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(67, 97, 238, 0.1);
+  border-radius: var(--radius-md);
+  height: 80px;
+  width: 80px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.dashboard-stat:hover .stat-icon-container {
+  background: var(--bg-gradient);
+  color: white;
+  transform: rotate(5deg) scale(1.05);
+}
+
+.dashboard-stat {
+  transition: all 0.3s ease;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  border: none;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-stat:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dashboard-stat:before {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: var(--bg-gradient);
+  opacity: 0.1;
+  border-radius: 50%;
+  top: -50px;
+  right: -50px;
+  z-index: -1;
+  transition: all 0.6s ease;
+}
+
+.dashboard-stat:hover:before {
+  width: 200px;
+  height: 200px;
+}
+
+.dashboard-stat .stat-title {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-stat .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.dashboard-stat .stat-desc {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.progress-lg {
+  height: 0.75rem;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.01em;
+}
+
+.badge i, .badge .fas, .badge .far, .badge .fal, .badge .fab {
+  margin-right: 0.25rem;
+  font-size: 0.7rem;
+}
+
+.badge-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.badge-success {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.badge-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.badge-info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.badge-light {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary-color);
+}
+
+.badge-outline-primary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+/* Custom Classes */
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.bg-primary-light {
+  background-color: rgba(59, 130, 246, 0.12) !important;
+}
+
+.text-sm {
+  font-size: 0.875rem !important;
+}
+
+.text-xs {
+  font-size: 0.8125rem !important;
+}
+
+.text-lg {
+  font-size: 1.125rem !important;
+}
+
+.fw-medium {
+  font-weight: 500 !important;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+.bg-light-primary {
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+.bg-light-success {
+  background-color: rgba(16, 185, 129, 0.08);
+}
+
+.bg-light-warning {
+  background-color: rgba(245, 158, 11, 0.08);
+}
+
+.bg-light-info {
+  background-color: rgba(6, 182, 212, 0.08);
+}
+
+.bg-light {
+  background-color: var(--bg-light) !important;
+}
+
+.rounded {
+  border-radius: var(--border-radius) !important;
+}
+
+.shadow-sm {
+  box-shadow: var(--card-shadow) !important;
+}
+
+/* Ders Planlama Tablosu */
+.schedule-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 1px;
+  margin-bottom: 1.5rem;
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.schedule-table th, 
+.schedule-table td {
+  text-align: center;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 0.25rem;
+  height: 2.25rem;
+  vertical-align: middle;
+  font-size: 0.85rem;
+}
+
+.schedule-table th {
+  background-color: rgba(59, 130, 246, 0.08);
+  color: var(--text-color);
+  font-weight: 600;
+  border-color: var(--border-color);
+  letter-spacing: 0.01em;
+}
+
+.schedule-table th:first-child {
+  width: 70px;
+}
+
+.schedule-hour {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.schedule-cell {
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  border-radius: 0.25rem;
+}
+
+.schedule-cell:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+  z-index: 1;
+}
+
+.schedule-cell.active {
+  background-color: rgba(59, 130, 246, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3);
+  z-index: 2;
+}
+
+/* Ders renkleri - Modern renk paleti ile */
+.ders-renk-0 { background-color: rgba(59, 130, 246, 0.15); }  /* Matematik - Mavi */
+.ders-renk-1 { background-color: rgba(16, 185, 129, 0.15); }  /* Fizik - Yeşil */
+.ders-renk-2 { background-color: rgba(245, 158, 11, 0.15); }  /* Kimya - Turuncu */
+.ders-renk-3 { background-color: rgba(168, 85, 247, 0.15); }  /* Biyoloji - Mor */
+.ders-renk-4 { background-color: rgba(239, 68, 68, 0.15); }   /* Türkçe - Kırmızı */
+.ders-renk-5 { background-color: rgba(6, 182, 212, 0.15); }   /* Tarih - Turkuaz */
+.ders-renk-6 { background-color: rgba(251, 191, 36, 0.15); }  /* Coğrafya - Sarı */
+.ders-renk-7 { background-color: rgba(236, 72, 153, 0.15); }  /* Edebiyat - Pembe */
+.ders-renk-8 { background-color: rgba(5, 150, 105, 0.15); }   /* Felsefe - Koyu Yeşil */
+.ders-renk-9 { background-color: rgba(124, 58, 237, 0.15); }  /* Sosyal - Mor */
+
+/* Liste Stilleri - Google Material Design inspired */
+.list-group {
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.list-group-item {
+  border-color: var(--border-color);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+}
+
+.list-group-item:hover {
+  background-color: rgba(59, 130, 246, 0.03);
+}
+
+.list-group-item.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  font-weight: 500;
+}
+
+.list-group-item-action {
+  cursor: pointer;
+}
+
+/* Dashboard stilleri - Google Material Design inspired */
+.dashboard-stat {
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  background-color: var(--bg-white);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.dashboard-stat-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  color: var(--primary-color);
+  opacity: 0.9;
+}
+
+.dashboard-stat-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+}
+
+.dashboard-stat-value {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.dashboard-stat-footer {
+  margin-top: auto;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Konu Takip */
+.konu-takip-row {
+  transition: all 0.15s ease;
+}
+
+.konu-takip-row:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.konu-takip-row.completed {
+  background-color: rgba(16, 185, 129, 0.08);
+}
+
+.konu-takip-row .progress {
+  height: 0.375rem;
+}
+
+/* Deneme sonuçları */
+.deneme-sonuc-card {
+  border-left: 3px solid var(--primary-color);
+  transition: all 0.2s ease;
+  margin-bottom: 1.25rem;
+}
+
+.deneme-sonuc-card:hover {
+  border-left-width: 5px;
+  transform: translateX(2px);
+}
+
+/* İlerleme kartları - Google Material Design inspired */
+.ilerleme-card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  margin-bottom: 0.9rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-color);
+}
+
+.ilerleme-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  background-color: rgba(59, 130, 246, 0.04);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ilerleme-card-title {
+  font-weight: 500;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.ilerleme-card-body {
+  padding: 0.6rem 0.9rem;
+}
+
+/* Responsive düzeltmeler */
+/* Küçük ekranlar için ek mobil düzenlemeler */
+@media (max-width: 576px) {
+  .student-management-container {
+    padding: 0.75rem 0;
+  }
+  
+  .dashboard-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .header-title h1 {
+    font-size: 1.25rem;
+  }
+  
+  .header-title p {
+    font-size: 0.9rem;
+  }
+  
+  .action-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .search-container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .search-input input {
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  }
+  
+  .student-card-header {
+    padding: 1rem;
+  }
+  
+  .student-card-body {
+    padding: 1rem;
+  }
+  
+  .student-card-footer {
+    padding: 1rem;
+  }
+  
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+  
+  .empty-state h2 {
+    font-size: 1.25rem;
+  }
+  
+  .empty-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .empty-actions .action-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-stat {
+    padding: 1rem;
+  }
+
+  .dashboard-stat-icon {
+    font-size: 2rem;
+  }
+
+  .dashboard-stat-value {
+    font-size: 1.5rem;
+  }
+  
+  /* Küçük ekranlarda gezinmeyi kolaylaştırmak için butonları büyüt */
+  .card-button,
+  .action-icon {
+    padding: 0.75rem;
+  }
+  
+  /* Ders programı için ek mobil stillemeler */
+  .ders-item {
+    max-width: 100%;
+    font-size: 0.72rem;
+  }
+  
+  .ders-wrapper {
+    width: 100%;
+  }
+}
+
+/* Modal düzeltmeleri - titreme sorununu çözmek için */
+.modal-dialog {
+  pointer-events: none;
+  will-change: transform;
+  transform: translate(0, 0) !important;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.modal-content {
+  pointer-events: auto;
+  transform: none !important; /* Titreşimi engellemek için */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
+
+.modal.show .modal-dialog {
+  transform: none !important; /* Titreşimi engellemek için */
+}
+
+.modal-footer .btn:hover {
+  transform: none !important; /* Buton hover titreşimini engellemek için */
+}
+
+.modal-backdrop {
+  pointer-events: auto;
+  will-change: opacity;
+}
+
+/* No hover effects sınıfı */
+.no-hover-effects * {
+  transform: none !important;
+  transition: none !important;
+}
+
+.no-hover-transform {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Modal açıkken body'e eklenen sınıf */
+body.modal-open-fix {
+  overflow: hidden;
+}
+
+body.modal-open-fix .btn:hover,
+body.modal-open-fix .card:hover,
+body.modal-open-fix .list-group-item:hover {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Yazdırma stilleri */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    font-size: 10pt;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .card {
+    border: 1px solid #ddd;
+    box-shadow: none;
+  }
+
+  .table th {
+    background-color: #f2f2f2 !important;
+    color: #333 !important;
+  }
+}

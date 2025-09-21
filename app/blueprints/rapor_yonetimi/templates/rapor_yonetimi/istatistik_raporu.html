@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}İstatistik Raporu Oluştur{% endblock %}
+
+{% block content %}
+<!-- Modern İstatistik Raporu -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-chart-bar me-2"></i>
+                <span>İSTATİSTİKSEL ANALİZ RAPORU OLUŞTUR</span>
+            </div>
+            <a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}" class="modern-action-btn">
+                <i class="fas fa-arrow-left me-1"></i> Raporlar Listesine Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="modern-panel">
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="modern-card mb-4">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-sliders-h me-2 text-primary"></i>
+                        <span class="text-primary">Rapor Parametreleri</span>
+                    </div>
+                </div>
+                <div class="modern-card-body">
+                    <form method="post" action="{{ url_for('rapor_yonetimi.istatistik_raporu') }}">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="rapor_tipi" class="modern-form-label">Rapor Tipi <span class="text-danger">*</span></label>
+                                <select class="form-select modern-form-control" id="rapor_tipi" name="rapor_tipi" required>
+                                    <option value="" selected disabled>-- Rapor Tipi Seçin --</option>
+                                    <option value="analiz">Genel Analiz Raporu</option>
+                                    <option value="karşılaştırma">Öğrenci Grupları Karşılaştırma</option>
+                                    <option value="performans">Rehberlik Performans Raporu</option>
+                                    <option value="yönetim_özeti">Okul Yönetimi Özet Raporu</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="baslangic_tarihi" class="modern-form-label">Başlangıç Tarihi <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control modern-form-control" id="baslangic_tarihi" name="baslangic_tarihi" 
+                                       value="{{ baslangic_tarihi.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="bitis_tarihi" class="modern-form-label">Bitiş Tarihi <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control modern-form-control" id="bitis_tarihi" name="bitis_tarihi" 
+                                       value="{{ bitis_tarihi.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="modern-form-label">Filtreler</label>
+                                <div class="border rounded p-3 bg-light">
+                                    <div class="mb-2">
+                                        <div class="fw-bold mb-2 text-primary small">Sınıf Seçimi</div>
+                                        <div class="row">
+                                            {% for sinif in siniflar %}
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="{{ sinif }}" id="sinif_{{ loop.index }}" name="sinif[]" checked>
+                                                    <label class="form-check-label" for="sinif_{{ loop.index }}">
+                                                        {{ sinif }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0">Rapor verileri otomatik olarak hesaplanacak ve grafiksel analizler oluşturulacaktır.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="modern-action-btn">
+                                <i class="fas fa-chart-bar me-1"></i> Raporu Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sağ Bilgi Paneli -->
+        <div class="col-lg-4">
+            <div class="modern-card mb-4 bg-primary text-white">
+                <div class="modern-card-body">
+                    <div class="text-center">
+                        <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                        <h5 class="mb-3">İstatistiksel Analiz Raporları</h5>
+                    </div>
+                    <p>Bu bölümden rehberlik faaliyetlerinizin istatistiksel analizlerini yapabilir, öğrenci gruplarını karşılaştırabilir ve performans göstergelerinizi takip edebilirsiniz.</p>
+                </div>
+            </div>
+            
+            <div class="modern-card mb-4">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        <span class="text-primary">Rapor Tipleri Açıklamaları</span>
+                    </div>
+                </div>
+                <div class="modern-card-body">
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <i class="fas fa-chart-line text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold mb-1">Genel Analiz Raporu</div>
+                                <p class="small text-muted mb-0">Rehberlik faaliyetlerinin genel analizini içerir. Görüşme türleri, çalışma alanları ve sınıf bazlı dağılımlar analiz edilir.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <i class="fas fa-exchange-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold mb-1">Öğrenci Grupları Karşılaştırma</div>
+                                <p class="small text-muted mb-0">Farklı öğrenci gruplarını (sınıflar, şubeler, özel gruplar) karşılaştırmak için kullanılır. Performans ve gelişim karşılaştırması yapabilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <i class="fas fa-tachometer-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold mb-1">Rehberlik Performans Raporu</div>
+                                <p class="small text-muted mb-0">Rehberlik servisinin performans göstergelerini içerir. Günlük/haftalık/aylık ortalamalar, öğrenci başına görüşme sayıları ve karşılaştırmalar yer alır.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-0">
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <i class="fas fa-file-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold mb-1">Okul Yönetimi Özet Raporu</div>
+                                <p class="small text-muted mb-0">Okul yönetimine sunulmak üzere hazırlanmış özet rapor. Okuldaki rehberlik faaliyetlerinin genel durumu, öğrenci gelişimleri ve risk durumları yer alır.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

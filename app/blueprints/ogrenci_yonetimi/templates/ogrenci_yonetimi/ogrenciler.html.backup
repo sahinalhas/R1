@@ -1,0 +1,837 @@
+{% extends "base.html" %}
+
+{% block title %}Öğrenciler - YKS Çalışma Programı Takip Sistemi{% endblock %}
+
+{% block content %}
+<!-- Modern Öğrenci Yönetimi - Yeni Tasarım -->
+<div class="student-management-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-title">
+                <h1><i class="fas fa-user-graduate"></i> Öğrenci Yönetimi</h1>
+                <p>Sistemde kayıtlı öğrencileri yönetin ve takip edin</p>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('ogrenci_yonetimi.ekle') }}" class="action-button primary">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Yeni Öğrenci</span>
+                </a>
+                <a href="{{ url_for('ogrenci_yonetimi.excel_ile_ekle') }}" class="action-button secondary">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Excel ile Ekle</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="search-container">
+        <div class="search-wrapper">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="ogrenciAra" placeholder="Öğrenci ara (ad, soyad, numara)" autofocus>
+            </div>
+            <div class="filter-options">
+                <div class="filter-item">
+                    <select id="sinifFiltre">
+                        <option value="">Tüm Sınıflar</option>
+                        <option value="9">9. Sınıf</option>
+                        <option value="10">10. Sınıf</option>
+                        <option value="11">11. Sınıf</option>
+                        <option value="12">12. Sınıf</option>
+                        <option value="Mezun">Mezun</option>
+                    </select>
+                </div>
+                <div class="view-toggle">
+                    <button class="toggle-button active" data-view="grid">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="toggle-button" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if ogrenciler %}
+    <div class="students-grid" id="ogrenciKartlari">
+        {% for ogrenci in ogrenciler %}
+        <div class="student-card">
+            <div class="student-card-inner">
+                <div class="student-card-header">
+                    <div class="student-info">
+                        <div class="student-avatar">
+                            <div class="avatar-placeholder">
+                                {{ ogrenci.ad[0] }}{{ ogrenci.soyad[0] }}
+                            </div>
+                        </div>
+                        <div class="student-details">
+                            <h3>{{ ogrenci.ad }} {{ ogrenci.soyad }}</h3>
+                            <div class="student-meta">
+                                <span class="student-grade">{{ ogrenci.sinif }}</span>
+                                <span class="student-id">{{ ogrenci.numara }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="student-card-body">
+                    <div class="contact-info">
+                        {% if ogrenci.telefon %}
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ ogrenci.telefon|format_phone }}</span>
+                        </div>
+                        {% endif %}
+                        {% if ogrenci.eposta %}
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ ogrenci.eposta }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="student-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">78<small>%</small></div>
+                            <div class="stat-label">Başarı</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">8<small>/10</small></div>
+                            <div class="stat-label">Deneme</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">24<small>sa</small></div>
+                            <div class="stat-label">Çalışma</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="student-card-footer">
+                    <a href="{{ url_for('ogrenci_yonetimi.profil', ogrenci_id=ogrenci.id) }}" class="card-button primary">
+                        <i class="fas fa-user"></i> Profil
+                    </a>
+                    <div class="action-buttons">
+                        <a href="{{ url_for('ogrenci_yonetimi.duzenle', ogrenci_id=ogrenci.id) }}" class="action-icon edit" data-bs-toggle="tooltip" title="Düzenle">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="action-icon delete" data-bs-toggle="modal" data-bs-target="#silModal{{ ogrenci.id }}" title="Sil">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Öğrenci Silme Modalı - Modern Tasarım -->
+        <div class="modal fade" id="silModal{{ ogrenci.id }}" tabindex="-1" aria-labelledby="silModalLabel{{ ogrenci.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="silModalLabel{{ ogrenci.id }}">Öğrenci Silme İşlemi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="delete-confirmation">
+                            <div class="warning-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="confirmation-text">
+                                <h4>Emin misiniz?</h4>
+                                <p><strong>{{ ogrenci.ad }} {{ ogrenci.soyad }}</strong> adlı öğrencinin tüm bilgileri kalıcı olarak silinecektir.</p>
+                                <div class="danger-text">Bu işlem geri alınamaz!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="modal-button cancel" data-bs-dismiss="modal">Vazgeç</button>
+                        <form action="{{ url_for('ogrenci_yonetimi.sil', ogrenci_id=ogrenci.id) }}" method="post">
+                            <button type="submit" class="modal-button delete">Sil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Boş Öğrenci Listesi - Modern Tasarım -->
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <h2>Henüz Öğrenci Kaydı Bulunmuyor</h2>
+        <p>Öğrenci ekleyerek sistemi kullanmaya başlayabilirsiniz.</p>
+        <div class="empty-actions">
+            <a href="{{ url_for('ogrenci_yonetimi.ekle') }}" class="action-button primary">
+                <i class="fas fa-user-plus"></i>
+                <span>Yeni Öğrenci Ekle</span>
+            </a>
+            <a href="{{ url_for('ogrenci_yonetimi.excel_ile_ekle') }}" class="action-button secondary">
+                <i class="fas fa-file-excel"></i>
+                <span>Excel ile Ekle</span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Öğrenci Yönetimi Yeni Stiller */
+.student-management-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    padding: 1.5rem 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, #3a7bd5, #2196f3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    color: white;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header-title h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.header-title p {
+    margin: 0.5rem 0 0;
+    opacity: 0.8;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    gap: 0.5rem;
+}
+
+.action-button.primary {
+    background-color: white;
+    color: #2196f3;
+}
+
+.action-button.primary:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+.action-button.secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    backdrop-filter: blur(5px);
+}
+
+.action-button.secondary:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Search Container */
+.search-container {
+    background-color: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.search-input {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-input i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8a94a6;
+}
+
+.search-input input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 2.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.search-input input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.filter-options {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filter-item select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background-color: white;
+    font-size: 0.9rem;
+    min-width: 130px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px;
+}
+
+.filter-item select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.view-toggle {
+    display: flex;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.toggle-button {
+    background-color: white;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: #8a94a6;
+    transition: all 0.2s ease;
+}
+
+.toggle-button.active {
+    background-color: #2196f3;
+    color: white;
+}
+
+.toggle-button:first-child {
+    border-right: 1px solid #e9ecef;
+}
+
+/* Student Grid */
+.students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+.student-card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+}
+
+.student-card-inner {
+    background-color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e9ecef;
+}
+
+.student-card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #f5f5f7;
+}
+
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.student-avatar {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #3a7bd5, #2196f3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.student-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.student-details h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.student-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.student-grade {
+    background-color: #e3f2fd;
+    color: #2196f3;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.student-id {
+    color: #8a94a6;
+    font-size: 0.85rem;
+}
+
+.student-card-body {
+    padding: 1.25rem 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #596579;
+    font-size: 0.85rem;
+}
+
+.contact-item i {
+    color: #2196f3;
+    font-size: 0.9rem;
+    width: 16px;
+    text-align: center;
+}
+
+.student-stats {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f9fafc;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin-top: auto;
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;
+}
+
+.stat-value small {
+    font-size: 0.7rem;
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #8a94a6;
+}
+
+.student-card-footer {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f5f5f7;
+}
+
+.card-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.card-button.primary {
+    background-color: #2196f3;
+    color: white;
+}
+
+.card-button.primary:hover {
+    background-color: #1976d2;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #8a94a6;
+    background-color: #f9fafc;
+    border: none;
+}
+
+.action-icon:hover {
+    background-color: #f1f3f5;
+    color: #2c3e50;
+}
+
+.action-icon.edit:hover {
+    color: #2196f3;
+}
+
+.action-icon.delete:hover {
+    color: #f44336;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #e3f2fd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state-icon i {
+    font-size: 2rem;
+    color: #2196f3;
+}
+
+.empty-state h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: #2c3e50;
+}
+
+.empty-state p {
+    margin: 0 0 1.5rem;
+    color: #596579;
+    max-width: 500px;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Delete Modal */
+.delete-confirmation {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.warning-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    background-color: rgba(244, 67, 54, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.warning-icon i {
+    font-size: 1.75rem;
+    color: #f44336;
+}
+
+.confirmation-text h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.confirmation-text p {
+    margin: 0 0 0.75rem;
+    color: #596579;
+}
+
+.danger-text {
+    color: #f44336;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.modal-button {
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-button.cancel {
+    background-color: #f8f9fa;
+    color: #596579;
+}
+
+.modal-button.cancel:hover {
+    background-color: #e9ecef;
+}
+
+.modal-button.delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-button.delete:hover {
+    background-color: #e53935;
+}
+
+/* Media Queries */
+@media (max-width: 991.98px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-actions {
+        margin-top: 1.5rem;
+    }
+    
+    .search-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-options {
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-header {
+        padding: 1.5rem;
+    }
+    
+    .header-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .students-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Arama ve filtreleme işlemleri
+document.addEventListener('DOMContentLoaded', function() {
+    const aramaInput = document.getElementById('ogrenciAra');
+    const sinifFiltre = document.getElementById('sinifFiltre');
+    const ogrenciKartlari = document.getElementById('ogrenciKartlari');
+    const viewToggleButtons = document.querySelectorAll('.toggle-button');
+    
+    if (aramaInput && sinifFiltre && ogrenciKartlari) {
+        const kartlar = ogrenciKartlari.querySelectorAll('.student-card');
+        
+        // Arama işlemi
+        aramaInput.addEventListener('input', filtrele);
+        sinifFiltre.addEventListener('change', filtrele);
+        
+        function filtrele() {
+            const aramaMetni = aramaInput.value.toLowerCase();
+            const secilenSinif = sinifFiltre.value.toLowerCase();
+            
+            kartlar.forEach(kart => {
+                const ogrenciAdi = kart.querySelector('.student-details h3').textContent.toLowerCase();
+                const ogrenciNo = kart.querySelector('.student-id').textContent.toLowerCase();
+                const ogrenciSinif = kart.querySelector('.student-grade').textContent.toLowerCase();
+                
+                const aramaEslesme = ogrenciAdi.includes(aramaMetni) || ogrenciNo.includes(aramaMetni);
+                const sinifEslesme = secilenSinif === '' || ogrenciSinif.includes(secilenSinif);
+                
+                if (aramaEslesme && sinifEslesme) {
+                    kart.style.display = '';
+                } else {
+                    kart.style.display = 'none';
+                }
+            });
+        }
+    }
+    
+    // Görünüm değiştirme
+    if (viewToggleButtons && ogrenciKartlari) {
+        viewToggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const viewType = this.getAttribute('data-view');
+                
+                // Tüm butonlardan active class'ını kaldır
+                viewToggleButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Tıklanan butona active class'ı ekle
+                this.classList.add('active');
+                
+                // Görünüm tipine göre grid/list class'ını değiştir
+                if (viewType === 'grid') {
+                    ogrenciKartlari.classList.remove('students-list');
+                    ogrenciKartlari.classList.add('students-grid');
+                } else {
+                    ogrenciKartlari.classList.remove('students-grid');
+                    ogrenciKartlari.classList.add('students-list');
+                }
+            });
+        });
+    }
+    
+    // Tooltip aktifleştirme
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Arama ve filtreleme işlemleri
+document.addEventListener('DOMContentLoaded', function() {
+    const aramaInput = document.getElementById('ogrenciAra');
+    const sinifFiltre = document.getElementById('sinifFiltre');
+    const ogrenciKartlari = document.getElementById('ogrenciKartlari');
+    
+    if (aramaInput && sinifFiltre && ogrenciKartlari) {
+        const kartlar = ogrenciKartlari.querySelectorAll('.col-lg-4, .col-md-6');
+        
+        // Arama işlemi
+        aramaInput.addEventListener('keyup', filtrele);
+        sinifFiltre.addEventListener('change', filtrele);
+        
+        function filtrele() {
+            const aramaMetni = aramaInput.value.toLowerCase();
+            const secilenSinif = sinifFiltre.value.toLowerCase();
+            
+            kartlar.forEach(kart => {
+                const ogrenciAdi = kart.querySelector('.fw-semibold').textContent.toLowerCase();
+                const ogrenciNo = kart.querySelector('.text-muted.fw-medium').textContent.toLowerCase();
+                const ogrenciSinif = kart.querySelector('.badge').textContent.toLowerCase();
+                
+                const aramaEslesme = ogrenciAdi.includes(aramaMetni) || ogrenciNo.includes(aramaMetni);
+                const sinifEslesme = secilenSinif === '' || ogrenciSinif.includes(secilenSinif);
+                
+                if (aramaEslesme && sinifEslesme) {
+                    kart.style.display = '';
+                } else {
+                    kart.style.display = 'none';
+                }
+            });
+        }
+    }
+    
+    // Tooltip aktifleştirme
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

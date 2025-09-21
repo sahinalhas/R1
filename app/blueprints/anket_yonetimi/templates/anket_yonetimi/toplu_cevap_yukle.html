@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Toplu Cevap Yükle: {{ anket.baslik }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Toplu Cevap Yükle</h1>
+        <div>
+            <a href="{{ url_for('anket_yonetimi.anket_detay', anket_id=anket.id) }}" class="btn btn-info me-2">
+                <i class="fas fa-eye me-1"></i> Anket Detayları
+            </a>
+            <a href="{{ url_for('anket_yonetimi.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Anketlere Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Anket Bilgileri -->
+        <div class="col-md-4">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Anket Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <h4>{{ anket.baslik }}</h4>
+                    <p class="text-muted">{{ anket.anket_turu.tur_adi }}</p>
+                    
+                    {% if anket.aciklama %}
+                        <p>{{ anket.aciklama }}</p>
+                    {% endif %}
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Bu ankete ait toplu cevapları Excel veya CSV dosyası ile yükleyebilirsiniz.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Şablon</h5>
+                </div>
+                <div class="card-body">
+                    <p>Cevapları yüklemek için kullanılacak Excel veya CSV dosyası formatı aşağıdaki gibi olmalıdır:</p>
+                    
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ogrenci_no</th>
+                                    {% for i in range(1, sorular|length + 1) %}
+                                        <th>soru{{ i }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>123456</td>
+                                    {% for i in range(1, sorular|length + 1) %}
+                                        <td>cevap{{ i }}</td>
+                                    {% endfor %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="d-grid">
+                                <a href="{{ url_for('anket_yonetimi.sablon_indir', anket_id=anket.id) }}" class="btn btn-info">
+                                    <i class="fas fa-file-csv me-1"></i> CSV Şablonu İndir
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid">
+                                <a href="{{ url_for('anket_yonetimi.sablon_indir', anket_id=anket.id, format='excel') }}" class="btn btn-success">
+                                    <i class="fas fa-file-excel me-1"></i> Excel Şablonu İndir
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dosya Yükleme Formu -->
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Toplu Cevap Yükleme</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('anket_yonetimi.toplu_cevap_yukle', anket_id=anket.id) }}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv_file" class="form-label">Dosya Seçin</label>
+                            <input class="form-control" type="file" id="csv_file" name="csv_file" accept=".csv,.xlsx,.xls" required>
+                            <div class="form-text">Excel (.xlsx, .xls) veya CSV formatında dosya yükleyebilirsiniz.</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="sinif" class="form-label">Sınıf (opsiyonel)</label>
+                            <input type="text" class="form-control" id="sinif" name="sinif" 
+                                   placeholder="Örn: 9A, 10B (sınıf istatistikleri için)">
+                            <div class="form-text">Bu cevapların hangi sınıfa ait olduğunu belirtirseniz, anket sonuçlarında sınıf bazlı analizler yapılabilir.</div>
+                        </div>
+                        
+                        <div class="alert alert-danger mb-4">
+                            <h6 class="fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Önemli Notlar:</h6>
+                            <ul class="mb-0">
+                                <li>Dosyanızın ilk satırı başlık satırı olmalıdır (ogrenci_no, soru1, soru2, ...)</li>
+                                <li>Her satır bir öğrenciye ait cevapları içermelidir</li>
+                                <li>İlk sütun öğrenci numarası içermelidir (okul_no alanındaki değer)</li>
+                                <li>Excel (.xlsx, .xls) veya CSV (.csv) formatındaki dosyaları yükleyebilirsiniz</li>
+                                <li>Mevcut cevaplar varsa üzerine yazılacaktır</li>
+                                <li>Sistemde bulunamayan öğrenciler atlanacaktır</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-file-upload me-1"></i> Cevapları Yükle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Dosya seçim kontrolü
+        const csvFileInput = document.getElementById('csv_file');
+        const submitBtn = document.querySelector('button[type="submit"]');
+        
+        csvFileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name.toLowerCase();
+                
+                if (!fileName.endsWith('.csv') && !fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+                    alert('Lütfen yalnızca Excel (.xlsx, .xls) veya CSV (.csv) uzantılı dosya seçin!');
+                    this.value = '';
+                    submitBtn.disabled = true;
+                } else {
+                    submitBtn.disabled = false;
+                }
+            } else {
+                submitBtn.disabled = true;
+            }
+        });
+    });
+</script>
+{% endblock %}

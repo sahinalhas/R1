@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ rapor.baslik }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        h1 {
+            font-size: 18pt;
+            color: #003366;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        h2 {
+            font-size: 14pt;
+            color: #003366;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            color: #003366;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .rapor-bilgileri {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: #f8f8f8;
+        }
+        
+        .rapor-bilgileri table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .rapor-bilgileri td {
+            padding: 5px;
+        }
+        
+        .rapor-bilgileri td:first-child {
+            font-weight: bold;
+            width: 30%;
+        }
+        
+        .ozet-tablo {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        
+        .ozet-tablo th, .ozet-tablo td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .ozet-tablo th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .ozet-tablo tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .grafik-container {
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .grafik {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .yorum-bolumu {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 25px 0;
+            background-color: #f8f9fc;
+        }
+        
+        .yorum-baslik {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #003366;
+        }
+        
+        .imza-bolgesi {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .imza-kutusu {
+            text-align: center;
+            width: 40%;
+        }
+        
+        .imza-cizgi {
+            border-top: 1px solid #333;
+            margin: 50px auto 10px;
+            width: 80%;
+        }
+        
+        .sayfa-numarasi {
+            text-align: center;
+            font-size: 9pt;
+            color: #777;
+            margin-top: 20px;
+        }
+        
+        /* Özel stil sınıfları */
+        .metin-ortalama {
+            text-align: center;
+        }
+        
+        .metin-sag {
+            text-align: right;
+        }
+        
+        .meb-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="meb-logo">
+            <!-- MEB logosu buraya gelebilir -->
+            <h4>T.C.<br>MİLLÎ EĞİTİM BAKANLIĞI</h4>
+        </div>
+        
+        <h1>{{ rapor.baslik }}</h1>
+    </header>
+    
+    <div class="rapor-bilgileri">
+        <table>
+            <tr>
+                <td>Dönem:</td>
+                <td>{{ rapor.donem }}</td>
+            </tr>
+            <tr>
+                <td>Rapor Tipi:</td>
+                <td>{{ rapor.rapor_tipi|title }}</td>
+            </tr>
+            <tr>
+                <td>Tarih Aralığı:</td>
+                <td>{{ rapor_verileri.ozet_veriler.rapor_tarih_araligi }}</td>
+            </tr>
+            <tr>
+                <td>Okul Adı:</td>
+                <td>{{ rapor_verileri.okul_bilgileri.okul_adi }}</td>
+            </tr>
+            <tr>
+                <td>Okul Türü:</td>
+                <td>{{ rapor_verileri.okul_bilgileri.okul_turu }}</td>
+            </tr>
+            <tr>
+                <td>İl / İlçe:</td>
+                <td>{{ rapor_verileri.okul_bilgileri.il }} / {{ rapor_verileri.okul_bilgileri.ilce }}</td>
+            </tr>
+            <tr>
+                <td>Rapor Oluşturma Tarihi:</td>
+                <td>{{ rapor.olusturma_tarihi.strftime('%d.%m.%Y') }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h2>ÖZET VERİLER</h2>
+    
+    <table class="ozet-tablo">
+        <tr>
+            <th>Veri</th>
+            <th>Sayı</th>
+        </tr>
+        <tr>
+            <td>Toplam Öğrenci Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.toplam_ogrenci }}</td>
+        </tr>
+        <tr>
+            <td>Toplam Görüşme Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.toplam_gorusme }}</td>
+        </tr>
+        <tr>
+            <td>Bireysel Görüşme Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.bireysel_gorusme }}</td>
+        </tr>
+        <tr>
+            <td>Grup Görüşmesi Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.grup_gorusmesi }}</td>
+        </tr>
+        <tr>
+            <td>Veli Görüşmesi Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.veli_gorusmesi }}</td>
+        </tr>
+        <tr>
+            <td>Personel Görüşmesi Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.personel_gorusmesi }}</td>
+        </tr>
+        <tr>
+            <td>Tamamlanan Anket Sayısı</td>
+            <td>{{ rapor_verileri.ozet_veriler.tamamlanan_anketler }}</td>
+        </tr>
+    </table>
+    
+    <h2>AYLIK İSTATİSTİKLER</h2>
+    
+    <table class="ozet-tablo">
+        <tr>
+            <th>Ay</th>
+            <th>Toplam Görüşme</th>
+            <th>Bireysel</th>
+            <th>Veli</th>
+            <th>Grup</th>
+            <th>Personel</th>
+        </tr>
+        {% for ay_veri in rapor_verileri.aylik_istatistikler %}
+        <tr>
+            <td>{{ ay_veri.ay_adi }}</td>
+            <td>{{ ay_veri.toplam }}</td>
+            <td>{{ ay_veri.bireysel }}</td>
+            <td>{{ ay_veri.veli }}</td>
+            <td>{{ ay_veri.grup }}</td>
+            <td>{{ ay_veri.personel }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <h2>SINIF DAĞILIMI</h2>
+    
+    <table class="ozet-tablo">
+        <tr>
+            <th>Sınıf</th>
+            <th>Öğrenci Sayısı</th>
+            <th>Görüşme Sayısı</th>
+            <th>Öğrenci Başına Görüşme</th>
+        </tr>
+        {% for sinif_veri in rapor_verileri.sinif_dagilimi %}
+        <tr>
+            <td>{{ sinif_veri.sinif }}</td>
+            <td>{{ sinif_veri.ogrenci_sayisi }}</td>
+            <td>{{ sinif_veri.gorusme_sayisi }}</td>
+            <td>
+                {% if sinif_veri.ogrenci_sayisi > 0 %}
+                {{ "%.2f"|format(sinif_veri.gorusme_sayisi / sinif_veri.ogrenci_sayisi) }}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <h2>ÇALIŞMA ALANLARI</h2>
+    
+    <table class="ozet-tablo">
+        <tr>
+            <th>Çalışma Alanı</th>
+            <th>Görüşme Sayısı</th>
+            <th>Yüzde</th>
+        </tr>
+        {% for alan_veri in rapor_verileri.calisma_alanlari %}
+        <tr>
+            <td>{{ alan_veri.alan }}</td>
+            <td>{{ alan_veri.gorusme_sayisi }}</td>
+            <td>
+                {% if rapor_verileri.ozet_veriler.toplam_gorusme > 0 %}
+                % {{ "%.1f"|format(alan_veri.gorusme_sayisi / rapor_verileri.ozet_veriler.toplam_gorusme * 100) }}
+                {% else %}
+                % 0
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% if rapor.yorum %}
+    <div class="yorum-bolumu">
+        <div class="yorum-baslik">DEĞERLENDİRME VE YORUMLAR</div>
+        <p>{{ rapor.yorum }}</p>
+    </div>
+    {% endif %}
+    
+    <div class="imza-bolgesi">
+        <div class="imza-kutusu">
+            <div class="imza-cizgi"></div>
+            <p>{{ rapor_verileri.danisman_adi }}<br>Rehber Öğretmen / Psikolojik Danışman</p>
+        </div>
+        
+        <div class="imza-kutusu">
+            <div class="imza-cizgi"></div>
+            <p>Okul Müdürü</p>
+        </div>
+    </div>
+    
+    <div class="sayfa-numarasi">
+        MEB Rehberlik Faaliyet Raporu - {{ rapor.olusturma_tarihi.strftime('%d.%m.%Y') }}
+    </div>
+</body>
+</html>

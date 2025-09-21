@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Dönemsel Faaliyet Raporu Oluştur{% endblock %}
+
+{% block content %}
+<!-- Modern Dönemsel Rapor Oluşturma -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-file-alt me-2"></i>
+                <span>DÖNEMSEL FAALİYET RAPORU OLUŞTUR</span>
+            </div>
+            <a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}" class="modern-action-btn">
+                <i class="fas fa-arrow-left me-1"></i> Raporlar Listesine Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="modern-panel">
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="modern-card mb-4">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-file-alt me-2 text-primary"></i>
+                        <span class="text-primary">Dönemsel Rapor Bilgileri</span>
+                    </div>
+                </div>
+                <div class="modern-card-body">
+                    <form method="post" action="{{ url_for('rapor_yonetimi.donemsel_rapor') }}">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="baslik" class="modern-form-label">Rapor Başlığı <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control modern-form-control" id="baslik" name="baslik" 
+                                       value="{{ donem }} Rehberlik Faaliyet Raporu" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="donem" class="modern-form-label">Dönem <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control modern-form-control" id="donem" name="donem" 
+                                       value="{{ donem }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="rapor_tipi" class="modern-form-label">Rapor Tipi <span class="text-danger">*</span></label>
+                                <select class="form-select modern-form-control" id="rapor_tipi" name="rapor_tipi" required>
+                                    <option value="dönemsel" selected>Dönemsel Rapor</option>
+                                    <option value="yıllık">Yıllık Rapor</option>
+                                    <option value="aylık">Aylık Rapor</option>
+                                    <option value="haftalık">Haftalık Rapor</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="baslangic_tarihi" class="modern-form-label">Başlangıç Tarihi <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control modern-form-control" id="baslangic_tarihi" name="baslangic_tarihi" 
+                                       value="{{ baslangic_tarihi.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="bitis_tarihi" class="modern-form-label">Bitiş Tarihi <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control modern-form-control" id="bitis_tarihi" name="bitis_tarihi" 
+                                       value="{{ bitis_tarihi.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="yorum" class="modern-form-label">Değerlendirme ve Yorumlar</label>
+                            <textarea class="form-control modern-form-control" id="yorum" name="yorum" rows="4"></textarea>
+                            <div class="form-text">Dönemsel faaliyetlere ilişkin genel değerlendirmenizi yazınız. Bu metin raporda görünecektir.</div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="fw-bold mb-1">Bilgi</p>
+                                    <p class="mb-0">Rapor verileri otomatik olarak seçilen tarih aralığına göre hesaplanacaktır.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="modern-action-btn">
+                                <i class="fas fa-file-alt me-1"></i> Raporu Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sağ Bilgi Paneli -->
+        <div class="col-lg-4">
+            <div class="modern-card mb-4 bg-primary text-white">
+                <div class="modern-card-body">
+                    <div class="text-center">
+                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                        <h5 class="mb-3">MEB E-Rehberlik Uyumlu</h5>
+                    </div>
+                    <p>Bu rapor, MEB E-Rehberlik sisteminde kullanılan formatlarla uyumlu veri içerir. Raporunuzu oluşturduktan sonra Excel olarak indirip dış sistemlere aktarabilirsiniz.</p>
+                </div>
+            </div>
+            
+            <div class="modern-card mb-4">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-list-check me-2 text-primary"></i>
+                        <span class="text-primary">Rapor İçeriği</span>
+                    </div>
+                </div>
+                <div class="modern-card-body">
+                    <div class="mb-3 border-bottom pb-2">
+                        <h6 class="fw-bold"><i class="fas fa-check-circle text-success me-1"></i> Özet Veriler</h6>
+                        <p class="small text-muted mb-1">Toplam görüşme sayıları, anket uygulamaları, dağılımlar.</p>
+                    </div>
+                    
+                    <div class="mb-3 border-bottom pb-2">
+                        <h6 class="fw-bold"><i class="fas fa-check-circle text-success me-1"></i> Aylık İstatistikler</h6>
+                        <p class="small text-muted mb-1">Rehberlik faaliyetlerinin aylara göre dağılımı ve grafiksel gösterimi.</p>
+                    </div>
+                    
+                    <div class="mb-3 border-bottom pb-2">
+                        <h6 class="fw-bold"><i class="fas fa-check-circle text-success me-1"></i> Sınıf Bazlı Analizler</h6>
+                        <p class="small text-muted mb-1">Sınıf düzeylerine göre rehberlik hizmetlerinin dağılımı.</p>
+                    </div>
+                    
+                    <div class="mb-0">
+                        <h6 class="fw-bold"><i class="fas fa-check-circle text-success me-1"></i> Çalışma Alanları</h6>
+                        <p class="small text-muted mb-0">Farklı rehberlik alanlarına göre çalışma dağılımı.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

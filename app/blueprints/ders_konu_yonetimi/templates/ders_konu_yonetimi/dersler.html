@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Dersler - YKS Çalışma Programı Takip Sistemi{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header Section -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center p-4 border-0">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-primary bg-opacity-10 rounded-3 p-3 me-3">
+                    <i class="fas fa-book fs-4 text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="card-title mb-0 fw-bold">Dersler</h4>
+                    <p class="text-muted small mb-0">YKS hazırlık dersleri ve konuları</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('ders_konu_yonetimi.excel_ile_ekle') }}" class="btn btn-outline-success rounded-pill px-4 py-2 shadow-sm">
+                    <i class="fas fa-file-excel me-2"></i> Excel ile Toplu Ekle
+                </a>
+                <a href="{{ url_for('ders_konu_yonetimi.ekle') }}" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+                    <i class="fas fa-plus me-2"></i> Yeni Ders Ekle
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="alert alert-primary bg-opacity-10 border-0 rounded-4 mb-4">
+        <div class="d-flex">
+            <i class="fas fa-lightbulb fs-4 me-3 text-primary"></i>
+            <div>
+                <h6 class="fw-bold mb-2">Ders Yönetimi Hakkında</h6>
+                <p class="mb-0">Bu sayfada tüm dersleri görebilir, düzenleyebilir ve yeni dersler ekleyebilirsiniz. Derslere tıklayarak konuları görüntüleyebilir veya düzenleyebilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Derslerin Kategorik Olarak Gösterimi -->
+    {% if dersler %}
+    
+    <!-- Ders kategorileri -->
+    <ul class="nav nav-pills mb-4" id="dersTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active px-4 py-2 rounded-pill" 
+                    id="tyt-tab" 
+                    data-bs-toggle="pill" 
+                    data-bs-target="#tyt-dersler" 
+                    type="button" 
+                    role="tab">
+                <i class="fas fa-check-circle me-2"></i> TYT Dersleri
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link px-4 py-2 rounded-pill" 
+                    id="ayt-tab" 
+                    data-bs-toggle="pill" 
+                    data-bs-target="#ayt-dersler" 
+                    type="button" 
+                    role="tab">
+                <i class="fas fa-star me-2"></i> AYT Dersleri
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link px-4 py-2 rounded-pill" 
+                    id="ydt-tab" 
+                    data-bs-toggle="pill" 
+                    data-bs-target="#ydt-dersler" 
+                    type="button" 
+                    role="tab">
+                <i class="fas fa-globe me-2"></i> YDT Dersleri
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab içerikleri -->
+    <div class="tab-content" id="dersTabContent">
+        <!-- TYT Dersleri -->
+        <div class="tab-pane fade show active" id="tyt-dersler" role="tabpanel">
+            <div class="row g-4">
+                {% for ders in dersler %}
+                {% if 'TYT' in ders.ad %}
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="icon-wrapper bg-info bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-check-circle text-info"></i>
+                                </div>
+                                <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 py-2">TYT</span>
+                            </div>
+                            <h5 class="card-title fw-bold mb-3">{{ ders.ad }}</h5>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-muted small mb-2">
+                                    <span>Konu Sayısı</span>
+                                    <span class="fw-bold">{{ ders.konu_sayisi() }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>Toplam Süre</span>
+                                    <span class="fw-bold">{{ ders.toplam_sure() }} dakika</span>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-4 gap-2">
+                                <a href="{{ url_for('ders_konu_yonetimi.detay', ders_id=ders.id) }}" class="btn btn-sm btn-info rounded-pill flex-grow-1">
+                                    <i class="fas fa-list-ul me-1"></i> Konuları Gör
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('ders_konu_yonetimi.duzenle', ders_id=ders.id) }}">
+                                                <i class="fas fa-edit me-2 text-warning"></i> Düzenle
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#silModal{{ ders.id }}">
+                                                <i class="fas fa-trash me-2"></i> Sil
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- AYT Dersleri -->
+        <div class="tab-pane fade" id="ayt-dersler" role="tabpanel">
+            <div class="row g-4">
+                {% for ders in dersler %}
+                {% if 'AYT' in ders.ad %}
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="icon-wrapper bg-success bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-star text-success"></i>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">AYT</span>
+                            </div>
+                            <h5 class="card-title fw-bold mb-3">{{ ders.ad }}</h5>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-muted small mb-2">
+                                    <span>Konu Sayısı</span>
+                                    <span class="fw-bold">{{ ders.konu_sayisi() }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>Toplam Süre</span>
+                                    <span class="fw-bold">{{ ders.toplam_sure() }} dakika</span>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-4 gap-2">
+                                <a href="{{ url_for('ders_konu_yonetimi.detay', ders_id=ders.id) }}" class="btn btn-sm btn-success rounded-pill flex-grow-1">
+                                    <i class="fas fa-list-ul me-1"></i> Konuları Gör
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('ders_konu_yonetimi.duzenle', ders_id=ders.id) }}">
+                                                <i class="fas fa-edit me-2 text-warning"></i> Düzenle
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#silModal{{ ders.id }}">
+                                                <i class="fas fa-trash me-2"></i> Sil
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- YDT Dersleri -->
+        <div class="tab-pane fade" id="ydt-dersler" role="tabpanel">
+            <div class="row g-4">
+                {% for ders in dersler %}
+                {% if 'YDT' in ders.ad or 'Dil' in ders.ad or 'İngilizce' in ders.ad or 'Almanca' in ders.ad or 'Fransızca' in ders.ad %}
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="icon-wrapper bg-warning bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-globe text-warning"></i>
+                                </div>
+                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2">YDT</span>
+                            </div>
+                            <h5 class="card-title fw-bold mb-3">{{ ders.ad }}</h5>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-muted small mb-2">
+                                    <span>Konu Sayısı</span>
+                                    <span class="fw-bold">{{ ders.konu_sayisi() }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>Toplam Süre</span>
+                                    <span class="fw-bold">{{ ders.toplam_sure() }} dakika</span>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-4 gap-2">
+                                <a href="{{ url_for('ders_konu_yonetimi.detay', ders_id=ders.id) }}" class="btn btn-sm btn-warning rounded-pill flex-grow-1">
+                                    <i class="fas fa-list-ul me-1"></i> Konuları Gör
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('ders_konu_yonetimi.duzenle', ders_id=ders.id) }}">
+                                                <i class="fas fa-edit me-2 text-warning"></i> Düzenle
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#silModal{{ ders.id }}">
+                                                <i class="fas fa-trash me-2"></i> Sil
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- Boş durum gösterimi -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-5">
+            <div class="text-center py-5">
+                <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-4 d-inline-flex mb-3">
+                    <i class="fas fa-book fa-3x text-primary opacity-75"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Henüz Ders Kaydı Bulunmamaktadır</h5>
+                <p class="text-muted mb-4">Yeni dersler ekleyerek öğrencilerinizin çalışma planını oluşturmaya başlayabilirsiniz.</p>
+                <a href="{{ url_for('ders_konu_yonetimi.ekle') }}" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+                    <i class="fas fa-plus me-2"></i> İlk Dersi Ekle
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Hover efekti */
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+    
+    /* Icon wrapper stillemesi */
+    .icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        transition: all 0.2s ease;
+    }
+    
+    /* Yuvarlatılmış köşeler */
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+    
+    /* Daha yumuşak renk tonları */
+    .bg-opacity-10 {
+        --bs-bg-opacity: 0.1;
+    }
+</style>
+{% endblock %}

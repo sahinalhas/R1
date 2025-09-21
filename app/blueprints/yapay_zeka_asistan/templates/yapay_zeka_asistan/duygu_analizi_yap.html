@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ogrenci.tam_ad }} - Duygu Analizi{% endblock %}
+
+{% block styles %}
+<style>
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc!important;
+    }
+    .text-info {
+        color: #36b9cc!important;
+    }
+    .fw-bold {
+        font-weight: bold!important;
+    }
+    .analiz-bilgi {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card edevlet-card-body edevlet-panel mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">{{ ogrenci.tam_ad }} - Duygu Analizi</h5>
+                    <div>
+                        <a href="{{ urls.ogrenci_analizler }}" class="btn btn-secondary btn-sm">
+                            <i class="fa fa-arrow-left"></i> Analizlere Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Duygu Analizi Hakkında</h5>
+                                    <p>Duygu analizi, öğrencinin yazılı metinlerindeki duygusal ifadeleri tespit ederek,
+                                       duygusal durumunu değerlendiren bir yapay zeka teknolojisidir.</p>
+                                    
+                                    <h6 class="mt-3">Kullanım Alanları:</h6>
+                                    <ul>
+                                        <li>Öğrencinin kompozisyonlarının analizi</li>
+                                        <li>Anket cevaplarının duygusal değerlendirmesi</li>
+                                        <li>Günlük veya refleksiyon yazılarının incelenmesi</li>
+                                        <li>Görüşme notlarındaki duygu tonunun belirlenmesi</li>
+                                    </ul>
+                                    
+                                    <div class="alert alert-info mt-3">
+                                        <strong>Not:</strong> Duygu analizi sonuçları, öğrencinin psikolojik durumu hakkında 
+                                        genel bir fikir verse de, profesyonel bir psikolojik değerlendirme yerine geçmez.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="card-title mb-0">Duygu Analizi Formu</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form method="POST" action="{{ url_for('yapay_zeka_asistan.duygu_analizi_yap', ogrenci_id=ogrenci.id) }}">
+                                        <div class="mb-3">
+                                            <label for="metin_kaynagi" class="form-label">Metin Kaynağı</label>
+                                            <select id="metin_kaynagi" name="metin_kaynagi" class="form-select" required>
+                                                <option value="">Bir kaynak seçin</option>
+                                                <option value="kompozisyon">Kompozisyon</option>
+                                                <option value="anket_cevabi">Anket Cevabı</option>
+                                                <option value="refleksiyon">Refleksiyon/Günlük</option>
+                                                <option value="gorusme_notu">Görüşme Notu</option>
+                                                <option value="diger">Diğer</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="analiz_tipi" class="form-label">Analiz Tipi</label>
+                                            <select id="analiz_tipi" name="analiz_tipi" class="form-select">
+                                                <option value="basit">Temel Analiz</option>
+                                                <option value="gelismis" selected>Gelişmiş Analiz</option>
+                                                <option value="kapsamli">Kapsamlı Analiz</option>
+                                            </select>
+                                            <div class="form-text mt-1" id="analiz_tipi_aciklama">
+                                                Gelişmiş analiz, daha doğru duygu tespiti sunar ve önemli kelimeleri belirler.
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="metin" class="form-label">Analiz Edilecek Metin</label>
+                                            <textarea id="metin" name="metin" class="form-control" rows="10" required
+                                                     placeholder="Öğrencinin yazılı metnini buraya girin. Daha doğru sonuçlar için en az 100 karakter içeren metinler önerilir."></textarea>
+                                        </div>
+                                        
+                                        <div class="card mb-3 border-left-info py-2 bg-light">
+                                            <div class="card-body py-1">
+                                                <div class="analiz-bilgi" id="basit-analiz-bilgi" style="display:none">
+                                                    <span class="fw-bold text-info">Temel Analiz:</span> Kelime eşleştirme tabanlı basit duygu analizi. Hızlı sonuç verir.
+                                                </div>
+                                                <div class="analiz-bilgi" id="gelismis-analiz-bilgi">
+                                                    <span class="fw-bold text-info">Gelişmiş Analiz:</span> TF-IDF ve bağlam analizi ile daha doğru sonuçlar. Önemli kelimeleri belirler.
+                                                </div>
+                                                <div class="analiz-bilgi" id="kapsamli-analiz-bilgi" style="display:none">
+                                                    <span class="fw-bold text-info">Kapsamlı Analiz:</span> Duygu kategorileri, cümle analizi ve motivasyon-kaygı dengesi ekler.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="text-end mt-3">
+                                            <a href="{{ urls.ogrenci_analizler }}" class="btn btn-secondary">İptal</a>
+                                            <button type="submit" class="btn btn-info">Duygu Analizi Yap</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var analiz_tipi = document.getElementById('analiz_tipi');
+        var aciklama = document.getElementById('analiz_tipi_aciklama');
+        var basitInfo = document.getElementById('basit-analiz-bilgi');
+        var gelismisInfo = document.getElementById('gelismis-analiz-bilgi');
+        var kapsamliInfo = document.getElementById('kapsamli-analiz-bilgi');
+        
+        // İlk yükleme
+        updateAnaliz(analiz_tipi.value);
+        
+        // Analiz tipi değiştirildiğinde
+        analiz_tipi.addEventListener('change', function() {
+            updateAnaliz(this.value);
+        });
+        
+        // Analiz bilgisi güncelleme fonksiyonu
+        function updateAnaliz(tip) {
+            // Tüm bilgileri gizle
+            basitInfo.style.display = 'none';
+            gelismisInfo.style.display = 'none';
+            kapsamliInfo.style.display = 'none';
+            
+            // Seçilen analizin bilgisini göster
+            if (tip === 'basit') {
+                basitInfo.style.display = 'block';
+                aciklama.textContent = 'Temel analiz, kelime eşleştirme ile hızlı sonuç verir.';
+            } else if (tip === 'gelismis') {
+                gelismisInfo.style.display = 'block';
+                aciklama.textContent = 'Gelişmiş analiz, daha doğru duygu tespiti sunar ve önemli kelimeleri belirler.';
+            } else if (tip === 'kapsamli') {
+                kapsamliInfo.style.display = 'block';
+                aciklama.textContent = 'Kapsamlı analiz, motivasyon ve kaygı skorlarıyla en detaylı sonuçları sunar.';
+            }
+        }
+    });
+</script>
+{% endblock %}

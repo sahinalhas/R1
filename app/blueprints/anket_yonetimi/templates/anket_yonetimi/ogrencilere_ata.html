@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Anketi Öğrencilere Ata: {{ anket.baslik }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Anketi Öğrencilere Ata</h1>
+        <div>
+            <a href="{{ url_for('anket_yonetimi.anket_detay', anket_id=anket.id) }}" class="btn btn-info me-2">
+                <i class="fas fa-eye me-1"></i> Anket Detayları
+            </a>
+            <a href="{{ url_for('anket_yonetimi.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Anketlere Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Anket Bilgileri -->
+        <div class="col-md-4">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Anket Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <h4>{{ anket.baslik }}</h4>
+                    <p class="text-muted">{{ anket.anket_turu.tur_adi }}</p>
+                    
+                    {% if anket.aciklama %}
+                        <p>{{ anket.aciklama }}</p>
+                    {% endif %}
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Anketi atamak istediğiniz öğrencileri seçin.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Atama Yardımcısı</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="button" id="selectAllBtn" class="btn btn-outline-primary">
+                            <i class="fas fa-check-square me-1"></i> Tümünü Seç
+                        </button>
+                        <button type="button" id="deselectAllBtn" class="btn btn-outline-secondary">
+                            <i class="fas fa-square me-1"></i> Tümünü Kaldır
+                        </button>
+                    </div>
+                    
+                    <div class="accordion" id="sinifAccordion">
+                        {% for sinif_key, sinif in siniflar.items() %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ sinif_key|replace('-', '') }}">
+                                    <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#collapse{{ sinif_key|replace('-', '') }}" 
+                                            aria-expanded="false" 
+                                            aria-controls="collapse{{ sinif_key|replace('-', '') }}">
+                                        <div class="d-flex align-items-center w-100">
+                                            <span class="flex-grow-1">{{ sinif.ad }} Sınıfı</span>
+                                            <span class="badge bg-primary ms-2">{{ sinif.ogrenciler|length }} öğrenci</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ sinif_key|replace('-', '') }}" 
+                                     class="accordion-collapse collapse" 
+                                     aria-labelledby="heading{{ sinif_key|replace('-', '') }}" 
+                                     data-bs-parent="#sinifAccordion">
+                                    <div class="accordion-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-success mb-2 select-class-btn" 
+                                                    data-sinif="{{ sinif_key }}">
+                                                <i class="fas fa-check-square me-1"></i> Bu Sınıfın Tümünü Seç
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Öğrenci Listesi -->
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Öğrenci Listesi</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('anket_yonetimi.ogrencilere_ata', anket_id=anket.id) }}" method="post">
+                        {% if siniflar %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Seç</th>
+                                            <th>Öğrenci No</th>
+                                            <th>Adı Soyadı</th>
+                                            <th>Sınıf</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for sinif_key, sinif in siniflar.items() %}
+                                            {% for ogrenci in sinif.ogrenciler %}
+                                                <tr class="sinif-{{ sinif_key|replace('-', '') }}">
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input ogrenci-checkbox" 
+                                                                   type="checkbox" 
+                                                                   name="ogrenci_id" 
+                                                                   value="{{ ogrenci.id }}"
+                                                                   data-sinif="{{ sinif_key }}">
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ ogrenci.okul_no }}</td>
+                                                    <td>{{ ogrenci.ad }} {{ ogrenci.soyad }}</td>
+                                                    <td>{{ ogrenci.sinif }}-{{ ogrenci.sube }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <div id="selectedCount" class="alert alert-info mb-3">
+                                    <i class="fas fa-info-circle me-2"></i> 
+                                    <span id="selectedCountText">0 öğrenci seçildi</span>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                                        <i class="fas fa-user-plus me-1"></i> Seçilen Öğrencilere Anketi Ata
+                                    </button>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i> Sistemde kayıtlı öğrenci bulunamadı.
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const deselectAllBtn = document.getElementById('deselectAllBtn');
+        const checkboxes = document.querySelectorAll('.ogrenci-checkbox');
+        const submitBtn = document.getElementById('submitBtn');
+        const selectedCountText = document.getElementById('selectedCountText');
+        const selectClassBtns = document.querySelectorAll('.select-class-btn');
+        
+        // Seçili öğrenci sayısını güncelle
+        function updateSelectedCount() {
+            const selectedCount = document.querySelectorAll('.ogrenci-checkbox:checked').length;
+            selectedCountText.textContent = `${selectedCount} öğrenci seçildi`;
+            
+            // En az bir öğrenci seçilmişse gönderme butonunu aktifleştir
+            submitBtn.disabled = selectedCount === 0;
+        }
+        
+        // Tümünü seç
+        selectAllBtn.addEventListener('click', function() {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateSelectedCount();
+        });
+        
+        // Tümünü kaldır
+        deselectAllBtn.addEventListener('click', function() {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedCount();
+        });
+        
+        // Sınıf bazında seçim
+        selectClassBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sinifKey = this.dataset.sinif;
+                const sinifCheckboxes = document.querySelectorAll(`.ogrenci-checkbox[data-sinif="${sinifKey}"]`);
+                
+                sinifCheckboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                
+                updateSelectedCount();
+            });
+        });
+        
+        // Her checkbox değişiminde sayıyı güncelle
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+        
+        // Sayfa yüklendiğinde sayıyı güncelle
+        updateSelectedCount();
+    });
+</script>
+{% endblock %}

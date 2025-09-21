@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Yapay Zeka Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card edevlet-card-body edevlet-panel mb-4">
+                <div class="card-header">
+                    <h5 class="card-title">Yapay Zeka Dashboard</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="card bg-primary text-white h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Öğrenci Sayısı</h5>
+                                    <h2 class="display-4">{{ ogrenci_sayisi }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3 mb-4">
+                            <div class="card bg-success text-white h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Aktif Model Sayısı</h5>
+                                    <h2 class="display-4">{{ analiz_sayisi }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3 mb-4">
+                            <div class="card bg-info text-white h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Yapılan Analiz</h5>
+                                    <h2 class="display-4">0</h2>
+                                    <small>Bu ay</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3 mb-4">
+                            <div class="card bg-warning text-dark h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Uygulanan Öneri</h5>
+                                    <h2 class="display-4">0</h2>
+                                    <small>Bu ay</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-8 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="card-title">Analiz Grafiği</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        Bu grafik, yapay zeka analiz sonuçlarının zaman içindeki dağılımını gösterecektir.
+                                        Öğrenciler için yapılan analizler arttıkça, grafikler otomatik olarak güncellenecektir.
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                                            <p class="text-muted">Henüz yeterli veri bulunmamaktadır.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="card-title">Hızlı İşlemler</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-3">
+                                        <a href="{{ url_for('yapay_zeka_asistan.akademik_risk_modeli_olustur') }}" class="btn btn-primary">
+                                            <i class="fa fa-plus-circle"></i> Yeni Model Oluştur
+                                        </a>
+                                        <a href="{{ url_for('yapay_zeka_asistan.modeller') }}" class="btn btn-info">
+                                            <i class="fa fa-cogs"></i> Model Yönetimi
+                                        </a>
+                                        <button class="btn btn-success" disabled>
+                                            <i class="fa fa-chart-pie"></i> Rapor Oluştur
+                                        </button>
+                                        <button class="btn btn-secondary" disabled>
+                                            <i class="fa fa-sync"></i> Tüm Modelleri Yeniden Eğit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Önerilen Geliştirmeler</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card bg-light h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Davranışsal Risk Analizi</h5>
+                                                    <p class="card-text">Öğrencilerin davranış ve disiplin verilerine dayalı risk analizi modeli.</p>
+                                                    <span class="badge bg-secondary">Yakında</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card bg-light h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Kariyer Eğilim Analizi</h5>
+                                                    <p class="card-text">Öğrencinin ilgi, yetenek ve akademik verilerine dayalı kariyer önerileri.</p>
+                                                    <span class="badge bg-secondary">Yakında</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card bg-light h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Gelişmiş Metin Analizi</h5>
+                                                    <p class="card-text">Öğrenci kompozisyonlarını detaylı analiz eden NLP modeli.</p>
+                                                    <span class="badge bg-secondary">Yakında</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,669 @@
+{% extends "base.html" %}
+
+{% block title %}Anket Düzenle: {{ anket.baslik }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Anket Düzenle: {{ anket.baslik }}</h1>
+        <div>
+            <a href="{{ url_for('anket_yonetimi.anket_detay', anket_id=anket.id) }}" class="btn btn-info me-2">
+                <i class="fas fa-eye me-1"></i> Anket Detayları
+            </a>
+            <a href="{{ url_for('anket_yonetimi.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Anketlere Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Anket Bilgileri -->
+        <div class="col-md-4">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Anket Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('anket_yonetimi.duzenle_anket', anket_id=anket.id) }}" method="post">
+                        <div class="mb-3">
+                            <label for="baslik" class="form-label">Anket Başlığı</label>
+                            <input type="text" class="form-control" id="baslik" name="baslik" 
+                                   value="{{ anket.baslik }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="anket_turu_id" class="form-label">Anket Türü</label>
+                            <select class="form-select" id="anket_turu_id" name="anket_turu_id" required>
+                                {% for tur in anket_turleri %}
+                                    <option value="{{ tur.id }}" {% if tur.id == anket.anket_turu_id %}selected{% endif %}>
+                                        {{ tur.tur_adi }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aciklama" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="aciklama" name="aciklama" rows="3">{{ anket.aciklama or '' }}</textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Anketi Güncelle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Durum</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Anket Durumu:</strong>
+                            {% if anket.aktif %}
+                                <span class="badge bg-success ms-2">Aktif</span>
+                            {% else %}
+                                <span class="badge bg-danger ms-2">Pasif</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <form action="{{ url_for('anket_yonetimi.anket_durum_degistir', anket_id=anket.id) }}" method="post">
+                                <input type="hidden" name="durum" value="{{ 'pasif' if anket.aktif else 'aktif' }}">
+                                <button type="submit" class="btn {{ 'btn-danger' if anket.aktif else 'btn-success' }}">
+                                    {% if anket.aktif %}
+                                        <i class="fas fa-toggle-off me-1"></i> Pasifleştir
+                                    {% else %}
+                                        <i class="fas fa-toggle-on me-1"></i> Aktifleştir
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">İşlemler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if anket.aktif %}
+                            <a href="{{ url_for('anket_yonetimi.ogrencilere_ata', anket_id=anket.id) }}" class="btn btn-success">
+                                <i class="fas fa-user-plus me-1"></i> Öğrencilere Ata
+                            </a>
+                            <a href="{{ url_for('anket_yonetimi.toplu_cevap_yukle', anket_id=anket.id) }}" class="btn btn-warning">
+                                <i class="fas fa-file-upload me-1"></i> Toplu Cevap Yükle
+                            </a>
+                        {% else %}
+                            <div class="alert alert-secondary mb-0">
+                                <i class="fas fa-info-circle me-2"></i> Anketi öğrencilere atamak veya toplu cevap yüklemek için önce anketi aktifleştirin.
+                            </div>
+                        {% endif %}
+                        <a href="{{ url_for('anket_yonetimi.anket_sonuclari', anket_id=anket.id) }}" class="btn btn-dark">
+                            <i class="fas fa-chart-bar me-1"></i> Sonuçları Gör
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash me-1"></i> Anketi Sil
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Silme Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Anket Silme Onayı</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>{{ anket.baslik }}</strong> anketini silmek istediğinize emin misiniz?</p>
+                            <p class="text-danger">Bu işlem geri alınamaz ve ankete ait tüm soruları ve cevapları da silecektir!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                            <form action="{{ url_for('anket_yonetimi.anket_sil', anket_id=anket.id) }}" method="post">
+                                <button type="submit" class="btn btn-danger">Anketi Sil</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sorular Listesi -->
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Anket Soruları</h5>
+                    <div>
+                        <button type="button" class="btn btn-light me-2" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
+                            <i class="fas fa-file-import me-1"></i> Toplu Soru Yükle
+                        </button>
+                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
+                            <i class="fas fa-plus-circle me-1"></i> Yeni Soru Ekle
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if sorular %}
+                        <div class="list-group mb-4">
+                            {% for soru in sorular %}
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ soru.soru_sirasi }}. {{ soru.soru_metni }}</h5>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-primary edit-question" 
+                                                data-soru-id="{{ soru.id }}"
+                                                data-soru-metni="{{ soru.soru_metni }}"
+                                                data-soru-sirasi="{{ soru.soru_sirasi }}"
+                                                data-cevap-turu="{{ soru.cevap_turu_id }}"
+                                                data-cevap-secenekleri="{{ soru.cevap_secenekleri or '' }}"
+                                                data-zorunlu="{{ 'checked' if soru.zorunlu else '' }}"
+                                                data-ters-puanlama="{{ 'checked' if soru.ters_puanlama else '' }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger delete-question" data-soru-id="{{ soru.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="mb-1">
+                                    <span class="badge bg-info me-2">{{ soru.cevap_turu.tur_adi }}</span>
+                                    {% if soru.zorunlu %}
+                                        <span class="badge bg-danger me-2">Zorunlu</span>
+                                    {% endif %}
+                                    {% if soru.ters_puanlama %}
+                                        <span class="badge bg-warning text-dark">Ters Puanlama</span>
+                                    {% endif %}
+                                </p>
+                                {% if soru.cevap_secenekleri %}
+                                    <div class="mt-2">
+                                        <strong>Cevap Seçenekleri:</strong>
+                                        <ul class="mb-0 mt-1">
+                                            {% for secenek in soru.secenekler_listesi %}
+                                                <li>{{ secenek }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Bu ankete henüz soru eklenmemiş. "Yeni Soru Ekle" butonunu kullanarak soru ekleyebilirsiniz.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Soru Ekleme Modal -->
+    <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Soru Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addQuestionForm">
+                        <div class="mb-3">
+                            <label for="soru_metni" class="form-label">Soru Metni</label>
+                            <textarea class="form-control" id="soru_metni" name="soru_metni" 
+                                     rows="2" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="cevap_turu_id" class="form-label">Cevap Türü</label>
+                                <select class="form-select" id="cevap_turu_id" name="cevap_turu_id" required>
+                                    <option value="">-- Cevap Türü Seçin --</option>
+                                    {% for tur in cevap_turleri %}
+                                        <option value="{{ tur.id }}">{{ tur.tur_adi }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if not cevap_turleri %}
+                                    <div class="form-text text-danger">
+                                        <i class="fas fa-exclamation-triangle me-1"></i> 
+                                        Hiç cevap türü tanımlanmamış! Önce 
+                                        <a href="{{ url_for('anket_yonetimi.cevap_turleri') }}">cevap türü ekleyin</a>.
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="soru_sirasi" class="form-label">Soru Sırası</label>
+                                <input type="number" class="form-control" id="soru_sirasi" name="soru_sirasi" 
+                                       min="1" placeholder="Otomatik (son sıraya eklenecek)">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cevap_secenekleri" class="form-label">Cevap Seçenekleri <small class="text-muted">(Her satıra bir seçenek, çoktan seçmeli veya ölçek tipleri için)</small></label>
+                            <textarea class="form-control" id="cevap_secenekleri" name="cevap_secenekleri" 
+                                     rows="5" placeholder="Her satıra bir seçenek yazın.
+Örnek:
+Kesinlikle Katılmıyorum
+Katılmıyorum
+Kararsızım
+Katılıyorum
+Kesinlikle Katılıyorum"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="zorunlu" name="zorunlu" checked>
+                                    <label class="form-check-label" for="zorunlu">
+                                        Cevaplama Zorunlu
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="ters_puanlama" name="ters_puanlama">
+                                    <label class="form-check-label" for="ters_puanlama">
+                                        Ters Puanlama (Psikolojik testler için)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="saveQuestionBtn">Soruyu Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Soru Düzenleme Modal -->
+    <div class="modal fade" id="editQuestionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Soru Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editQuestionForm">
+                        <input type="hidden" id="edit_soru_id" name="soru_id">
+                        <div class="mb-3">
+                            <label for="edit_soru_metni" class="form-label">Soru Metni</label>
+                            <textarea class="form-control" id="edit_soru_metni" name="soru_metni" 
+                                     rows="2" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="edit_cevap_turu_id" class="form-label">Cevap Türü</label>
+                                <select class="form-select" id="edit_cevap_turu_id" name="cevap_turu_id" required>
+                                    {% for tur in cevap_turleri %}
+                                        <option value="{{ tur.id }}">{{ tur.tur_adi }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_soru_sirasi" class="form-label">Soru Sırası</label>
+                                <input type="number" class="form-control" id="edit_soru_sirasi" name="soru_sirasi" 
+                                       min="1">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_cevap_secenekleri" class="form-label">Cevap Seçenekleri <small class="text-muted">(Her satıra bir seçenek)</small></label>
+                            <textarea class="form-control" id="edit_cevap_secenekleri" name="cevap_secenekleri" 
+                                     rows="5"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="edit_zorunlu" name="zorunlu">
+                                    <label class="form-check-label" for="edit_zorunlu">
+                                        Cevaplama Zorunlu
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="edit_ters_puanlama" name="ters_puanlama">
+                                    <label class="form-check-label" for="edit_ters_puanlama">
+                                        Ters Puanlama
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="updateQuestionBtn">Soruyu Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Soru Silme Onay Modal -->
+    <div class="modal fade" id="deleteQuestionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Soru Silme Onayı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bu soruyu silmek istediğinize emin misiniz?</p>
+                    <p class="text-danger">Bu işlem geri alınamaz ve soruya ait tüm cevaplar da silinecektir!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Soruyu Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toplu Soru Yükleme Modal -->
+    <div class="modal fade" id="bulkImportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Toplu Soru Yükleme</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bulkImportForm">
+                        <div class="mb-3">
+                            <label for="cevap_turu_id_bulk" class="form-label">Cevap Türü <span class="text-danger">*</span></label>
+                            <select class="form-select" id="cevap_turu_id_bulk" name="cevap_turu_id" required>
+                                <option value="">-- Cevap Türü Seçin --</option>
+                                {% for tur in cevap_turleri %}
+                                    <option value="{{ tur.id }}">{{ tur.tur_adi }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Tüm sorular için ortak cevap türü seçin.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cevap_secenekleri_bulk" class="form-label">Cevap Seçenekleri <small class="text-muted">(Her satıra bir seçenek, çoktan seçmeli veya ölçek tipleri için)</small></label>
+                            <textarea class="form-control" id="cevap_secenekleri_bulk" name="cevap_secenekleri" 
+                                     rows="4" placeholder="Her satıra bir seçenek yazın.
+Örnek:
+Kesinlikle Katılmıyorum
+Katılmıyorum
+Katılıyorum
+Kesinlikle Katılıyorum"></textarea>
+                            <div class="form-text">Tüm sorular için ortak cevap seçenekleri girin (gerekirse).</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="zorunlu_bulk" name="zorunlu" checked>
+                                <label class="form-check-label" for="zorunlu_bulk">
+                                    Cevaplama Zorunlu
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ters_puanlama_bulk" name="ters_puanlama">
+                                <label class="form-check-label" for="ters_puanlama_bulk">
+                                    Ters Puanlama (Psikolojik testler için)
+                                </label>
+                            </div>
+                            <div class="form-text">Bu ayarlar tüm sorular için geçerli olacaktır.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="bulk_questions" class="form-label">Sorular <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="bulk_questions" name="bulk_questions" 
+                                     rows="10" placeholder="Her satıra bir soru yazın.
+Örnek:
+Kendimi genellikle mutlu hissediyorum.
+Yeni insanlarla tanışmaktan hoşlanırım.
+Gelecek hakkında iyimserim.
+..." required></textarea>
+                            <div class="form-text">Her satır bir soru olarak değerlendirilecektir.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="saveBulkQuestionsBtn">Soruları Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addQuestionModal = new bootstrap.Modal(document.getElementById('addQuestionModal'));
+        const editQuestionModal = new bootstrap.Modal(document.getElementById('editQuestionModal'));
+        const deleteQuestionModal = new bootstrap.Modal(document.getElementById('deleteQuestionModal'));
+        
+        // Yeni soru kaydetme
+        document.getElementById('saveQuestionBtn').addEventListener('click', function() {
+            const form = document.getElementById('addQuestionForm');
+            const formData = new FormData(form);
+            
+            // Zorunlu alan kontrolü
+            if (!formData.get('soru_metni').trim()) {
+                alert('Lütfen soru metnini girin.');
+                return;
+            }
+            
+            if (!formData.get('cevap_turu_id')) {
+                alert('Lütfen bir cevap türü seçin.');
+                return;
+            }
+            
+            // Checkbox değerlerini kontrol et
+            formData.set('zorunlu', document.getElementById('zorunlu').checked ? 'on' : 'off');
+            formData.set('ters_puanlama', document.getElementById('ters_puanlama').checked ? 'on' : 'off');
+            
+            fetch('{{ url_for("anket_yonetimi.soru_ekle", anket_id=anket.id) }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addQuestionModal.hide();
+                    alert(data.message);
+                    // Sayfayı yenile
+                    window.location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        // Soru düzenleme modalını aç
+        document.querySelectorAll('.edit-question').forEach(button => {
+            button.addEventListener('click', function() {
+                const soruId = this.dataset.soruId;
+                const soruMetni = this.dataset.soruMetni;
+                const soruSirasi = this.dataset.soruSirasi;
+                const cevapTuru = this.dataset.cevapTuru;
+                const cevapSecenekleri = this.dataset.cevapSecenekleri;
+                const zorunlu = this.dataset.zorunlu;
+                const tersPuanlama = this.dataset.tersPuanlama;
+                
+                // Form alanlarını doldur
+                document.getElementById('edit_soru_id').value = soruId;
+                document.getElementById('edit_soru_metni').value = soruMetni;
+                document.getElementById('edit_soru_sirasi').value = soruSirasi;
+                document.getElementById('edit_cevap_turu_id').value = cevapTuru;
+                
+                // JSON veya düz metin olabilir, kontrol et
+                try {
+                    const secenekler = JSON.parse(cevapSecenekleri);
+                    document.getElementById('edit_cevap_secenekleri').value = secenekler.join('\n');
+                } catch (e) {
+                    document.getElementById('edit_cevap_secenekleri').value = cevapSecenekleri;
+                }
+                
+                document.getElementById('edit_zorunlu').checked = zorunlu === 'checked';
+                document.getElementById('edit_ters_puanlama').checked = tersPuanlama === 'checked';
+                
+                editQuestionModal.show();
+            });
+        });
+        
+        // Soru güncelleme
+        document.getElementById('updateQuestionBtn').addEventListener('click', function() {
+            const form = document.getElementById('editQuestionForm');
+            const formData = new FormData(form);
+            const soruId = document.getElementById('edit_soru_id').value;
+            
+            // Zorunlu alan kontrolü
+            if (!formData.get('soru_metni').trim()) {
+                alert('Lütfen soru metnini girin.');
+                return;
+            }
+            
+            if (!formData.get('cevap_turu_id')) {
+                alert('Lütfen bir cevap türü seçin.');
+                return;
+            }
+            
+            // Checkbox değerlerini kontrol et
+            formData.set('zorunlu', document.getElementById('edit_zorunlu').checked ? 'on' : 'off');
+            formData.set('ters_puanlama', document.getElementById('edit_ters_puanlama').checked ? 'on' : 'off');
+            
+            fetch('{{ url_for("anket_yonetimi.soru_duzenle", soru_id=0) }}'.replace('/0', '/' + soruId), {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    editQuestionModal.hide();
+                    alert(data.message);
+                    // Sayfayı yenile
+                    window.location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        // Soru silme modalını aç
+        let soruIdToDelete;
+        document.querySelectorAll('.delete-question').forEach(button => {
+            button.addEventListener('click', function() {
+                soruIdToDelete = this.dataset.soruId;
+                deleteQuestionModal.show();
+            });
+        });
+        
+        // Soru silme onayı
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (!soruIdToDelete) return;
+            
+            fetch('{{ url_for("anket_yonetimi.soru_sil", soru_id=0) }}'.replace('/0', '/' + soruIdToDelete), {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    deleteQuestionModal.hide();
+                    alert(data.message);
+                    // Sayfayı yenile
+                    window.location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        // Formları sıfırla (modal kapandığında)
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('hidden.bs.modal', function() {
+                const forms = this.querySelectorAll('form');
+                forms.forEach(form => form.reset());
+            });
+        });
+        
+        // Toplu soru yükleme modalını hazırla
+        const bulkImportModal = new bootstrap.Modal(document.getElementById('bulkImportModal'));
+        
+        // Toplu soru yükleme butonunu ayarla
+        document.getElementById('saveBulkQuestionsBtn').addEventListener('click', function() {
+            const form = document.getElementById('bulkImportForm');
+            const formData = new FormData(form);
+            
+            // Zorunlu alan kontrolü
+            const cevapTuruId = formData.get('cevap_turu_id');
+            const bulkQuestions = formData.get('bulk_questions');
+            
+            if (!cevapTuruId) {
+                alert('Lütfen bir cevap türü seçin.');
+                return;
+            }
+            
+            if (!bulkQuestions.trim()) {
+                alert('Lütfen en az bir soru girin.');
+                return;
+            }
+            
+            // Checkbox değerlerini ayarla
+            formData.set('zorunlu', document.getElementById('zorunlu_bulk').checked ? 'on' : 'off');
+            formData.set('ters_puanlama', document.getElementById('ters_puanlama_bulk').checked ? 'on' : 'off');
+            
+            // Soruları satır satır ayır
+            const questions = bulkQuestions.split('\n').filter(q => q.trim() !== '');
+            
+            if (questions.length === 0) {
+                alert('Lütfen en az bir soru girin.');
+                return;
+            }
+            
+            // Soruları yüklemek için bir POST endpoint'i oluştur
+            fetch('{{ url_for("anket_yonetimi.toplu_soru_ekle", anket_id=anket.id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cevap_turu_id: cevapTuruId,
+                    cevap_secenekleri: document.getElementById('cevap_secenekleri_bulk').value,
+                    zorunlu: document.getElementById('zorunlu_bulk').checked,
+                    ters_puanlama: document.getElementById('ters_puanlama_bulk').checked,
+                    sorular: questions
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bulkImportModal.hide();
+                    alert(data.message);
+                    // Sayfayı yenile
+                    window.location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu: ' + error);
+            });
+        });
+    });
+</script>
+{% endblock %}

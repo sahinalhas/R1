@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Anket Yönetimi{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item active">Anket Yönetimi</li>
+{% endblock %}
+
+{% block content %}
+<!-- Anket Yönetimi Başlık -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-poll me-2"></i>
+                <span>ANKET YÖNETİMİ</span>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('anket_yonetimi.anket_turleri') }}" class="modern-action-btn me-2" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                    <i class="fas fa-tags"></i> Anket Türleri
+                </a>
+                <a href="{{ url_for('anket_yonetimi.cevap_turleri') }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                    <i class="fas fa-list-ol"></i> Cevap Türleri
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+            <div>
+                <a href="{{ url_for('anket_yonetimi.yeni_anket') }}" class="modern-action-btn">
+                    <i class="fas fa-plus-circle"></i> Yeni Anket Oluştur
+                </a>
+            </div>
+            <div class="text-muted small">
+                <i class="fas fa-info-circle me-1"></i> Toplam {{ anketler|length if anketler else 0 }} anket bulunmaktadır
+            </div>
+        </div>
+        
+        {% if anketler %}
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Anket Başlığı</th>
+                            <th>Tür</th>
+                            <th>Soru Sayısı</th>
+                            <th>Oluşturulma Tarihi</th>
+                            <th>Durum</th>
+                            <th style="min-width: 250px;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for anket in anketler %}
+                        <tr>
+                            <td class="fw-bold">{{ anket.baslik }}</td>
+                            <td>{{ anket.anket_turu.tur_adi }}</td>
+                            <td>{{ anket.sorular|length }}</td>
+                            <td>{{ anket.olusturma_tarihi|format_date }}</td>
+                            <td>
+                                {% if anket.aktif %}
+                                    <span class="badge bg-success rounded-1 py-1 px-2">Aktif</span>
+                                {% else %}
+                                    <span class="badge bg-danger rounded-1 py-1 px-2">Pasif</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ url_for('anket_yonetimi.anket_detay', anket_id=anket.id) }}" 
+                                        class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" title="Detaylar">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('anket_yonetimi.duzenle_anket', anket_id=anket.id) }}" 
+                                        class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if anket.aktif %}
+                                        <a href="{{ url_for('anket_yonetimi.ogrencilere_ata', anket_id=anket.id) }}" 
+                                        class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" title="Öğrencilere Ata">
+                                            <i class="fas fa-user-plus"></i>
+                                        </a>
+                                        <a href="{{ url_for('anket_yonetimi.toplu_cevap_yukle', anket_id=anket.id) }}" 
+                                        class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" title="Toplu Cevap Yükle">
+                                            <i class="fas fa-file-upload"></i>
+                                        </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('anket_yonetimi.anket_sonuclari', anket_id=anket.id) }}" 
+                                        class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" title="Sonuçları Gör">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </a>
+                                    
+                                    <button type="button" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteModal{{ anket.id }}" title="Sil">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    
+                                    <!-- Durum değiştirme -->
+                                    <form action="{{ url_for('anket_yonetimi.anket_durum_degistir', anket_id=anket.id) }}" method="post" class="d-inline">
+                                        <input type="hidden" name="durum" value="{{ 'pasif' if anket.aktif else 'aktif' }}">
+                                        <button type="submit" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;"
+                                                title="{{ 'Pasifleştir' if anket.aktif else 'Aktifleştir' }}">
+                                            <i class="fas {{ 'fa-toggle-off' if anket.aktif else 'fa-toggle-on' }}"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <!-- Silme Modal -->
+                                <div class="modal fade" id="deleteModal{{ anket.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title">Anket Silme Onayı</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>{{ anket.baslik }}</strong> anketini silmek istediğinize emin misiniz?</p>
+                                                <div class="alert alert-danger">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i> Bu işlem geri alınamaz ve ankete ait tüm soruları ve cevapları da silecektir!
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">İptal</button>
+                                                <form action="{{ url_for('anket_yonetimi.anket_sil', anket_id=anket.id) }}" method="post">
+                                                    <button type="submit" class="modern-action-btn">
+                                                        <i class="fas fa-trash me-1"></i> Anketi Sil
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info m-3">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="fas fa-info-circle fa-2x"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold mb-1">Henüz hiç anket oluşturulmamış</div>
+                        <p class="mb-0">Yeni bir anket oluşturmak için "Yeni Anket Oluştur" butonunu kullanabilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sayfada modal varsa, kapanınca form sıfırlama
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('hidden.bs.modal', function() {
+                const forms = this.querySelectorAll('form');
+                forms.forEach(form => form.reset());
+            });
+        });
+    });
+</script>
+{% endblock %}

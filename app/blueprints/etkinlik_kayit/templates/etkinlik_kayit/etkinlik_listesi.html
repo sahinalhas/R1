@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Rehberlik Etkinlik Kayıtları{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center bg-gradient-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-calendar-check me-2"></i>Rehberlik Etkinlik Kayıtları
+            </h5>
+            <a href="{{ url_for('etkinlik_kayit.yeni_etkinlik') }}" class="btn btn-sm btn-light">
+                <i class="fas fa-plus me-1"></i>Yeni Etkinlik Ekle
+            </a>
+        </div>
+        <div class="card-body">
+            {% if etkinlikler and etkinlikler|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Faaliyet Türü</th>
+                            <th>Çalışma Yöntemi</th>
+                            <th>Hedef Türü</th>
+                            <th>Öğrenci</th>
+                            <th>Diğer Katılımcılar</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for etkinlik in etkinlikler %}
+                        <tr>
+                            <td>{{ etkinlik.etkinlik_tarihi|format_date }}</td>
+                            <td>{{ etkinlik.faaliyet_turu }}</td>
+                            <td>{{ etkinlik.calisma_yontemi }}</td>
+                            <td>{{ etkinlik.hedef_turu }}</td>
+                            <td>
+                                <span class="badge bg-info text-dark">Kız: {{ etkinlik.kiz_ogrenci_sayisi }}</span>
+                                <span class="badge bg-info text-dark">Erkek: {{ etkinlik.erkek_ogrenci_sayisi }}</span>
+                                <span class="badge bg-success">Toplam: {{ etkinlik.toplam_ogrenci_sayisi }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">Öğretmen: {{ etkinlik.ogretmen_sayisi }}</span>
+                                <span class="badge bg-secondary">Veli: {{ etkinlik.veli_sayisi }}</span>
+                                <span class="badge bg-secondary">Diğer: {{ etkinlik.diger_katilimci_sayisi }}</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ url_for('etkinlik_kayit.etkinlik_detay', etkinlik_id=etkinlik.id) }}" class="btn btn-info" title="Detay">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('etkinlik_kayit.etkinlik_duzenle', etkinlik_id=etkinlik.id) }}" class="btn btn-warning" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-danger" title="Sil" 
+                                            onclick="silmeIslemi('{{ url_for('etkinlik_kayit.etkinlik_sil', etkinlik_id=etkinlik.id) }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Henüz kaydedilmiş etkinlik bulunmamaktadır.
+                <a href="{{ url_for('etkinlik_kayit.yeni_etkinlik') }}" class="alert-link">Yeni etkinlik eklemek için tıklayın.</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Silme Onay Modalı -->
+<div class="modal fade" id="silmeOnayi" tabindex="-1" aria-labelledby="silmeOnayiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="silmeOnayiLabel">Etkinlik Silme Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu etkinlik kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form id="silmeFormu" method="post" action="">
+                    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function silmeIslemi(silmeUrl) {
+        document.getElementById('silmeFormu').action = silmeUrl;
+        var silmeModal = new bootstrap.Modal(document.getElementById('silmeOnayi'));
+        silmeModal.show();
+    }
+</script>
+{% endblock %}

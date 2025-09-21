@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if etkinlik %}Etkinlik Düzenle{% else %}Yeni Etkinlik Kaydı{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-gradient-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-calendar-plus me-2"></i>
+                {% if etkinlik %}Etkinlik Düzenle{% else %}Yeni Etkinlik Kaydı{% endif %}
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('etkinlik_kayit.etkinlik_duzenle', etkinlik_id=etkinlik.id) if etkinlik else url_for('etkinlik_kayit.yeni_etkinlik') }}" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <!-- Etkinlik ana bilgileri -->
+                    <div class="col-md-4">
+                        <label for="etkinlik_tarihi" class="form-label">Etkinlik Tarihi <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="etkinlik_tarihi" name="etkinlik_tarihi" 
+                               value="{{ etkinlik.etkinlik_tarihi.strftime('%Y-%m-%d') if etkinlik else '' }}" required>
+                        <div class="invalid-feedback">Lütfen etkinlik tarihini seçin.</div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="faaliyet_turu" class="form-label">Faaliyet Türü <span class="text-danger">*</span></label>
+                        <select class="form-select" id="faaliyet_turu" name="faaliyet_turu" required>
+                            <option value="" selected disabled>Seçiniz...</option>
+                            {% for faaliyet_turu in etkinlik_turleri %}
+                            <option value="{{ faaliyet_turu }}" {% if etkinlik and etkinlik.faaliyet_turu == faaliyet_turu %}selected{% endif %}>
+                                {{ faaliyet_turu }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Lütfen faaliyet türünü seçin.</div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="hedef_turu" class="form-label">Hedef Türü <span class="text-danger">*</span></label>
+                        <select class="form-select" id="hedef_turu" name="hedef_turu" required>
+                            <option value="" selected disabled>Seçiniz...</option>
+                            {% for hedef_turu in hedef_turleri %}
+                            <option value="{{ hedef_turu }}" {% if etkinlik and etkinlik.hedef_turu == hedef_turu %}selected{% endif %}>
+                                {{ hedef_turu }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Lütfen hedef türünü seçin.</div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="calisma_yontemi" class="form-label">Çalışma Yöntemi <span class="text-danger">*</span></label>
+                        <select class="form-select" id="calisma_yontemi" name="calisma_yontemi" required>
+                            <option value="" selected disabled>Seçiniz...</option>
+                            {% for calisma_yontemi in calisma_yontemleri %}
+                            <option value="{{ calisma_yontemi }}" {% if etkinlik and etkinlik.calisma_yontemi == calisma_yontemi %}selected{% endif %}>
+                                {{ calisma_yontemi }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Lütfen çalışma yöntemini seçin.</div>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <label for="sinif_bilgisi" class="form-label">Sınıf Bilgisi</label>
+                        <input type="text" class="form-control" id="sinif_bilgisi" name="sinif_bilgisi" 
+                               placeholder="Örn: AİHL - 9. Sınıf / A Şubesi İMAM HATİP PROGRAMI UYGULANAN ALAN" 
+                               value="{{ etkinlik.sinif_bilgisi if etkinlik else '' }}">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label for="aciklama" class="form-label">Açıklama <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="aciklama" name="aciklama" rows="3" required>{{ etkinlik.aciklama if etkinlik else '' }}</textarea>
+                        <div class="invalid-feedback">Lütfen etkinlik açıklamasını girin.</div>
+                    </div>
+                    
+                    <!-- Katılımcı bilgileri -->
+                    <div class="col-12 mt-4">
+                        <div class="card bg-light">
+                            <div class="card-header">
+                                <h6 class="mb-0">Katılımcı Sayıları</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <!-- Katılımcı sayıları -->
+                                    <div class="col-md-4">
+                                        <label for="ogretmen_sayisi" class="form-label">Öğretmen</label>
+                                        <input type="number" min="0" class="form-control" id="ogretmen_sayisi" name="ogretmen_sayisi" 
+                                               value="{{ etkinlik.ogretmen_sayisi if etkinlik else 0 }}">
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <label for="veli_sayisi" class="form-label">Veli</label>
+                                        <input type="number" min="0" class="form-control" id="veli_sayisi" name="veli_sayisi" 
+                                               value="{{ etkinlik.veli_sayisi if etkinlik else 0 }}">
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <label for="diger_katilimci_sayisi" class="form-label">Diğer</label>
+                                        <input type="number" min="0" class="form-control" id="diger_katilimci_sayisi" name="diger_katilimci_sayisi" 
+                                               value="{{ etkinlik.diger_katilimci_sayisi if etkinlik else 0 }}">
+                                    </div>
+                                    
+                                    <!-- Öğrenci sayıları -->
+                                    <div class="col-6 col-md-3">
+                                        <div class="card">
+                                            <div class="card-header bg-info text-dark py-1">
+                                                <h6 class="mb-0 small">Erkek Öğr. Sayısı</h6>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <input type="number" min="0" class="form-control" id="erkek_ogrenci_sayisi" name="erkek_ogrenci_sayisi" 
+                                                       value="{{ etkinlik.erkek_ogrenci_sayisi if etkinlik else 0 }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-6 col-md-3">
+                                        <div class="card">
+                                            <div class="card-header bg-info text-dark py-1">
+                                                <h6 class="mb-0 small">Kız Öğr. Sayısı</h6>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <input type="number" min="0" class="form-control" id="kiz_ogrenci_sayisi" name="kiz_ogrenci_sayisi" 
+                                                       value="{{ etkinlik.kiz_ogrenci_sayisi if etkinlik else 0 }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light py-1">
+                                                <h6 class="mb-0 small">Etkinlik Resmi Yazı Sayısı</h6>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                <input type="text" class="form-control" id="resmi_yazi_sayisi" name="resmi_yazi_sayisi" 
+                                                       placeholder="Varsa giriniz" value="{{ etkinlik.resmi_yazi_sayisi if etkinlik else '' }}">
+                                                <small class="form-text text-muted">** Varsa giriniz.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form butonları -->
+                    <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                        <a href="{{ url_for('etkinlik_kayit.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i>İptal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Kaydet
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Form doğrulama için Bootstrap validation
+    (function () {
+        'use strict'
+        
+        // Fetch all forms to apply validation
+        var forms = document.querySelectorAll('.needs-validation')
+        
+        // Loop over forms and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+{% endblock %}

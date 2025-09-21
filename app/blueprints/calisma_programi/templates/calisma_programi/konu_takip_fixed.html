@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% block title %}Konu Takibi - {{ ogrenci.ad }} {{ ogrenci.soyad }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Yeni Modern Tasarım Stili */
+    :root {
+        --primary-color: #4f46e5;
+        --primary-light: #6366f1;
+        --primary-dark: #4338ca;
+        --secondary-color: #10b981;
+        --secondary-light: #34d399;
+        --secondary-dark: #059669;
+        --warning-color: #f59e0b;
+        --warning-light: #fbbf24;
+        --warning-dark: #d97706;
+        --danger-color: #ef4444;
+        --text-dark: #1f2937;
+        --text-medium: #4b5563;
+        --text-light: #6b7280;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --border-radius: 0.5rem;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Konteyner ve düzen stilleri */
+    .konu-takip-container {
+        display: flex;
+        gap: 1.5rem;
+    }
+    
+    .sidebar {
+        width: 260px;
+        flex-shrink: 0;
+    }
+    
+    .main-content {
+        flex: 1;
+    }
+    
+    /* Responsive stilleri */
+    @media (max-width: 992px) {
+        .konu-takip-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+        }
+    }
+    
+    /* Modern filtre butonları */
+    .modern-filter-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: var(--text-medium);
+        background-color: white;
+        border: 1px solid var(--gray-300);
+        transition: all 0.2s;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .modern-filter-btn:hover {
+        background-color: var(--gray-50);
+        color: var(--text-dark);
+        border-color: var(--gray-400);
+        text-decoration: none;
+    }
+    
+    .modern-filter-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-dark);
+    }
+    
+    .modern-filter-btn i {
+        margin-right: 0.35rem;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{% with active_tab='konu_takip' %}
+    {% include 'student_tabs.html' %}
+{% endwith %}
+
+<!-- Modern Konu Takibi -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-tasks me-2"></i>
+                <span>KONU TAKİBİ</span>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('calisma_programi.haftalik_plan', ogrenci_id=ogrenci.id) }}" class="modern-action-btn me-2" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                    <i class="fas fa-calendar-week"></i> Haftalık Plan
+                </a>
+                <a href="{{ url_for('rapor_yonetimi.ilerleme_raporu_pdf', ogrenci_id=ogrenci.id) }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" target="_blank">
+                    <i class="fas fa-file-pdf"></i> İlerleme Raporu
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel">
+        <!-- Değişkenler -->
+        {% set tamamlanan_count = 0 %}
+        {% set toplam_konular = 0 %}
+        {% set cozulen_sorular = 0 %}
+        {% set dogru_sorular = 0 %}
+
+        {% for ders_id, ders_bilgi in ders_konulari.items() %}
+            {% for konu_bilgi in ders_bilgi.konular %}
+                {% set toplam_konular = toplam_konular + 1 %}
+                {% if konu_bilgi.takip.tamamlandi %}
+                    {% set tamamlanan_count = tamamlanan_count + 1 %}
+                {% endif %}
+                {% set cozulen_sorular = cozulen_sorular + (konu_bilgi.takip.cozulen_soru or 0) %}
+                {% set dogru_sorular = dogru_sorular + (konu_bilgi.takip.dogru_soru or 0) %}
+            {% endfor %}
+        {% endfor %}
+
+        <!-- Durum Özeti -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="border p-3 rounded h-100">
+                    <div class="d-flex mb-2">
+                        <div class="p-2 me-2 rounded bg-light">
+                            <i class="fas fa-book-reader text-primary"></i>
+                        </div>
+                        <div class="small text-muted fw-bold mt-1">TAMAMLANAN KONULAR</div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="h2 fw-bold text-primary mb-0">{{ tamamlanan_count }}/{{ toplam_konular }}</div>
+                        <div class="small text-muted">{{ (tamamlanan_count / toplam_konular * 100) if toplam_konular > 0 else 0 | round }}% Tamamlandı</div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (tamamlanan_count / toplam_konular * 100) if toplam_konular > 0 else 0 }}%;"
+                             aria-valuenow="{{ tamamlanan_count }}" aria-valuemin="0" aria-valuemax="{{ toplam_konular }}"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="border p-3 rounded h-100">
+                    <div class="d-flex mb-2">
+                        <div class="p-2 me-2 rounded bg-light">
+                            <i class="fas fa-check-square text-primary"></i>
+                        </div>
+                        <div class="small text-muted fw-bold mt-1">ÇÖZÜLEN SORULAR</div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="h2 fw-bold text-primary mb-0">{{ cozulen_sorular }}</div>
+                        <div class="small text-muted">Toplam soru</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="border p-3 rounded h-100">
+                    <div class="d-flex mb-2">
+                        <div class="p-2 me-2 rounded bg-light">
+                            <i class="fas fa-award text-primary"></i>
+                        </div>
+                        <div class="small text-muted fw-bold mt-1">DOĞRU CEVAPLAR</div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="h2 fw-bold text-primary mb-0">{{ dogru_sorular }}</div>
+                        <div class="small text-muted">{{ (dogru_sorular / cozulen_sorular * 100) if cozulen_sorular > 0 else 0 | round }}% Başarı</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 mb-3">
+            <div class="border p-3 rounded">
+                <div class="d-flex mb-2">
+                    <div class="p-2 me-2 rounded bg-light">
+                        <i class="fas fa-book-open text-primary"></i>
+                    </div>
+                    <div class="small text-muted fw-bold mt-1">DERSLER</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-end">
+                    <div class="h3 fw-bold text-primary mb-0">{{ ders_konulari|length }}</div>
+                    <div class="small text-muted">{{ dersler|length }} ders programa dahil edilmiş</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ders Listesi ve Filtreler -->
+        <div class="bg-white p-3 border rounded mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="fw-bold text-primary">
+                    <i class="fas fa-filter me-1"></i> FİLTRELEME
+                </div>
+                <div class="d-flex">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted" style="font-size: 0.8rem;"></i>
+                        </span>
+                        <input type="text" id="courseSearch" class="form-control form-control-sm border-start-0" placeholder="Ders ara...">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hızlı Filtreler -->
+            <div class="mb-3">
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, durum=secili_durum) }}" 
+                       class="modern-filter-btn {% if not secili_ders_id %}active{% endif %}">
+                        <i class="fas fa-layer-group"></i> Tüm Dersler
+                    </a>
+                    
+                    {% for ders in dersler[:5] %}
+                    {% set ders_konular = ders_konulari.get(ders.id, {'konular': []}) %}
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=ders.id, durum=secili_durum) }}" 
+                       class="modern-filter-btn {% if secili_ders_id == ders.id %}active{% endif %}" 
+                       title="{{ ders.ad }}">
+                        <i class="fas fa-book"></i> {{ ders.ad }}
+                    </a>
+                    {% endfor %}
+                    
+                    {% if dersler|length > 5 %}
+                    <div class="dropdown">
+                        <button class="modern-filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Diğer Dersler
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% for ders in dersler[5:] %}
+                            <li>
+                                <a class="dropdown-item {% if secili_ders_id == ders.id %}active{% endif %}" 
+                                   href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=ders.id, durum=secili_durum) }}">
+                                    {{ ders.ad }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Durum Filtreleri -->
+            <div class="mt-3">
+                <div class="fw-bold text-muted small mb-2">DURUM FİLTRESİ:</div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=secili_ders_id) }}" 
+                       class="modern-filter-btn {% if not secili_durum %}active{% endif %}">
+                        <i class="fas fa-th-list"></i> Tüm Konular
+                    </a>
+                    
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=secili_ders_id, durum='tamamlanan') }}" 
+                       class="modern-filter-btn {% if secili_durum == 'tamamlanan' %}active{% endif %}">
+                        <i class="fas fa-check-circle"></i> Tamamlananlar
+                    </a>
+                    
+                    <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id, ders_id=secili_ders_id, durum='tamamlanmayan') }}" 
+                       class="modern-filter-btn {% if secili_durum == 'tamamlanmayan' %}active{% endif %}">
+                        <i class="fas fa-hourglass-half"></i> Devam Edenler
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Konu Listesi -->
+        <form id="konuTakipForm" method="post">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="fw-bold">
+                    <i class="fas fa-list-alt me-1"></i> 
+                    {% if secili_ders_id %}
+                        {{ dersler|selectattr('id', 'eq', secili_ders_id)|first|attr('ad') }}
+                    {% else %}
+                        TÜM DERSLER - KONU LİSTESİ
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex align-items-center">
+                    <div class="input-group input-group-sm me-2">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted" style="font-size: 0.8rem;"></i>
+                        </span>
+                        <input type="text" id="topicSearch" class="form-control form-control-sm border-start-0" 
+                               placeholder="Konu ara...">
+                    </div>
+                    
+                    <select id="sortTopics" class="form-select form-select-sm" style="width: auto;">
+                        <option value="number">Sıra No</option>
+                        <option value="name">Konu Adı</option>
+                        <option value="status">Durum</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Her bir ders için konu listesi -->
+            {% for ders_id, ders_bilgi in ders_konulari.items() %}
+                {% if ders_bilgi.konular %}
+                <div class="ders-konu-grup mb-4">
+                    <div class="border-bottom mb-3 pb-2">
+                        <h5 class="mb-0">
+                            <i class="fas fa-book text-primary me-2"></i> {{ ders_bilgi.ders.ad }}
+                        </h5>
+                    </div>
+                    
+                    <div class="row topic-list" id="topicList-{{ ders_id }}">
+                        {% for konu_bilgi in ders_bilgi.konular %}
+                        {% set konu = konu_bilgi.konu %}
+                        {% set takip = konu_bilgi.takip %}
+                        
+                        <div class="col-md-6 col-lg-4 mb-3 topic-item" 
+                             data-topic-name="{{ konu.ad.lower() }}" 
+                             data-completed="{{ 'true' if takip.tamamlandi else 'false' }}">
+                            
+                            <div class="card h-100 {% if takip.tamamlandi %}border-success{% endif %}">
+                                <div class="card-header d-flex justify-content-between align-items-center {% if takip.tamamlandi %}bg-success bg-opacity-10{% endif %}">
+                                    <span class="badge bg-secondary">#{{ konu.sira }}</span>
+                                    <span class="badge {% if takip.tamamlandi %}bg-success{% else %}bg-warning{% endif %}">
+                                        {% if takip.tamamlandi %}
+                                            <i class="fas fa-check-circle me-1"></i> Tamamlandı
+                                        {% else %}
+                                            <i class="fas fa-clock me-1"></i> Devam Ediyor
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ konu.ad }}</h6>
+                                    
+                                    <div class="form-check mb-2 mt-3">
+                                        <input class="form-check-input" type="checkbox" 
+                                               name="konu_{{ konu.id }}_tamamlandi" 
+                                               id="tamamlandi_{{ konu.id }}" 
+                                               {% if takip.tamamlandi %}checked{% endif %}>
+                                        <label class="form-check-label" for="tamamlandi_{{ konu.id }}">
+                                            Konu tamamlandı
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="cozulen_{{ konu.id }}" class="form-label small text-muted">Çözülen Soru</label>
+                                                <input type="number" class="form-control form-control-sm" 
+                                                       id="cozulen_{{ konu.id }}" 
+                                                       name="konu_{{ konu.id }}_cozulen_soru" 
+                                                       value="{{ takip.cozulen_soru or 0 }}" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="dogru_{{ konu.id }}" class="form-label small text-muted">Doğru Soru</label>
+                                                <input type="number" class="form-control form-control-sm" 
+                                                       id="dogru_{{ konu.id }}" 
+                                                       name="konu_{{ konu.id }}_dogru_soru" 
+                                                       value="{{ takip.dogru_soru or 0 }}" min="0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Kaydet Butonu -->
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i> Tüm Değişiklikleri Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for Filtering and Sorting -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ders filtreleme
+    const courseSearch = document.getElementById('courseSearch');
+    if (courseSearch) {
+        courseSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.ders-konu-grup').forEach(group => {
+                const dersTitle = group.querySelector('h5').textContent.toLowerCase();
+                if (dersTitle.includes(searchTerm)) {
+                    group.style.display = '';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Konu arama
+    const topicSearch = document.getElementById('topicSearch');
+    if (topicSearch) {
+        topicSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.topic-item').forEach(item => {
+                const topicName = item.getAttribute('data-topic-name');
+                if (topicName.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Sıralama
+    const sortTopics = document.getElementById('sortTopics');
+    if (sortTopics) {
+        sortTopics.addEventListener('change', function() {
+            const sortValue = this.value;
+            
+            document.querySelectorAll('.topic-list').forEach(list => {
+                const items = Array.from(list.querySelectorAll('.topic-item'));
+                
+                items.sort((a, b) => {
+                    if (sortValue === 'name') {
+                        const nameA = a.getAttribute('data-topic-name');
+                        const nameB = b.getAttribute('data-topic-name');
+                        return nameA.localeCompare(nameB);
+                    } else if (sortValue === 'status') {
+                        const statusA = a.getAttribute('data-completed') === 'true' ? 1 : 0;
+                        const statusB = b.getAttribute('data-completed') === 'true' ? 1 : 0;
+                        return statusB - statusA; // Tamamlananlar önce
+                    } else {
+                        // Sıra numarasına göre
+                        const numA = parseInt(a.querySelector('.badge').textContent.replace('#', ''));
+                        const numB = parseInt(b.querySelector('.badge').textContent.replace('#', ''));
+                        return numA - numB;
+                    }
+                });
+                
+                // Yeniden DOM'a ekle
+                items.forEach(item => list.appendChild(item));
+            });
+        });
+    }
+    
+    // Çözülen ve doğru soru validasyonu
+    document.querySelectorAll('input[name^="konu_"][name$="_cozulen_soru"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const konuId = this.id.replace('cozulen_', '');
+            const dogruInput = document.getElementById(`dogru_${konuId}`);
+            
+            // Doğru soru, çözülen sorudan fazla olamaz
+            if (parseInt(dogruInput.value) > parseInt(this.value)) {
+                dogruInput.value = this.value;
+            }
+            
+            // Doğru soru inputunun max değerini ayarla
+            dogruInput.setAttribute('max', this.value);
+        });
+    });
+    
+    // Doğru soru validasyonu
+    document.querySelectorAll('input[name^="konu_"][name$="_dogru_soru"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const konuId = this.id.replace('dogru_', '');
+            const cozulenInput = document.getElementById(`cozulen_${konuId}`);
+            
+            // Doğru soru, çözülen sorudan fazla olamaz
+            if (parseInt(this.value) > parseInt(cozulenInput.value)) {
+                this.value = cozulenInput.value;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

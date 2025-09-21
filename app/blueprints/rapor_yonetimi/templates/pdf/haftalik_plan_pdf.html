@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        @page {
+            margin: 1cm;
+            size: portrait;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        h1 {
+            font-size: 18px;
+            color: #4169e1;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        h2 {
+            font-size: 14px;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            page-break-after: avoid;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .ogrenci-bilgi {
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        
+        .not {
+            margin-bottom: 15px;
+            padding: 6px;
+            color: #666;
+            font-style: italic;
+            border-left: 3px solid #4169e1;
+            background-color: #f9f9f9;
+            font-size: 10px;
+        }
+        
+        .gun-baslik {
+            background-color: #eaeaea;
+            padding: 4px 8px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            page-break-inside: avoid;
+        }
+        
+        .schedule-table th, 
+        .schedule-table td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: center;
+            font-size: 10px;
+        }
+        
+        .schedule-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .ders-renk-0 { background-color: rgba(65, 105, 225, 0.2); }
+        .ders-renk-1 { background-color: rgba(60, 179, 113, 0.2); }
+        .ders-renk-2 { background-color: rgba(255, 127, 80, 0.2); }
+        .ders-renk-3 { background-color: rgba(147, 112, 219, 0.2); }
+        .ders-renk-4 { background-color: rgba(255, 99, 71, 0.2); }
+        .ders-renk-5 { background-color: rgba(32, 178, 170, 0.2); }
+        .ders-renk-6 { background-color: rgba(255, 215, 0, 0.2); }
+        .ders-renk-7 { background-color: rgba(220, 20, 60, 0.2); }
+        .ders-renk-8 { background-color: rgba(0, 128, 128, 0.2); }
+        .ders-renk-9 { background-color: rgba(128, 0, 128, 0.2); }
+        
+        .row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-bottom: 10px;
+            page-break-inside: avoid;
+        }
+        
+        .column {
+            flex: 0 0 48%;
+            margin-right: 2%;
+            margin-bottom: 10px;
+        }
+        
+        .column:nth-child(2n) {
+            margin-right: 0;
+        }
+        
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 8px;
+            color: #666;
+            font-style: italic;
+            font-size: 9px;
+        }
+        
+        .page-footer {
+            text-align: center;
+            font-size: 9px;
+            margin-top: 15px;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>{{ title }}</h1>
+    </div>
+    
+    <div class="ogrenci-bilgi">
+        <strong>Öğrenci:</strong> {{ ogrenci.ad }} {{ ogrenci.soyad }} &nbsp;|&nbsp;
+        <strong>Numara:</strong> {{ ogrenci.numara }} &nbsp;|&nbsp;
+        <strong>Sınıf:</strong> {{ ogrenci.sinif }}
+    </div>
+    
+    <div class="not">
+        <em>Not: Bu program, öğrencinin verimli ders çalışması için düzenlenmiştir. İhtiyaca göre güncellemeler yapılabilir.</em>
+    </div>
+    
+    {% for i in range(0, 7, 2) %}
+    <div class="row">
+        {% for j in range(i, i+2) %}
+            {% if j < 7 %}
+            <div class="column">
+                <div class="card">
+                    <div class="gun-baslik">{{ gunler[j] }}</div>
+                    
+                    {% if program[j] %}
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th width="40%">Saat</th>
+                                <th>Ders</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for blok in program[j] %}
+                            <tr class="ders-renk-{{ loop.index % 10 }}">
+                                <td>{{ blok.baslangic }}-{{ blok.bitis }}</td>
+                                <td>{{ blok.ders_adi }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-message">Bu gün için planlanmış ders bulunmamaktadır.</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+    
+    <div class="page-footer">
+        Reberlik Servisi Yönetim Sistemi &copy; 2023 | Oluşturulma Tarihi: {{ now.strftime('%d.%m.%Y') }}
+    </div>
+</body>
+</html>

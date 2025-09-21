@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}{% if konu %}Konu Düzenle{% else %}Yeni Konu Ekle{% endif %} - {{ ders.ad }}{% endblock %}
+
+{% block content %}
+<!-- Ders bilgileri üst kart -->
+{% set ders_renk = 'primary' %}
+{% set ders_ikon = 'book' %}
+{% set ders_tip = '' %}
+
+{% if 'TYT' in ders.ad %}
+    {% set ders_renk = 'info' %}
+    {% set ders_ikon = 'check-circle' %}
+    {% set ders_tip = 'TYT' %}
+{% elif 'AYT' in ders.ad %}
+    {% set ders_renk = 'success' %}
+    {% set ders_ikon = 'star' %}
+    {% set ders_tip = 'AYT' %}
+{% elif 'YDT' in ders.ad or 'Dil' in ders.ad or 'İngilizce' in ders.ad or 'Almanca' in ders.ad or 'Fransızca' in ders.ad %}
+    {% set ders_renk = 'warning' %}
+    {% set ders_ikon = 'globe' %}
+    {% set ders_tip = 'YDT' %}
+{% endif %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Header Kart -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-white d-flex align-items-center p-4 border-0">
+                <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-3 p-3 me-3">
+                    {% if konu %}
+                    <i class="fas fa-edit fs-4 text-{{ ders_renk }}"></i>
+                    {% else %}
+                    <i class="fas fa-plus fs-4 text-{{ ders_renk }}"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title mb-0 fw-bold">
+                            {% if konu %}Konu Düzenle{% else %}Yeni Konu Ekle{% endif %}
+                        </h4>
+                        {% if ders_tip %}
+                        <span class="badge bg-{{ ders_renk }} bg-opacity-10 text-{{ ders_renk }} rounded-pill px-3 py-2 ms-2">{{ ders_tip }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted small mb-0 mt-1">{{ ders.ad }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Kart -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-4">
+                <!-- Açıklama Alert -->
+                <div class="alert alert-{{ ders_renk }} bg-opacity-10 border-0 rounded-4 mb-4">
+                    <div class="d-flex">
+                        <i class="fas fa-lightbulb fs-4 me-3 text-{{ ders_renk }}"></i>
+                        <div>
+                            <h6 class="fw-bold mb-2">Konu Bilgileri</h6>
+                            <p class="mb-0">
+                                {% if konu %}
+                                Konu bilgilerini güncellemek için aşağıdaki alanları doldurunuz. Tüm alanların doldurulması zorunludur.
+                                {% else %}
+                                Yeni konu eklemek için aşağıdaki alanları doldurunuz. Konu adı ve tahmini çalışma süresi bilgileri zorunludur.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form -->
+                <form method="post" class="needs-validation" novalidate>
+                    <div class="mb-4">
+                        <label for="ad" class="form-label fw-medium">Konu Adı <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0">
+                                <i class="fas fa-bookmark text-{{ ders_renk }}"></i>
+                            </span>
+                            <input type="text" class="form-control border-0" id="ad" name="ad" value="{{ konu.ad if konu else '' }}" required placeholder="Örn: Oran ve Orantı">
+                        </div>
+                        <div class="invalid-feedback">
+                            Lütfen konu adını girin.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="tahmini_sure" class="form-label fw-medium">Tahmini Çalışma Süresi (dakika) <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0">
+                                <i class="fas fa-clock text-{{ ders_renk }}"></i>
+                            </span>
+                            <input type="number" class="form-control border-0" id="tahmini_sure" name="tahmini_sure" value="{{ konu.tahmini_sure if konu else '' }}" min="1" required placeholder="Dakika cinsinden süre">
+                        </div>
+                        <div class="invalid-feedback">
+                            Lütfen geçerli bir süre girin.
+                        </div>
+                        <div class="form-text small text-muted mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Öğrencinin bu konuyu çalışması için gereken tahmini süre (dakika cinsinden).
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="{{ url_for('ders_konu_yonetimi.detay', ders_id=ders.id) }}" class="btn btn-outline-secondary rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-arrow-left me-2"></i> Geri Dön
+                        </a>
+                        <button type="submit" class="btn btn-{{ ders_renk }} rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-save me-2"></i> 
+                            {% if konu %}Değişiklikleri Kaydet{% else %}Konuyu Ekle{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Icon wrapper stillemesi */
+    .icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        transition: all 0.2s ease;
+    }
+    
+    /* Yuvarlatılmış köşeler */
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+    
+    /* Input focus stillemesi */
+    .form-control:focus {
+        box-shadow: none;
+        border-color: rgba(var(--bs-primary-rgb), 0.5);
+    }
+</style>
+{% endblock %}

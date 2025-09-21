@@ -1,0 +1,549 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ rapor.baslik }} - Detay{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}">Rapor Yönetimi</a></li>
+<li class="breadcrumb-item active">Rapor Detayı</li>
+{% endblock %}
+
+{% block content %}
+<!-- Modern Rapor Detayı -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-file-alt me-2"></i>
+                <span>FAALİYET RAPORU DETAYI</span>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('rapor_yonetimi.rapor_pdf', rapor_id=rapor.id) }}" class="modern-action-btn me-2">
+                    <i class="fas fa-file-pdf me-1"></i> PDF İndir
+                </a>
+                <a href="{{ url_for('rapor_yonetimi.rapor_excel', rapor_id=rapor.id) }}" class="modern-action-btn me-2">
+                    <i class="fas fa-file-excel me-1"></i> Excel İndir
+                </a>
+                <a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}" class="modern-action-btn">
+                    <i class="fas fa-arrow-left me-1"></i> Raporlar Listesine Dön
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+
+    <!-- Rapor Başlık ve Genel Bilgiler -->
+    <div class="border rounded mb-4">
+        <div class="bg-primary text-white p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="fw-bold">
+                    <i class="fas fa-clipboard-list me-2"></i> {{ rapor.rapor_tipi|title|upper }} RAPORU
+                </div>
+                <div>
+                    {% if rapor.durum == 'taslak' %}
+                    <span class="badge bg-warning text-dark py-1 px-2 rounded-1">Taslak</span>
+                    {% elif rapor.durum == 'tamamlandı' %}
+                    <span class="badge bg-success py-1 px-2 rounded-1">Tamamlandı</span>
+                    {% elif rapor.durum == 'onaylandı' %}
+                    <span class="badge bg-primary py-1 px-2 rounded-1 border border-white">Onaylandı</span>
+                    {% elif rapor.durum == 'mebbis_aktarıldı' %}
+                    <span class="badge bg-info py-1 px-2 rounded-1">MEBBİS'e Aktarıldı</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="p-3">
+            <div class="row align-items-center">
+                <div class="col-md-10">
+                    <h4 class="fw-bold text-primary mb-2">{{ rapor.baslik }}</h4>
+                    <p class="mb-0">
+                        <span class="badge bg-primary me-2 py-1 px-2 rounded-1">{{ rapor.donem }}</span>
+                        <span class="text-muted">
+                            <i class="fas fa-calendar-alt me-1"></i> 
+                            {{ rapor.olusturma_tarihi.strftime('%d.%m.%Y %H:%M') }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-2 text-end">
+                    <i class="fas fa-clipboard-list fa-3x text-primary opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Özet Veriler -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="border rounded h-100">
+                <div class="bg-primary text-white p-2">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-users me-2"></i>
+                        <div class="fw-bold small">TOPLAM ÖĞRENCİ</div>
+                    </div>
+                </div>
+                <div class="p-3 text-center">
+                    <h3 class="mb-0 fw-bold text-primary">
+                        {{ rapor_verileri.ozet_veriler.toplam_ogrenci }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="border rounded h-100">
+                <div class="bg-success text-white p-2">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-comments me-2"></i>
+                        <div class="fw-bold small">TOPLAM GÖRÜŞME</div>
+                    </div>
+                </div>
+                <div class="p-3 text-center">
+                    <h3 class="mb-0 fw-bold text-success">
+                        {{ rapor_verileri.ozet_veriler.toplam_gorusme }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="border rounded h-100">
+                <div class="bg-info text-white p-2">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user me-2"></i>
+                        <div class="fw-bold small">BİREYSEL GÖRÜŞMELER</div>
+                    </div>
+                </div>
+                <div class="p-3 text-center">
+                    <h3 class="mb-0 fw-bold text-info">
+                        {{ rapor_verileri.ozet_veriler.bireysel_gorusme }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="border rounded h-100">
+                <div class="bg-warning text-dark p-2">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        <div class="fw-bold small">TAMAMLANAN ANKETLER</div>
+                    </div>
+                </div>
+                <div class="p-3 text-center">
+                    <h3 class="mb-0 fw-bold text-warning">
+                        {{ rapor_verileri.ozet_veriler.tamamlanan_anketler }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İçerik Kartları -->
+    <div class="row g-4">
+        <!-- Sol Kolon -->
+        <div class="col-lg-6">
+            <!-- Aylık İstatistikler -->
+            <div class="border rounded mb-4">
+                <div class="bg-primary text-white p-2">
+                    <div class="fw-bold">
+                        <i class="fas fa-chart-line me-2"></i> AYLIK GÖRÜŞME İSTATİSTİKLERİ
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div style="height: 300px;">
+                        <canvas id="aylikGrafikChart"></canvas>
+                    </div>
+                    <hr>
+                    <div class="table-responsive mt-3">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Ay</th>
+                                    <th>Toplam</th>
+                                    <th>Bireysel</th>
+                                    <th>Veli</th>
+                                    <th>Grup</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ay_veri in rapor_verileri.aylik_istatistikler %}
+                                <tr>
+                                    <td>{{ ay_veri.ay_adi }}</td>
+                                    <td>{{ ay_veri.toplam }}</td>
+                                    <td>{{ ay_veri.bireysel }}</td>
+                                    <td>{{ ay_veri.veli }}</td>
+                                    <td>{{ ay_veri.grup }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Görüşme Türleri Dağılımı -->
+            <div class="border rounded mb-4">
+                <div class="bg-primary text-white p-2">
+                    <div class="fw-bold">
+                        <i class="fas fa-chart-pie me-2"></i> GÖRÜŞME TÜRLERİ DAĞILIMI
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div style="height: 300px;" class="pt-4 pb-2">
+                        <canvas id="gorusmeTurleriChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small d-flex justify-content-center gap-3">
+                        <span>
+                            <i class="fas fa-circle text-primary me-1"></i> Bireysel
+                        </span>
+                        <span>
+                            <i class="fas fa-circle text-success me-1"></i> Veli
+                        </span>
+                        <span>
+                            <i class="fas fa-circle text-info me-1"></i> Grup
+                        </span>
+                        <span>
+                            <i class="fas fa-circle text-warning me-1"></i> Personel
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Kolon -->
+        <div class="col-lg-6">
+            <!-- Çalışma Alanları Dağılımı -->
+            <div class="border rounded mb-4">
+                <div class="bg-primary text-white p-2">
+                    <div class="fw-bold">
+                        <i class="fas fa-sitemap me-2"></i> ÇALIŞMA ALANLARI DAĞILIMI
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div style="height: 300px;">
+                        <canvas id="calismaAlanlariChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sınıf Bazlı Analizler -->
+            <div class="border rounded mb-4">
+                <div class="bg-primary text-white p-2">
+                    <div class="fw-bold">
+                        <i class="fas fa-users-class me-2"></i> SINIF BAZLI ANALİZLER
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div style="height: 250px;">
+                        <canvas id="sinifAnalizChart"></canvas>
+                    </div>
+                    <hr>
+                    <div class="table-responsive mt-3">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Sınıf</th>
+                                    <th>Öğrenci Sayısı</th>
+                                    <th>Görüşme Sayısı</th>
+                                    <th>Öğr. Başına</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sinif_veri in rapor_verileri.sinif_dagilimi %}
+                                <tr>
+                                    <td>{{ sinif_veri.sinif }}</td>
+                                    <td>{{ sinif_veri.ogrenci_sayisi }}</td>
+                                    <td>{{ sinif_veri.gorusme_sayisi }}</td>
+                                    <td>
+                                        {% if sinif_veri.ogrenci_sayisi > 0 %}
+                                        {{ "%.2f"|format(sinif_veri.gorusme_sayisi / sinif_veri.ogrenci_sayisi) }}
+                                        {% else %}
+                                        0
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Değerlendirme ve Yorumlar -->
+    {% if rapor.yorum %}
+    <div class="border rounded mb-4">
+        <div class="bg-primary text-white p-2">
+            <div class="fw-bold">
+                <i class="fas fa-comment-alt me-2"></i> DEĞERLENDİRME VE YORUMLAR
+            </div>
+        </div>
+        <div class="p-3">
+            {{ rapor.yorum|nl2br }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- MEBBİS Entegrasyonu -->
+    <div class="border rounded mb-4">
+        <div class="bg-primary text-white p-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="fw-bold">
+                    <i class="fas fa-university me-2"></i> MEBBİS ENTEGRASYON DURUMU
+                </div>
+                <div>
+                    {% if rapor.durum == 'taslak' %}
+                    <button class="modern-action-btn" id="raporOnaylaBtn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                        <i class="fas fa-check-circle me-1"></i> Raporu Tamamla
+                    </button>
+                    {% elif rapor.durum == 'tamamlandı' %}
+                    <button class="modern-action-btn" id="raporMebbisBtn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                        <i class="fas fa-upload me-1"></i> MEBBİS'e Aktar
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="p-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-1 fw-bold text-primary">İşlem Adımları</div>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="small fw-bold">1. Rapor Taslak Oluşturuldu</div>
+                            <span class="badge bg-success rounded-1 py-1 px-2"><i class="fas fa-check"></i></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="small fw-bold">2. Rapor Tamamlandı</div>
+                            {% if rapor.durum != 'taslak' %}
+                            <span class="badge bg-success rounded-1 py-1 px-2"><i class="fas fa-check"></i></span>
+                            {% else %}
+                            <span class="badge bg-secondary rounded-1 py-1 px-2"><i class="fas fa-minus"></i></span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="small fw-bold">3. Rapor Onaylandı</div>
+                            {% if rapor.durum == 'onaylandı' or rapor.durum == 'mebbis_aktarıldı' %}
+                            <span class="badge bg-success rounded-1 py-1 px-2"><i class="fas fa-check"></i></span>
+                            {% else %}
+                            <span class="badge bg-secondary rounded-1 py-1 px-2"><i class="fas fa-minus"></i></span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="small fw-bold">4. MEBBİS'e Aktarıldı</div>
+                            {% if rapor.durum == 'mebbis_aktarıldı' %}
+                            <span class="badge bg-success rounded-1 py-1 px-2"><i class="fas fa-check"></i></span>
+                            {% else %}
+                            <span class="badge bg-secondary rounded-1 py-1 px-2"><i class="fas fa-minus"></i></span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-1 fw-bold text-primary">MEBBİS Aktarım Bilgileri</div>
+                    <div class="border rounded p-3 bg-light h-100">
+                        {% if rapor.durum == 'mebbis_aktarıldı' %}
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-check-circle text-success fa-2x"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-success">MEBBİS'e Başarıyla Aktarıldı</div>
+                                <div class="small text-muted">Tüm veriler başarıyla E-Rehberlik sistemine aktarıldı.</div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="border rounded p-2">
+                                    <div class="small text-muted">Aktarım Tarihi</div>
+                                    <div class="fw-bold">{{ rapor.mebbis_aktarim_tarihi.strftime('%d.%m.%Y %H:%M') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-2">
+                                    <div class="small text-muted">Referans No</div>
+                                    <div class="fw-bold">{{ rapor.mebbis_referans_no }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-info-circle text-primary fa-2x"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Henüz MEBBİS'e Aktarılmadı</div>
+                                <p class="mb-0 small">Raporu tamamladıktan sonra "MEBBİS'e Aktar" butonunu kullanarak aktarım yapabilirsiniz.</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_script %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Aylık Görüşme İstatistikleri Grafiği
+    const aylikGrafikCtx = document.getElementById('aylikGrafikChart').getContext('2d');
+    const aylikData = {
+        labels: [{% for ay_veri in rapor_verileri.aylik_istatistikler %}'{{ ay_veri.ay_adi }}',{% endfor %}],
+        datasets: [
+            {
+                label: 'Toplam Görüşme',
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                data: [{% for ay_veri in rapor_verileri.aylik_istatistikler %}{{ ay_veri.toplam }},{% endfor %}],
+                fill: true
+            }
+        ]
+    };
+    
+    const aylikChart = new Chart(aylikGrafikCtx, {
+        type: 'line',
+        data: aylikData,
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Görüşme Türleri Dağılımı Grafiği
+    const gorusmeTurleriCtx = document.getElementById('gorusmeTurleriChart').getContext('2d');
+    const gorusmeTurleriData = {
+        labels: ['Bireysel', 'Veli', 'Grup', 'Personel'],
+        datasets: [{
+            data: [
+                {{ rapor_verileri.ozet_veriler.bireysel_gorusme }},
+                {{ rapor_verileri.ozet_veriler.veli_gorusmesi }},
+                {{ rapor_verileri.ozet_veriler.grup_gorusmesi }},
+                {{ rapor_verileri.ozet_veriler.personel_gorusmesi }}
+            ],
+            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a'],
+            hoverBorderColor: "rgba(234, 236, 244, 1)",
+        }]
+    };
+    
+    const gorusmeTurleriChart = new Chart(gorusmeTurleriCtx, {
+        type: 'doughnut',
+        data: gorusmeTurleriData,
+        options: {
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Çalışma Alanları Grafiği
+    const calismaAlanlariCtx = document.getElementById('calismaAlanlariChart').getContext('2d');
+    const calismaAlanlariData = {
+        labels: [{% for alan_veri in rapor_verileri.calisma_alanlari %}'{{ alan_veri.alan }}',{% endfor %}],
+        datasets: [{
+            label: 'Görüşme Sayısı',
+            backgroundColor: 'rgba(28, 200, 138, 0.8)',
+            borderColor: 'rgba(28, 200, 138, 1)',
+            borderWidth: 1,
+            data: [{% for alan_veri in rapor_verileri.calisma_alanlari %}{{ alan_veri.gorusme_sayisi }},{% endfor %}]
+        }]
+    };
+    
+    const calismaAlanlariChart = new Chart(calismaAlanlariCtx, {
+        type: 'bar',
+        data: calismaAlanlariData,
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Sınıf Analiz Grafiği
+    const sinifAnalizCtx = document.getElementById('sinifAnalizChart').getContext('2d');
+    const sinifAnalizData = {
+        labels: [{% for sinif_veri in rapor_verileri.sinif_dagilimi %}'{{ sinif_veri.sinif }}',{% endfor %}],
+        datasets: [
+            {
+                label: 'Öğrenci Sayısı',
+                backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                borderWidth: 1,
+                data: [{% for sinif_veri in rapor_verileri.sinif_dagilimi %}{{ sinif_veri.ogrenci_sayisi }},{% endfor %}]
+            },
+            {
+                label: 'Görüşme Sayısı',
+                backgroundColor: 'rgba(246, 194, 62, 0.8)',
+                borderColor: 'rgba(246, 194, 62, 1)',
+                borderWidth: 1,
+                data: [{% for sinif_veri in rapor_verileri.sinif_dagilimi %}{{ sinif_veri.gorusme_sayisi }},{% endfor %}]
+            }
+        ]
+    };
+    
+    const sinifAnalizChart = new Chart(sinifAnalizCtx, {
+        type: 'bar',
+        data: sinifAnalizData,
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Rapor Durum Güncelleme İşlevleri
+    const raporOnaylaBtn = document.getElementById('raporOnaylaBtn');
+    if (raporOnaylaBtn) {
+        raporOnaylaBtn.addEventListener('click', function() {
+            if (confirm('Raporu tamamlamak istediğinize emin misiniz?')) {
+                // AJAX çağrısı ile rapor durumunu güncelleme işlevi buraya eklenebilir
+                alert('Rapor durumu güncellendi. Sayfa yenilenecek.');
+                window.location.reload();
+            }
+        });
+    }
+
+    const raporMebbisBtn = document.getElementById('raporMebbisBtn');
+    if (raporMebbisBtn) {
+        raporMebbisBtn.addEventListener('click', function() {
+            if (confirm('Raporu MEBBİS sistemine aktarmak istediğinize emin misiniz?')) {
+                // AJAX çağrısı ile MEBBİS aktarım işlevi buraya eklenebilir
+                alert('Rapor MEBBİS sistemine aktarıldı. Sayfa yenilenecek.');
+                window.location.reload();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

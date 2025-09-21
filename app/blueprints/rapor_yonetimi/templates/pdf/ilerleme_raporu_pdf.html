@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        @page {
+            margin: 1cm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        h1 {
+            font-size: 20px;
+            color: #4169e1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 16px;
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 14px;
+            color: #4169e1;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .ogrenci-bilgi {
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .rapor-tarih {
+            text-align: right;
+            font-style: italic;
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
+        
+        .bolum {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        
+        .bolum-baslik {
+            background-color: #eaeaea;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .ilerleme-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .ilerleme-table th, 
+        .ilerleme-table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: left;
+            font-size: 11px;
+        }
+        
+        .ilerleme-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .deneme-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .deneme-table th, 
+        .deneme-table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: left;
+            font-size: 11px;
+        }
+        
+        .deneme-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 15px;
+            background-color: #f2f2f2;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4169e1;
+        }
+        
+        .ozet-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .ozet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .ozet-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .konu-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        
+        .konu-table th, 
+        .konu-table td {
+            border: 1px solid #ddd;
+            padding: 4px;
+        }
+        
+        .konu-table th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        
+        .tamamlandi {
+            background-color: rgba(60, 179, 113, 0.2);
+        }
+        
+        .page-footer {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        
+        .info-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4169e1;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        
+        .warning-card {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        
+        .highlight-box {
+            background-color: #e7f3ff;
+            border: 1px solid #cce5ff;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .metric-card {
+            background-color: white;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4169e1;
+            margin: 5px 0;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .haftalik-sure-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
+        
+        .haftalik-sure-table th, 
+        .haftalik-sure-table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+        }
+        
+        .haftalik-sure-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>{{ title }}</h1>
+    </div>
+    
+    <div class="ogrenci-bilgi">
+        <strong>Öğrenci:</strong> {{ ogrenci.ad }} {{ ogrenci.soyad }} &nbsp;|&nbsp;
+        <strong>Numara:</strong> {{ ogrenci.numara }} &nbsp;|&nbsp;
+        <strong>Sınıf:</strong> {{ ogrenci.sinif }}
+    </div>
+    
+    <div class="rapor-tarih">
+        Rapor Tarihi: {{ tarih }}
+    </div>
+    
+    <!-- Toplam Çalışma Zamanı Özeti -->
+    <div class="bolum">
+        <h2>Çalışma Durumu Özeti</h2>
+        
+        {% set toplam_haftalik_sure = 0 %}
+        {% for veri in ilerleme_verileri %}
+            {% set toplam_haftalik_sure = toplam_haftalik_sure + veri.haftalik_sure %}
+        {% endfor %}
+        
+        <div class="ozet-grid-3">
+            <div class="metric-card">
+                <div class="metric-label">Haftalık Çalışma</div>
+                <div class="metric-value">{{ (toplam_haftalik_sure // 60) }}s {{ toplam_haftalik_sure % 60 }}dk</div>
+                <div class="metric-label">Toplam Süre</div>
+            </div>
+            
+            <div class="metric-card">
+                {% set toplam_tamamlanan = 0 %}
+                {% set toplam_konular = 0 %}
+                {% for veri in ilerleme_verileri %}
+                    {% set toplam_tamamlanan = toplam_tamamlanan + veri.tamamlanan %}
+                    {% set toplam_konular = toplam_konular + veri.konu_sayisi %}
+                {% endfor %}
+                
+                <div class="metric-label">Tamamlanan Konular</div>
+                <div class="metric-value">{{ toplam_tamamlanan }} / {{ toplam_konular }}</div>
+                <div class="metric-label">
+                    {% if toplam_konular > 0 %}
+                        %{{ "%.1f"|format(toplam_tamamlanan / toplam_konular * 100) }} tamamlandı
+                    {% else %}
+                        %0 tamamlandı
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Tahmini Tamamlanma</div>
+                <div class="metric-value">
+                    {% if en_gec_tamamlanma_tarihi %}
+                        {{ en_gec_tamamlanma_tarihi.strftime('%d.%m.%Y') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="metric-label">
+                    {% if en_gec_tamamlanma_tarihi %}
+                        {{ (en_gec_tamamlanma_tarihi - now).days }} gün kaldı
+                    {% else %}
+                        Hesaplanamadı
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {% if en_gec_tamamlanma_tarihi %}
+            <div class="info-card">
+                <strong>Bilgi:</strong> Mevcut çalışma temponuza göre, tüm derslerinizi 
+                <strong>{{ en_gec_tamamlanma_tarihi.strftime('%d %B %Y') }}</strong> 
+                tarihinde bitirmiş olacaksınız. Bu, haftalık çalışma programınıza ve kalan konuların tahmini sürelerine dayanarak hesaplanmıştır.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Ders İlerlemeleri ve Tahmini Bitiş Süreleri -->
+    <div class="bolum">
+        <h2>Ders İlerlemeleri ve Tahmini Bitiş Tarihleri</h2>
+        
+        <table class="ilerleme-table">
+            <thead>
+                <tr>
+                    <th>Ders</th>
+                    <th>İlerleme Durumu</th>
+                    <th>Haftalık Çalışma</th>
+                    <th>Tahmini Bitiş</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for veri in ilerleme_verileri %}
+                <tr>
+                    <td style="font-weight: bold;">{{ veri.ders.ad }}</td>
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <div style="flex-grow: 1; margin-right: 10px;">
+                                <div class="progress-bar-container" style="height: 12px;">
+                                    <div class="progress-bar" style="width: {{ veri.ilerleme.tamamlama_yuzdesi }}%;"></div>
+                                </div>
+                            </div>
+                            <div style="width: 60px; text-align: right;">
+                                {{ veri.tamamlanan }}/{{ veri.konu_sayisi }}
+                                ({{ "%.1f"|format(veri.ilerleme.tamamlama_yuzdesi) }}%)
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                        {% if veri.haftalik_sure > 0 %}
+                            {{ veri.haftalik_sure // 60 }}s {{ veri.haftalik_sure % 60 }}dk
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        {% if veri.ilerleme.tahmini_bitis_tarihi %}
+                            {{ veri.ilerleme.tahmini_bitis_tarihi.strftime('%d.%m.%Y') }}
+                            <div style="font-size: 9px; color: #666;">
+                                {{ (veri.ilerleme.tahmini_bitis_tarihi - now).days }} gün kaldı
+                            </div>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="warning-card">
+            <strong>Not:</strong> Tahmini bitiş tarihleri, mevcut haftalık ders programınıza ve tamamlanmayan konuların süre tahminlerine göre hesaplanmıştır. 
+            Daha hızlı ilerlemek için haftalık çalışma sürelerinizi artırabilirsiniz.
+        </div>
+    </div>
+    
+    <!-- Haftalık Çalışma Programı Özeti -->
+    <div class="bolum">
+        <h2>Haftalık Çalışma Programı Özeti</h2>
+        
+        {% set haftalik_program = {} %}
+        {% for veri in ilerleme_verileri %}
+            {% if veri.haftalik_sure > 0 %}
+                {% set _ = haftalik_program.update({veri.ders.id: {
+                    'ders': veri.ders,
+                    'sure': veri.haftalik_sure
+                }}) %}
+            {% endif %}
+        {% endfor %}
+        
+        {% if haftalik_program %}
+            <table class="haftalik-sure-table">
+                <thead>
+                    <tr>
+                        <th width="40%">Ders</th>
+                        <th width="20%">Haftalık Süre</th>
+                        <th width="20%">Yüzde</th>
+                        <th width="20%">Kalan Konu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ders_id, veri in haftalik_program.items() %}
+                        {% set ilerleme_veri = ilerleme_verileri|selectattr('ders.id', 'eq', ders_id)|first %}
+                        <tr>
+                            <td>{{ veri.ders.ad }}</td>
+                            <td>{{ veri.sure // 60 }}s {{ veri.sure % 60 }}dk</td>
+                            <td>{% if toplam_haftalik_sure > 0 %}{{ "%.1f"|format(veri.sure / toplam_haftalik_sure * 100) }}{% else %}0.0{% endif %}%</td>
+                            <td>{{ ilerleme_veri.kalan }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr style="font-weight: bold; background-color: #f9f9f9;">
+                        <td>Toplam</td>
+                        <td>{{ toplam_haftalik_sure // 60 }}s {{ toplam_haftalik_sure % 60 }}dk</td>
+                        <td>100%</td>
+                        <td>{{ toplam_konular - toplam_tamamlanan }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center; font-style: italic; color: #666;">Henüz haftalık ders programı tanımlanmamış.</p>
+        {% endif %}
+    </div>
+    
+    <!-- Konu Takip Bölümü -->
+    <div class="bolum">
+        <h2>Ders Bazlı Konu Takibi</h2>
+        
+        {% for veri in ilerleme_verileri %}
+            <h3>{{ veri.ders.ad }}</h3>
+            
+            {% if veri.konu_sayisi > 0 %}
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <div style="flex-grow: 1; margin-right: 10px;">
+                        <div class="progress-bar-container" style="height: 10px;">
+                            <div class="progress-bar" style="width: {{ veri.ilerleme.tamamlama_yuzdesi }}%;"></div>
+                        </div>
+                    </div>
+                    <div style="text-align: right; white-space: nowrap;">
+                        {{ veri.tamamlanan }}/{{ veri.konu_sayisi }} konu tamamlandı
+                        ({{ "%.1f"|format(veri.ilerleme.tamamlama_yuzdesi) }}%)
+                    </div>
+                </div>
+                
+                {% if konu_takipleri|length > 0 %}
+                    {% set filtered_takipler = [] %}
+                    {% for takip in konu_takipleri if takip.ders_id == veri.ders.id %}
+                        {% set _ = filtered_takipler.append(takip) %}
+                    {% endfor %}
+                {% endif %}
+                
+                {% if filtered_takipler|default([])|length > 0 %}
+                    <table class="konu-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">Sıra</th>
+                                <th width="40%">Konu</th>
+                                <th width="10%">Süre</th>
+                                <th width="10%">Durum</th>
+                                <th width="12%">Çözülen Soru</th>
+                                <th width="13%">Doğru Oranı</th>
+                                <th width="10%">Son Çalışma</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for takip in filtered_takipler %}
+                                <tr class="{% if takip.tamamlandi %}tamamlandi{% endif %}">
+                                    <td style="text-align: center;">{{ takip.konu.sira if takip.konu and takip.konu.sira else '-' }}</td>
+                                    <td>{{ takip.konu.ad if takip.konu else '-' }}</td>
+                                    <td style="text-align: center;">{{ takip.konu.tahmini_sure if takip.konu else 0 }} dk</td>
+                                    <td style="text-align: center;">
+                                        {% if takip.tamamlandi %}
+                                            <strong style="color: green;">✓</strong>
+                                        {% else %}
+                                            <span style="color: orange;">◯</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center;">{{ takip.cozulen_soru if takip.cozulen_soru else 0 }}</td>
+                                    <td style="text-align: center;">
+                                        {% if takip.cozulen_soru and takip.cozulen_soru > 0 and takip.dogru_soru %}
+                                            {{ "%.1f"|format(takip.dogru_soru / takip.cozulen_soru * 100) }}%
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center; font-size: 9px;">
+                                        {% if takip.son_calisma_tarihi %}
+                                            {{ takip.son_calisma_tarihi.strftime('%d.%m.%Y') }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p style="text-align: center; font-style: italic; color: #666;">Henüz konu takip bilgisi bulunmamaktadır.</p>
+                {% endif %}
+            {% else %}
+                <p style="text-align: center; font-style: italic; color: #666;">Bu ders için tanımlanmış konu bulunmamaktadır.</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+    <!-- Performans Trendleri -->
+    <div class="bolum">
+        <h2>Performans Trendleri ve Analiz</h2>
+        
+        <!-- Çalışma Süreleri Özeti -->
+        <div class="metric-card">
+            <div class="metric-label">Ortalama Günlük Çalışma</div>
+            <div class="metric-value">{{ (toplam_haftalik_sure / 7) | round | int }}dk</div>
+            <div class="metric-label">Haftalık Toplam: {{ toplam_haftalik_sure }}dk</div>
+        </div>
+        
+        <!-- Verimlilik Analizi -->
+        {% if deneme_sonuclari and deneme_sonuclari|length > 1 %}
+        <div class="highlight-box">
+            <h3>TYT Puan Gelişimi</h3>
+            <div style="margin: 10px 0;">
+                {% set ilk_tyt = deneme_sonuclari[-1].puan_tyt %}
+                {% set son_tyt = deneme_sonuclari[0].puan_tyt %}
+                {% set degisim = son_tyt - ilk_tyt %}
+                <strong>İlk TYT:</strong> {{ "%.2f"|format(ilk_tyt) }} →
+                <strong>Son TYT:</strong> {{ "%.2f"|format(son_tyt) }}
+                <span style="color: {{ 'green' if degisim > 0 else 'red' }}">
+                    ({{ "+" if degisim > 0 else "" }}{{ "%.2f"|format(degisim) }})
+                </span>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Çalışma Etkinliği -->
+        <div class="ozet-box">
+            <h3>Çalışma Etkinliği</h3>
+            <table class="ilerleme-table">
+                <thead>
+                    <tr>
+                        <th>Metrik</th>
+                        <th>Değer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Toplam Konu</td>
+                        <td>{{ toplam_konular }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tamamlanan Konu</td>
+                        <td>{{ toplam_tamamlanan }}</td>
+                    </tr>
+                    <tr>
+                        <td>Haftalık İlerleme Hızı</td>
+                        <td>{{ "%.1f"|format(toplam_tamamlanan / ((now - ogrenci.kayit_tarihi).days/7)) if ogrenci.kayit_tarihi else "-" }} konu/hafta</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Deneme Sonuçları Bölümü -->
+    <div class="bolum">
+        <h2>Deneme Sınavı Sonuçları</h2>
+        
+        {% if deneme_sonuclari %}
+            <table class="deneme-table">
+                <thead>
+                    <tr>
+                        <th>Deneme Adı</th>
+                        <th>Tarih</th>
+                        <th>TYT Puanı</th>
+                        <th>SAY</th>
+                        <th>EA</th>
+                        <th>SÖZ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sonuc in deneme_sonuclari %}
+                    <tr>
+                        <td>{{ sonuc.deneme_adi }}</td>
+                        <td style="text-align: center;">{{ sonuc.tarih.strftime('%d.%m.%Y') }}</td>
+                        <td style="text-align: center;">{{ "%.2f"|format(sonuc.puan_tyt) }}</td>
+                        <td style="text-align: center;">{{ "%.2f"|format(sonuc.puan_say) }}</td>
+                        <td style="text-align: center;">{{ "%.2f"|format(sonuc.puan_ea) }}</td>
+                        <td style="text-align: center;">{{ "%.2f"|format(sonuc.puan_soz) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% if deneme_sonuclari|length > 1 %}
+                <h3>TYT Net Analizi (Son Deneme)</h3>
+                {% set son_deneme = deneme_sonuclari[0] %}
+                <table class="deneme-table">
+                    <thead>
+                        <tr>
+                            <th>Türkçe</th>
+                            <th>Sosyal</th>
+                            <th>Matematik</th>
+                            <th>Fen</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">{{ "%.2f"|format(son_deneme.net_tyt_turkce) }}</td>
+                            <td style="text-align: center;">{{ "%.2f"|format(son_deneme.net_tyt_sosyal) }}</td>
+                            <td style="text-align: center;">{{ "%.2f"|format(son_deneme.net_tyt_matematik) }}</td>
+                            <td style="text-align: center;">{{ "%.2f"|format(son_deneme.net_tyt_fen) }}</td>
+                            <td style="text-align: center;">{{ "%.2f"|format(son_deneme.tyt_toplam_net()) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endif %}
+        {% else %}
+            <p style="text-align: center; font-style: italic; color: #666;">Henüz deneme sınavı sonucu bulunmamaktadır.</p>
+        {% endif %}
+    </div>
+    
+    <div class="page-footer">
+        YKS Çalışma Programı Takip Sistemi &copy; 2025 | Oluşturulma Tarihi: {{ tarih }}
+    </div>
+</body>
+</html>

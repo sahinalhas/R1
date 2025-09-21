@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Excel ile Toplu Ders ve Konu Ekleme - YKS Çalışma Programı Takip Sistemi{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-file-excel me-2 text-success"></i> Excel ile Toplu Ders ve Konu Ekleme
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p><i class="fas fa-info-circle me-1"></i> <strong>Bilgi:</strong> Excel dosyanız aşağıdaki formatta olmalıdır:</p>
+                    <ul>
+                        <li>A1, C1, E1... hücrelerinde ders adları olmalıdır</li>
+                        <li>A2, A3, A4... vb. hücrelerde konuların isimleri olmalıdır</li>
+                        <li>B2, B3, B4... vb. hücrelerde konuların süreleri dakika cinsinden olmalıdır</li>
+                        <li>Bir sonraki ders için C1, C2, C3... ve D2, D3, D4... şeklinde devam eder</li>
+                        <li>Derslerin isimlerinde TYT, AYT veya YDT geçerse bu grupta sınıflandırılırlar</li>
+                    </ul>
+                    <p><strong>Örnek Excel Yapısı:</strong></p>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
+                                <th>E</th>
+                                <th>F</th>
+                            </tr>
+                            <tr>
+                                <td><strong>TYT Matematik</strong></td>
+                                <td></td>
+                                <td><strong>TYT Fizik</strong></td>
+                                <td></td>
+                                <td><strong>AYT Edebiyat</strong></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Sayılar</td>
+                                <td>60</td>
+                                <td>Kuvvet</td>
+                                <td>45</td>
+                                <td>Şiir</td>
+                                <td>90</td>
+                            </tr>
+                            <tr>
+                                <td>Cebir</td>
+                                <td>90</td>
+                                <td>Hareket</td>
+                                <td>60</td>
+                                <td>Roman</td>
+                                <td>120</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+                    <div class="mb-3">
+                        <label for="excel_dosya" class="form-label">Excel Dosyası <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="excel_dosya" name="excel_dosya" accept=".xlsx,.xls" required>
+                        <div class="invalid-feedback">
+                            Lütfen bir Excel dosyası seçin.
+                        </div>
+                        <div class="form-text">Yalnızca .xlsx ve .xls uzantılı dosyalar kabul edilir.</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('ders_konu_yonetimi.lista') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-file-import me-1"></i> Excel Dosyasını Yükle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

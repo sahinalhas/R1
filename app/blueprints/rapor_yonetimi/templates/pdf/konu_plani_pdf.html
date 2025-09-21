@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        @page {
+            margin: 1cm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        h1 {
+            font-size: 20px;
+            color: #4169e1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 16px;
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .ogrenci-bilgi {
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .konu-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .konu-table th, 
+        .konu-table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: left;
+            font-size: 10px;
+        }
+        
+        .konu-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .konu-hucre {
+            min-height: 20px;
+            padding: 3px;
+        }
+        
+        .ders-renk-0 { background-color: rgba(65, 105, 225, 0.2); }
+        .ders-renk-1 { background-color: rgba(60, 179, 113, 0.2); }
+        .ders-renk-2 { background-color: rgba(255, 127, 80, 0.2); }
+        .ders-renk-3 { background-color: rgba(147, 112, 219, 0.2); }
+        .ders-renk-4 { background-color: rgba(255, 99, 71, 0.2); }
+        .ders-renk-5 { background-color: rgba(32, 178, 170, 0.2); }
+        .ders-renk-6 { background-color: rgba(255, 215, 0, 0.2); }
+        .ders-renk-7 { background-color: rgba(220, 20, 60, 0.2); }
+        .ders-renk-8 { background-color: rgba(0, 128, 128, 0.2); }
+        .ders-renk-9 { background-color: rgba(128, 0, 128, 0.2); }
+        
+        .gun-baslik {
+            background-color: #eaeaea;
+            padding: 5px 10px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 14px;
+            page-break-after: avoid;
+        }
+        
+        .page-footer {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>{{ title }}</h1>
+    </div>
+    
+    <div class="ogrenci-bilgi">
+        <strong>Öğrenci:</strong> {{ ogrenci.ad }} {{ ogrenci.soyad }} &nbsp;|&nbsp;
+        <strong>Numara:</strong> {{ ogrenci.numara }} &nbsp;|&nbsp;
+        <strong>Sınıf:</strong> {{ ogrenci.sinif }}
+    </div>
+    
+    <div class="not">
+        <em>Not: Bu plan, öğrencinin haftalık ders programına göre otomatik olarak oluşturulmuştur. Haftalık plan değiştirilirse konu planı da güncellenecektir.</em>
+    </div>
+    
+    {% for gun_index, gun_plani in konu_plani.items() %}
+    <div class="gun-baslik">{{ gunler[gun_index|int] }}</div>
+    
+    {% if gun_plani %}
+    <table class="konu-table">
+        <thead>
+            <tr>
+                <th width="15%">Saat</th>
+                <th width="20%">Ders</th>
+                <th>Konu</th>
+                <th width="15%">Süre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in gun_plani %}
+            <tr class="ders-renk-{{ loop.index % 10 }}">
+                <td style="text-align: center;">{{ plan.baslangic }} - {{ plan.bitis }}</td>
+                <td>{{ plan.ders_adi }}</td>
+                <td>{{ plan.konu_adi }}</td>
+                <td style="text-align: center;">{{ plan.sure }} dakika</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-message">Bu gün için planlanmış çalışma bulunmamaktadır.</div>
+    {% endif %}
+    {% endfor %}
+    
+    <div class="page-footer">
+        YKS Çalışma Programı Takip Sistemi &copy; 2023 | Oluşturulma Tarihi: {{ now.strftime('%d.%m.%Y') }}
+    </div>
+</body>
+</html>

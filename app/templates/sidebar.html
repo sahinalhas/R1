@@ -1,0 +1,125 @@
+<nav class="sidebar">
+    <!-- Mobil Kapatma Butonu -->
+    <div class="mobile-close-btn d-md-none">
+        <button type="button" class="btn-close close-sidebar" aria-label="Menüyü Kapat"></button>
+    </div>
+    <div class="sidebar-content">
+        <!-- Hoş Geldiniz Karşılama Bölümü -->
+        <div class="modern-welcome">
+            <div class="text-center py-3">
+                <i class="fas fa-user-circle modern-user-icon"></i>
+                <div class="modern-welcome-text">Hoş Geldiniz</div>
+                <div class="modern-welcome-help">Rehberlik Hizmetleri</div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <!-- Aktif öğrenci gösterimi artık tab bar'da yapılıyor -->
+            
+            <!-- Ana sayfa -->
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link {% if request.endpoint == 'ana_sayfa.index' and 'ogrenci_yonetimi.profil' not in request.endpoint and 'calisma_programi.' not in request.endpoint and 'deneme.' not in request.endpoint and 'rapor.' not in request.endpoint and 'ders_konu_yonetimi.' not in request.endpoint and 'ogrenci_yonetimi.liste' not in request.endpoint %}active{% endif %}" href="{{ url_for('ana_sayfa.index') }}">
+                    <i class="fas fa-home sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Ana Sayfa</span>
+                </a>
+            </li>
+            
+            <!-- Öğrenci yönetimi -->
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link {% if request.endpoint == 'ogrenci_yonetimi.liste' %}active{% endif %}" href="{{ url_for('ogrenci_yonetimi.liste') }}">
+                    <i class="fas fa-user-graduate sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Öğrenci Yönetimi</span>
+                </a>
+            </li>
+            
+            <!-- İlk kayıt formu -->
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link {% if 'ilk_kayit_formu.' in request.endpoint %}active{% endif %}" href="{{ url_for('ilk_kayit_formu.kayit_formu') }}">
+                    <i class="fas fa-clipboard sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">İlk Kayıt Formu</span>
+                </a>
+            </li>
+            
+            <!-- Görüşme defteri -->
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link {% if 'gorusme_defteri.' in request.endpoint %}active{% endif %}" href="{{ url_for('gorusme_defteri.index') }}">
+                    <i class="fas fa-comments sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Görüşme Defteri</span>
+                </a>
+            </li>
+            
+            <!-- Etkinlik kayıt -->
+            <li class="sidebar-nav-item">
+                <a href="{{ url_for('etkinlik_kayit.index') }}" class="sidebar-nav-link {% if 'etkinlik_kayit.' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-calendar-check sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Etkinlik Kayıt</span>
+                </a>
+            </li>
+            
+            <!-- Ders ve konu yönetimi -->
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link {% if 'ders_konu_yonetimi.' in request.endpoint and request.endpoint != 'ana_sayfa.index' and 'ogrenci_yonetimi.liste' not in request.endpoint %}active{% endif %}" href="{{ url_for('ders_konu_yonetimi.lista') }}">
+                    <i class="fas fa-book sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Ders ve Konu Yönetimi</span>
+                </a>
+            </li>
+            
+            <!-- Anket yönetimi -->
+            <li class="sidebar-nav-item">
+                <a href="{{ url_for('anket_yonetimi.index') }}" class="sidebar-nav-link {% if 'anket_yonetimi.' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-poll sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Anket Yönetimi</span>
+                </a>
+            </li>
+            
+            <!-- Gelişmiş raporlama -->
+            <li class="sidebar-nav-item">
+                <a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}" class="sidebar-nav-link {% if 'rapor_yonetimi.rapor_yonetimi_index' in request.endpoint or 'rapor_yonetimi.donemsel_rapor' in request.endpoint or 'rapor_yonetimi.istatistik_raporu' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-file-alt sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Gelişmiş Raporlama</span>
+                </a>
+            </li>
+            
+            <!-- Program parametreleri -->
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link {% if 'parametre_yonetimi.' in request.endpoint %}active{% endif %}" href="{{ url_for('parametre_yonetimi.index') }}">
+                    <i class="fas fa-cog sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Program Parametreleri</span>
+                </a>
+            </li>
+            
+            <!-- Yapay zeka asistanı -->
+            <li class="sidebar-nav-item">
+                <a href="{{ url_for('yapay_zeka_asistan.index') }}" class="sidebar-nav-link {% if 'yapay_zeka_asistan.' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-robot sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Yapay Zeka Asistanı</span>
+                </a>
+            </li>
+            
+            <!-- Öğrenci seçili değilse hızlı arama göster -->
+            {% if not get_aktif_ogrenci() %}
+            <li class="sidebar-nav-item search-container">
+                <div class="p-3">
+                    <form id="ogrenciHizliAramaForm" action="{{ url_for('ogrenci_yonetimi.hizli_ara') }}" method="GET" class="d-flex flex-column">
+                        <label for="ogrenciNo" class="form-label mb-2 modern-form-label">Öğrenci No ile Hızlı Geçiş</label>
+                        <div class="input-group">
+                            <input type="text" id="ogrenciNo" name="ogrenci_no" class="form-control modern-form-control" placeholder="Öğrenci No">
+                            <button type="submit" class="btn btn-primary modern-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <div class="sidebar-toggle" title="Kenar çubuğunu daralt/genişlet">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+</nav>
+
+<!-- Mobile Overlay -->
+<div class="mobile-overlay"></div>

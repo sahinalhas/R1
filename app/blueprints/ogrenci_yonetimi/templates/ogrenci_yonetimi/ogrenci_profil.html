@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ogrenci.ad }} {{ ogrenci.soyad }} - Öğrenci Profili{% endblock %}
+
+{% block content %}
+{% with active_tab='profil' %}
+    {% include 'student_tabs.html' %}
+{% endwith %}
+
+<!-- Öğrenci Profil İçeriği -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-id-card me-2"></i>
+            <span>ÖĞRENCİ PROFİLİ</span>
+        </div>
+    </div>
+    
+    <div class="modern-panel p-4">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="fas fa-user-circle text-primary me-2"></i>Kişisel Bilgiler</h5>
+                        <div class="mb-2">
+                            <span class="text-muted small">Öğrenci No:</span>
+                            <strong class="ms-2">{{ ogrenci.numara }}</strong>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted small">Ad Soyad:</span>
+                            <strong class="ms-2">{{ ogrenci.ad }} {{ ogrenci.soyad }}</strong>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted small">Sınıf:</span>
+                            <strong class="ms-2">{{ ogrenci.sinif }}</strong>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted small">Okul:</span>
+                            <strong class="ms-2">{{ ogrenci.okul }}</strong>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted small">Cinsiyet:</span>
+                            <strong class="ms-2">{{ ogrenci.cinsiyet }}</strong>
+                        </div>
+                        {% if ogrenci.telefon %}
+                        <div class="mb-2">
+                            <span class="text-muted small">Telefon:</span>
+                            <strong class="ms-2">{{ ogrenci.telefon }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if ogrenci.email %}
+                        <div class="mb-2">
+                            <span class="text-muted small">E-posta:</span>
+                            <strong class="ms-2">{{ ogrenci.email }}</strong>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="fas fa-graduation-cap text-primary me-2"></i>Akademik Bilgiler</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-subtitle mb-2 text-muted">YKS Hedef</h6>
+                                        <h5 class="card-title">{{ ogrenci.hedef or 'Belirtilmemiş' }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-subtitle mb-2 text-muted">Akademik Durum</h6>
+                                        <h5 class="card-title">{% if ogrenci.aktif %}Aktif{% else %}Pasif{% endif %}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <h6 class="mb-2">Notlar & Özel Durumlar:</h6>
+                            <p class="card-text border p-2 rounded bg-light">
+                                {{ ogrenci.notlar or 'Henüz not eklenmemiş.' }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('ogrenci_yonetimi.duzenle', ogrenci_id=ogrenci.id) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i> Düzenle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

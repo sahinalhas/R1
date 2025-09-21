@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Cevap Türleri{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('anket_yonetimi.index') }}">Anket Yönetimi</a></li>
+<li class="breadcrumb-item active">Cevap Türleri</li>
+{% endblock %}
+
+{% block content %}
+<!-- Cevap Türleri Başlık -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-list-ol me-2"></i>
+                <span>CEVAP TÜRLERİ</span>
+            </div>
+            <a href="{{ url_for('anket_yonetimi.index') }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                <i class="fas fa-arrow-left"></i> Anketlere Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <div class="row g-4">
+            <!-- Form Bölümü -->
+            <div class="col-md-4">
+                <div class="border rounded h-100">
+                    <div class="bg-primary text-white p-2">
+                        <div class="fw-bold"><i class="fas fa-plus-circle me-2"></i> YENİ CEVAP TÜRÜ EKLE</div>
+                    </div>
+                    <div class="p-3">
+                        <form action="{{ url_for('anket_yonetimi.cevap_turleri') }}" method="post">
+                            <div class="mb-3">
+                                <label for="tur_adi" class="form-label fw-bold text-primary">Tür Adı</label>
+                                <input type="text" class="form-control" id="tur_adi" name="tur_adi" 
+                                       placeholder="Örn: Çoktan Seçmeli, Açık Uçlu, Likert Ölçeği" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="aciklama" class="form-label fw-bold text-primary">Açıklama</label>
+                                <textarea class="form-control" id="aciklama" name="aciklama" 
+                                          rows="3" placeholder="Cevap türü hakkında açıklama (isteğe bağlı)"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="modern-action-btn">
+                                    <i class="fas fa-plus-circle"></i> Yeni Tür Ekle
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tablo Bölümü -->
+            <div class="col-md-8">
+                <div class="border rounded">
+                    <div class="bg-primary text-white p-2">
+                        <div class="fw-bold"><i class="fas fa-list me-2"></i> MEVCUT CEVAP TÜRLERİ</div>
+                    </div>
+                    <div class="p-3">
+                        {% if cevap_turleri %}
+                            <div class="table-responsive">
+                                <table class="modern-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tür Adı</th>
+                                            <th>Açıklama</th>
+                                            <th>Kullanım Sayısı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for tur in cevap_turleri %}
+                                        <tr>
+                                            <td class="fw-bold">{{ tur.tur_adi }}</td>
+                                            <td>{{ tur.aciklama or "Açıklama yok" }}</td>
+                                            <td>{{ tur.sorular|length }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-info-circle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold mb-1">Henüz hiç cevap türü tanımlanmamış</div>
+                                        <p class="mb-0">Yeni bir tür eklemek için formu kullanabilirsiniz.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="border p-3 mt-3 bg-light rounded">
+                            <div class="fw-bold text-primary mb-2"><i class="fas fa-lightbulb me-2"></i>Önerilen Cevap Türleri:</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="mb-0 ps-3">
+                                        <li><strong>Çoktan Seçmeli</strong> - Birden fazla seçenek arasından birini seçme</li>
+                                        <li><strong>Açık Uçlu</strong> - Serbest metin alanına cevap yazma</li>
+                                        <li><strong>Likert Ölçeği</strong> - 1'den 5'e kadar derecelendirme</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="mb-0 ps-3">
+                                        <li><strong>Evet/Hayır</strong> - İkili cevap seçeneği</li>
+                                        <li><strong>Sayısal Değer</strong> - Bir tam sayı değeri</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

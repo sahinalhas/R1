@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Anket Detayları: {{ anket.baslik }}{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('anket_yonetimi.index') }}">Anket Yönetimi</a></li>
+<li class="breadcrumb-item active">Anket Detayları</li>
+{% endblock %}
+
+{% block content %}
+<!-- Modern Anket Detay -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-poll-h me-2"></i>
+                <span>ANKET DETAYLARI: {{ anket.baslik|upper }}</span>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('anket_yonetimi.duzenle_anket', anket_id=anket.id) }}" class="modern-action-btn me-2" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                    <i class="fas fa-edit"></i> Anketi Düzenle
+                </a>
+                <a href="{{ url_for('anket_yonetimi.index') }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                    <i class="fas fa-arrow-left"></i> Anketlere Dön
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <div class="row g-4">
+            <!-- Anket Bilgileri -->
+            <div class="col-md-4">
+                <div class="border rounded mb-4">
+                    <div class="bg-primary text-white p-2">
+                        <div class="fw-bold"><i class="fas fa-info-circle me-2"></i> ANKET BİLGİLERİ</div>
+                    </div>
+                    <div class="p-3">
+                        <table class="table table-hover table-bordered">
+                            <tr>
+                                <th class="bg-light">Başlık:</th>
+                                <td class="fw-bold">{{ anket.baslik }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Tür:</th>
+                                <td>{{ anket.anket_turu.tur_adi }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Durum:</th>
+                                <td>
+                                    {% if anket.aktif %}
+                                        <span class="badge bg-success rounded-1 py-1 px-2">Aktif</span>
+                                    {% else %}
+                                        <span class="badge bg-danger rounded-1 py-1 px-2">Pasif</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Oluşturulma:</th>
+                                <td>{{ anket.olusturma_tarihi|format_date }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Son Güncelleme:</th>
+                                <td>{{ anket.guncelleme_tarihi|format_date }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Soru Sayısı:</th>
+                                <td>{{ sorular|length }}</td>
+                            </tr>
+                        </table>
+                        
+                        {% if anket.aciklama %}
+                            <div class="bg-light p-3 rounded mt-2">
+                                <div class="fw-bold text-primary mb-2"><i class="fas fa-align-left me-1"></i> Açıklama:</div>
+                                <div class="text-muted small">{{ anket.aciklama }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="border rounded mb-4">
+                    <div class="bg-primary text-white p-2">
+                        <div class="fw-bold"><i class="fas fa-tasks me-2"></i> İŞLEMLER</div>
+                    </div>
+                    <div class="p-3">
+                        <div class="d-grid gap-2">
+                            {% if anket.aktif %}
+                                <a href="{{ url_for('anket_yonetimi.ogrencilere_ata', anket_id=anket.id) }}" class="modern-action-btn">
+                                    <i class="fas fa-user-plus me-1"></i> Öğrencilere Ata
+                                </a>
+                                <a href="{{ url_for('anket_yonetimi.toplu_cevap_yukle', anket_id=anket.id) }}" class="modern-action-btn">
+                                    <i class="fas fa-file-upload me-1"></i> Toplu Cevap Yükle
+                                </a>
+                                <a href="{{ url_for('anket_yonetimi.sablon_indir', anket_id=anket.id) }}" class="modern-action-btn">
+                                    <i class="fas fa-file-download me-1"></i> Cevap Şablonu İndir
+                                </a>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i> Anketi öğrencilere atamak veya cevap yüklemek için önce düzenleme sayfasından anketi aktifleştirin.
+                                </div>
+                            {% endif %}
+                            <a href="{{ url_for('anket_yonetimi.anket_sonuclari', anket_id=anket.id) }}" class="modern-action-btn">
+                                <i class="fas fa-chart-bar me-1"></i> Sonuçları Gör
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sorular Listesi -->
+            <div class="col-md-8">
+                <div class="border rounded">
+                    <div class="bg-primary text-white p-2">
+                        <div class="fw-bold"><i class="fas fa-question-circle me-2"></i> ANKET SORULARI</div>
+                    </div>
+                    <div class="p-3">
+                        {% if sorular %}
+                            <div class="accordion" id="questionAccordion">
+                                {% for soru in sorular %}
+                                    <div class="accordion-item border-0 mb-2">
+                                        <h2 class="accordion-header" id="heading{{ soru.id }}">
+                                            <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" 
+                                                    data-bs-target="#collapse{{ soru.id }}" aria-expanded="false" 
+                                                    aria-controls="collapse{{ soru.id }}">
+                                                <div class="d-flex align-items-center w-100">
+                                                    <span class="me-2 text-primary fw-bold">{{ soru.soru_sirasi }}.</span>
+                                                    <span class="flex-grow-1">{{ soru.soru_metni }}</span>
+                                                    <span class="badge bg-primary rounded-1 py-1 px-2 ms-2">{{ soru.cevap_turu.tur_adi }}</span>
+                                                    {% if soru.zorunlu %}
+                                                        <span class="badge bg-danger rounded-1 py-1 px-2 ms-2">Zorunlu</span>
+                                                    {% endif %}
+                                                </div>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse{{ soru.id }}" class="accordion-collapse collapse" 
+                                             aria-labelledby="heading{{ soru.id }}" data-bs-parent="#questionAccordion">
+                                            <div class="accordion-body border border-top-0">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <span class="badge bg-light text-dark p-2 w-100 text-start">
+                                                                <i class="fas fa-info-circle me-1 text-primary"></i>
+                                                                <strong>Soru Tipi:</strong> {{ soru.cevap_turu.tur_adi }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <span class="badge bg-light text-dark p-2 w-100 text-start">
+                                                                <i class="fas fa-check-circle me-1 text-primary"></i>
+                                                                <strong>Cevaplama:</strong>
+                                                                {% if soru.zorunlu %}
+                                                                    <span class="text-danger">Zorunlu</span>
+                                                                {% else %}
+                                                                    <span class="text-secondary">İsteğe Bağlı</span>
+                                                                {% endif %}
+                                                            </span>
+                                                        </div>
+                                                        {% if soru.ters_puanlama %}
+                                                            <div class="mb-3">
+                                                                <span class="badge bg-warning text-dark p-2 w-100 text-start">
+                                                                    <i class="fas fa-exchange-alt me-1"></i>
+                                                                    <strong>Dikkat:</strong> Bu soru ters puanlanacak
+                                                                </span>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if soru.cevap_secenekleri %}
+                                                        <div class="col-md-6">
+                                                            <div class="bg-light p-3 rounded h-100">
+                                                                <div class="fw-bold text-primary mb-2">Cevap Seçenekleri:</div>
+                                                                <ol class="mb-0 ps-3">
+                                                                    {% for secenek in soru.secenekler_listesi %}
+                                                                        <li>{{ secenek }}</li>
+                                                                    {% endfor %}
+                                                                </ol>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-info-circle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold mb-1">Bu ankete henüz soru eklenmemiş</div>
+                                        <p class="mb-0">Düzenleme sayfasından ankete soru ekleyebilirsiniz.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Okul Bilgileri{% endblock %}
+
+{% block content %}
+<!-- Modern Okul Bilgileri -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-school me-2"></i>
+                <span>OKUL BİLGİLERİ</span>
+            </div>
+            <a href="{{ url_for('parametre_yonetimi.index') }}" class="modern-action-btn">
+                <i class="fas fa-arrow-left me-1"></i> Ayarlar Sayfasına Dön
+            </a>
+        </div>
+    </div>
+    
+    <div class="modern-panel">
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Ana Form -->
+            <div class="modern-card mb-4">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-school me-2 text-primary"></i>
+                        <span class="text-primary">Kurum Bilgileri</span>
+                    </div>
+                </div>
+                
+                <div class="modern-card-body">
+                    <form method="POST" action="{{ url_for('parametre_yonetimi.okul_bilgileri') }}" class="needs-validation" novalidate>
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label for="okul_adi" class="modern-form-label">Okul Adı</label>
+                                <input type="text" class="form-control modern-form-control" id="okul_adi" name="okul_adi" 
+                                       value="{{ okul_bilgisi.okul_adi if okul_bilgisi else '' }}" 
+                                       placeholder="Okul adını giriniz" required>
+                                <div class="invalid-feedback">Lütfen okul adını giriniz.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="il" class="modern-form-label">İl</label>
+                                <input type="text" class="form-control modern-form-control" id="il" name="il" 
+                                       value="{{ okul_bilgisi.il if okul_bilgisi else '' }}" 
+                                       placeholder="İl adını giriniz" required>
+                                <div class="invalid-feedback">Lütfen il adını giriniz.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="ilce" class="modern-form-label">İlçe</label>
+                                <input type="text" class="form-control modern-form-control" id="ilce" name="ilce" 
+                                       value="{{ okul_bilgisi.ilce if okul_bilgisi else '' }}" 
+                                       placeholder="İlçe adını giriniz" required>
+                                <div class="invalid-feedback">Lütfen ilçe adını giriniz.</div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="mb-4">
+                            <label for="danisman_adi" class="modern-form-label">Danışman Adı</label>
+                            <input type="text" class="form-control modern-form-control" id="danisman_adi" name="danisman_adi" 
+                                   value="{{ okul_bilgisi.danisman_adi if okul_bilgisi else '' }}" 
+                                   placeholder="Danışman adını giriniz" required>
+                            <div class="invalid-feedback">Lütfen danışman adını giriniz.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ url_for('parametre_yonetimi.index') }}" class="modern-action-btn" style="background-color: #6c757d;">
+                                <i class="fas fa-times me-1"></i>İptal
+                            </a>
+                            <button type="submit" class="modern-action-btn">
+                                <i class="fas fa-save me-1"></i>Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Bilgi ve İpuçları -->
+            <div class="modern-card mb-4">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        <span class="text-primary">Bilgi ve Yardım</span>
+                    </div>
+                </div>
+                <div class="modern-card-body">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-lightbulb fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="fw-bold mb-1">Neden Önemli?</p>
+                                <p class="mb-0">Bu bilgiler, raporlarda ve ana sayfa üzerinde kurumunuzu tanımlamak için kullanılır. Eksiksiz ve doğru bilgiler girmeniz önerilir.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex mb-3 pb-3 border-bottom">
+                        <div class="modern-icon-circle bg-primary text-white me-3 flex-shrink-0">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Kurum Bilgileri</h6>
+                            <p class="text-muted mb-0">Okulunuzun tam adını, bulunduğu ili ve ilçeyi giriniz.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex">
+                        <div class="modern-icon-circle bg-primary text-white me-3 flex-shrink-0">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Danışman Bilgileri</h6>
+                            <p class="text-muted mb-0">Rehberlik hizmetini sürdüren eğitimcinin tam adını giriniz.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if okul_bilgisi %}
+            <div class="modern-card">
+                <div class="modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-history me-2 text-primary"></i>
+                        <span class="text-primary">Mevcut Bilgiler</span>
+                    </div>
+                </div>
+                <div class="modern-card-body">
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="text-muted mb-1 small fw-bold">Okul Adı</div>
+                        <div class="fs-6">{{ okul_bilgisi.okul_adi }}</div>
+                    </div>
+                    
+                    <div class="row mb-3 pb-3 border-bottom">
+                        <div class="col-6">
+                            <div class="text-muted mb-1 small fw-bold">İl</div>
+                            <div class="fs-6">{{ okul_bilgisi.il }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted mb-1 small fw-bold">İlçe</div>
+                            <div class="fs-6">{{ okul_bilgisi.ilce }}</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-muted mb-1 small fw-bold">Danışman</div>
+                        <div class="fs-6">{{ okul_bilgisi.danisman_adi }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.modern-icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form doğrulama
+    const form = document.querySelector('.needs-validation');
+    
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        form.classList.add('was-validated');
+    });
+    
+    // Formdaki ilk alana odaklan
+    document.getElementById('okul_adi').focus();
+});
+</script>
+{% endblock %}

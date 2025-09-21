@@ -1,0 +1,974 @@
+/* YKS Çalışma Programı - Birleştirilmiş Modern Stil Dosyası */
+
+:root {
+  --primary-color: #4f46e5;
+  --primary-light: #ede9fe;
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --warning-color: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger-color: #ef4444;
+  --danger-light: #fee2e2;
+  --info-color: #3b82f6;
+  --info-light: #dbeafe;
+  --gray-light: #f3f4f6;
+  --gray-mid: #e5e7eb;
+  --gray-dark: #9ca3af;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+  --border-color: #e5e7eb;
+  --bg-white: #ffffff; 
+  --bg-light: #f3f4f6;
+  --border-radius: 0.5rem;
+}
+
+/* Dark Mode Variables */
+.dark-mode {
+  --primary-light: rgba(79, 70, 229, 0.2);
+  --success-light: rgba(16, 185, 129, 0.2);
+  --warning-light: rgba(245, 158, 11, 0.2);
+  --danger-light: rgba(239, 68, 68, 0.2);
+  --info-light: rgba(59, 130, 246, 0.2);
+  --gray-light: #1f2937;
+  --gray-mid: #374151;
+  --gray-dark: #6b7280;
+  --text-dark: #f9fafb;
+  --text-light: #d1d5db;
+}
+
+/* Main Container */
+.registration-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.3rem;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--gray-mid);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-title i {
+  font-size: 1.25rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.action-btn i {
+  font-size: 0.875rem;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.action-btn.primary {
+  background-color: var(--primary-color);
+}
+
+.action-btn.primary:hover {
+  background-color: #4338ca;
+}
+
+.action-btn.success {
+  background-color: var(--success-color);
+}
+
+.action-btn.success:hover {
+  background-color: #059669;
+}
+
+.action-btn.info {
+  background-color: var(--info-color);
+}
+
+.action-btn.info:hover {
+  background-color: #2563eb;
+}
+
+.action-btn.danger {
+  background-color: var(--danger-color);
+}
+
+.action-btn.danger:hover {
+  background-color: #dc2626;
+}
+
+/* Cards Grid Layout */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-mid);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-title i {
+  font-size: 1rem;
+}
+
+.card-body {
+  padding: 0.5rem;
+}
+
+.card-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--gray-mid);
+  background-color: var(--gray-light);
+}
+
+/* Card Variations */
+.card.primary .card-header {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.card.success .card-header {
+  background-color: var(--success-light);
+  color: var(--success-color);
+}
+
+.card.warning .card-header {
+  background-color: var(--warning-light);
+  color: var(--warning-color);
+}
+
+.card.danger .card-header {
+  background-color: var(--danger-light);
+  color: var(--danger-color);
+}
+
+.card.info .card-header {
+  background-color: var(--info-light);
+  color: var(--info-color);
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 0.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+  color: var(--text-dark);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius-md);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+/* Grid Layout */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.col-12 {
+  width: 100%;
+}
+
+.col-6 {
+  width: calc(50% - 0.5rem);
+}
+
+.col-4 {
+  width: calc(33.333% - 0.667rem);
+}
+
+.col-8 {
+  width: calc(66.666% - 0.333rem);
+}
+
+/* Search Box */
+.search-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--gray-dark);
+  font-size: 0.9rem;
+  z-index: 2;
+}
+
+.student-search-input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--gray-mid);
+  background-color: var(--gray-light);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.student-search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  background-color: white;
+}
+
+.search-spinner {
+  position: absolute;
+  right: 0.75rem;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.search-results {
+  position: absolute;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  margin-top: 0.25rem;
+}
+
+.search-result-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-light);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.search-result-item:hover {
+  background-color: var(--gray-light);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-number {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-right: 0.5rem;
+}
+
+.search-result-name {
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.search-result-class {
+  float: right;
+  padding: 0.15rem 0.4rem;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-radius: var(--radius-md);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Selected Students */
+.no-students-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: var(--gray-light);
+  border-radius: var(--radius-lg);
+  color: var(--text-light);
+  text-align: center;
+}
+
+.no-students-message i {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+.no-students-message p {
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.selected-students {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.student-card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+  border-left: 2px solid var(--primary-color);
+}
+
+.student-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.student-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.student-card-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.student-card-info {
+  flex: 1;
+}
+
+.student-card-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-card-number {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.student-card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.student-card-class {
+  padding: 0.15rem 0.4rem;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-radius: var(--radius-md);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.student-card-gender {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.student-card-remove {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: none;
+  border: none;
+  color: var(--gray-dark);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0.25rem;
+  border-radius: var(--radius-full);
+}
+
+.student-card-remove:hover {
+  color: var(--danger-color);
+  background-color: var(--danger-light);
+}
+
+/* Time Controls */
+.time-control-container {
+  background-color: var(--gray-light);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+}
+
+.time-control-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.time-control-row:last-child {
+  margin-bottom: 0;
+}
+
+.time-control-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  background-color: white;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  overflow-x: hidden; /* Kaydırma çubuğunu kaldırmak için auto yerine hidden olarak değiştirildi */
+}
+
+.time-control-group span:first-of-type {
+  min-width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.time-input-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.time-control-input {
+  width: 5rem;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius-md);
+  padding: 0.35rem 0.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+  padding-right: 18px; /* Yer açmak için */
+}
+
+/* Ders bilgisi input alanı daha geniş olsun */
+#gelisDers, #gidisDers {
+  width: 10rem; /* Daraltılmış input alanı - kaydırma çubuğunu engellemek için */
+}
+
+/* Yukarı-aşağı kontrol butonları */
+.time-spinner {
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.time-spinner-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 50%;
+  background-color: var(--gray-light);
+  border: none;
+  font-size: 8px;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.time-spinner-btn:first-child {
+  border-top-right-radius: calc(var(--radius-md) - 1px);
+}
+
+.time-spinner-btn:last-child {
+  border-bottom-right-radius: calc(var(--radius-md) - 1px);
+}
+
+.time-spinner-btn:hover {
+  background-color: var(--gray-mid);
+}
+
+.time-spinner-btn:active {
+  background-color: var(--primary-light);
+}
+
+.time-control-button {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-control-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.time-control-button.arrival {
+  background-color: var(--success-light);
+  color: var(--success-color);
+}
+
+.time-control-button.arrival:hover {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.time-control-button.departure {
+  background-color: var(--danger-light);
+  color: var(--danger-color);
+}
+
+.time-control-button.departure:hover {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+/* Textarea */
+.textarea-container {
+  position: relative;
+}
+
+.textarea-control {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius-md);
+  min-height: 60px;
+  resize: vertical;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.textarea-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+.textarea-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  padding: 0.25rem 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .col-6, .col-4, .col-8 {
+    width: 100%;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .action-buttons {
+    width: 100%;
+  }
+}
+
+/* Dark Mode Adaptations */
+.dark-mode .card {
+  background-color: var(--gray-light);
+}
+
+.dark-mode .search-results {
+  background-color: var(--gray-light);
+  border: 1px solid var(--gray-mid);
+}
+
+.dark-mode .student-card {
+  background-color: var(--gray-light);
+}
+
+.dark-mode .time-control-group {
+  background-color: var(--gray-mid);
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select,
+.dark-mode .textarea-control {
+  background-color: var(--gray-light);
+  border-color: var(--gray-mid);
+  color: var(--text-dark);
+}
+
+.dark-mode .no-students-message {
+  background-color: var(--gray-mid);
+}
+
+/* Bölücü Stil */
+.section-divider {
+  margin: 0.5rem 0;
+  height: 1px;
+  background-color: var(--gray-mid);
+  opacity: 0.5;
+}
+
+/* Bölüm Başlığı Stil */
+.section-heading {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-heading i {
+  font-size: 0.9rem;
+}
+
+/* Form grupları için modern-forms.css'den alınan stiller */
+.form-floating {
+  position: relative;
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select {
+  height: calc(3.5rem + 2px);
+  line-height: 1.25;
+  padding: 1rem 0.75rem;
+}
+
+.form-floating > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding: 1rem 0.75rem;
+  pointer-events: none;
+  border: 1px solid transparent;
+  transform-origin: 0 0;
+  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.form-floating > .form-control:focus,
+.form-floating > .form-select:focus,
+.form-floating > .form-control:not(:placeholder-shown),
+.form-floating > .form-select:not([value=""]) {
+  padding-top: 1.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-select:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select:not([value=""]) ~ label {
+  opacity: 0.65;
+  transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+  background-color: var(--bg-white);
+  height: auto;
+  padding: 0 0.25rem;
+  margin-left: 0.5rem;
+}
+
+/* Onay kutuları ve radyo butonları */
+.form-check {
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.75em;
+  margin-bottom: 0.25rem;
+  position: relative;
+}
+
+.form-check-input {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.25em;
+  vertical-align: top;
+  background-color: var(--bg-white);
+  border: 1px solid var(--border-color);
+  appearance: none;
+  print-color-adjust: exact;
+  position: relative;
+  transition: all 0.15s ease-in-out;
+}
+
+.form-check-input[type="checkbox"] {
+  border-radius: 0.25em;
+}
+
+.form-check-input[type="radio"] {
+  border-radius: 50%;
+}
+
+.form-check-input:active {
+  filter: brightness(90%);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-check-input:checked[type="checkbox"] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+}
+
+.form-check-input:checked[type="radio"] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+.form-check-label {
+  color: var(--text-color);
+  cursor: pointer;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+/* Toggle anahtar */
+.form-switch {
+  padding-left: 2.5em;
+}
+
+.form-switch .form-check-input {
+  width: 2em;
+  margin-left: -2.5em;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28128, 128, 128, 0.5%29'/%3e%3c/svg%3e");
+  background-position: left center;
+  border-radius: 2em;
+  transition: background-position .15s ease-in-out;
+}
+
+.form-switch .form-check-input:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28128, 128, 128, 0.5%29'/%3e%3c/svg%3e");
+}
+
+.form-switch .form-check-input:checked {
+  background-position: right center;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* Aranabilir Select */
+.select-container {
+  position: relative;
+  width: 100%;
+}
+
+.select-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.select-search-input {
+  width: 100%;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+
+.select-search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+.select-clear-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--gray-dark);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.select-options {
+  position: absolute;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+.select-option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.select-option:hover,
+.select-option.highlighted {
+  background-color: var(--gray-light);
+}
+
+.select-option:last-child {
+  border-bottom: none;
+}
+
+.searchable-select-wrapper {
+  position: relative;
+}
+
+.searchable-select {
+  width: 100%;
+}
+
+/* İki sütunlu kart düzeni - 2:1 oranında */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Kartları 2 sütunda göster */
+  gap: 1rem;
+}
+
+/* Modern form elemanları için stillendirmeler */
+.badge {
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  font-size: 0.75em;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 0.375rem;
+}
+
+.bg-light {
+  background-color: #f8f9fa;
+}
+
+.text-dark {
+  color: #212529;
+}

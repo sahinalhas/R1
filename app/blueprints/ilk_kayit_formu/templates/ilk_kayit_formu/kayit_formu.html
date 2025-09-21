@@ -1,0 +1,1374 @@
+{% extends 'base.html' %}
+
+{% block title %}Görüşme Kaydı - Rehberlik Sistemi{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/kayit_formu.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="registration-container">
+    <!-- Sayfa Başlığı ve Aksiyon Butonları -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-clipboard-list"></i> 
+            Rehberlik Görüşme Kaydı
+        </h1>
+        <div class="action-buttons">
+            <button class="action-btn danger" id="btnClear">
+                <i class="fas fa-trash-alt"></i> Temizle
+            </button>
+            <button class="action-btn primary" id="btnSave">
+                <i class="fas fa-save"></i> Kaydet
+            </button>
+            <button class="action-btn info" id="btnPrint">
+                <i class="fas fa-print"></i> Görüşme Fişi
+            </button>
+            <button class="action-btn success" id="btnCall">
+                <i class="fas fa-phone-alt"></i> Çağrı Fişi
+            </button>
+        </div>
+    </div>
+
+    <!-- Ana İçerik - Kart Tabanlı Grid (2 sütunlu) -->
+    <div class="card-grid">
+        <!-- Öğrenci Bilgileri Kartı -->
+        <div class="card danger">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-user-graduate"></i> Öğrenci Bilgileri
+                </h2>
+            </div>
+            <div class="card-body">
+                <!-- Öğrenci Arama Kutusu -->
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="studentSearchInput" class="student-search-input" 
+                            placeholder="Öğrenci ara (numara, ad, soyad veya sınıf)">
+                        <div class="search-spinner" id="searchSpinner" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                    <div class="search-results" id="searchResults" style="display: none;"></div>
+                </div>
+                
+                <!-- Seçilen Öğrenciler -->
+                <div class="selected-students-container" id="selectedStudentsContainer">
+                    <div class="no-students-message" id="noStudentsMessage">
+                        <i class="fas fa-user-graduate"></i>
+                        <p>Henüz öğrenci eklenmemiş</p>
+                        <small>Yukarıdaki arama kutusundan öğrenci ekleyebilirsiniz</small>
+                    </div>
+                    <div class="selected-students" id="selectedStudents"></div>
+                </div>
+                
+                <!-- Görüşme Konusu -->
+                <div class="section-divider"></div>
+                <h3 class="section-heading">
+                    <i class="fas fa-comments"></i> Görüşme Konusu
+                </h3>
+                <div class="form-group">
+                    <label class="form-label">Görüşme konusu</label>
+                    <select class="form-select searchable-select" id="meetingTopic">
+                        <option selected disabled>Görüşme konusu seçin</option>
+                        {% for konu in gorusme_konulari %}
+                        <option value="{{ konu.id }}">{{ konu.baslik }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Zaman Bilgileri -->
+                <div class="section-divider"></div>
+                <h3 class="section-heading">
+                    <i class="fas fa-clock"></i> Zaman Bilgileri
+                </h3>
+                <div class="time-control-container">
+                    <div class="time-control-row">
+                        <div class="time-control-group">
+                            <span>Ders:</span>
+                            <input type="text" id="gelisDers" class="time-control-input" placeholder="Ders" readonly>
+                            <span>Saat:</span>
+                            <div class="time-input-group">
+                                <input type="text" id="gelisSaat" class="time-control-input" placeholder="00:00">
+                                <div class="time-spinner">
+                                    <button type="button" class="time-spinner-btn" id="gelisArttir">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </button>
+                                    <button type="button" class="time-spinner-btn" id="gelisAzalt">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" id="gelisBtn" class="time-control-button arrival">
+                                <i class="fas fa-check"></i> Geliş
+                            </button>
+                        </div>
+                    </div>
+                    <div class="time-control-row">
+                        <div class="time-control-group">
+                            <span>Ders:</span>
+                            <input type="text" id="gidisDers" class="time-control-input" placeholder="Ders" readonly>
+                            <span>Saat:</span>
+                            <div class="time-input-group">
+                                <input type="text" id="gidisSaat" class="time-control-input" placeholder="00:00">
+                                <div class="time-spinner">
+                                    <button type="button" class="time-spinner-btn" id="gidisArttir">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </button>
+                                    <button type="button" class="time-spinner-btn" id="gidisAzalt">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" id="gidisBtn" class="time-control-button departure">
+                                <i class="fas fa-sign-out-alt"></i> Gidiş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Görüşme Açıklaması -->
+                <div class="section-divider"></div>
+                <h3 class="section-heading">
+                    <i class="fas fa-file-alt"></i> Görüşme Açıklaması
+                </h3>
+                <div class="textarea-container">
+                    <textarea class="textarea-control" id="meetingDescription" rows="3"
+                        placeholder="Görüşme detaylarını giriniz..."></textarea>
+                    <div class="textarea-footer">
+                        <span id="charCount">0/1000 karakter</span>
+                        <span>Minimum 10 karakter</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Görüşme İçerik ve Kişiler Kartı -->
+        <div class="card primary">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-comments"></i> Görüşme İçeriği
+                </h2>
+            </div>
+            <div class="card-body">
+                <!-- Görüşme Detayları -->
+                <div class="form-row">
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label class="form-label">Görüşme yeri</label>
+                            <select class="form-select" id="meetingLocation">
+                                <option selected>Rehberlik Servisi</option>
+                                <option value="Ev">Ev (Ziyaret)</option>
+                                <option value="Sınıf">Sınıf (Gözlem)</option>
+                                <option value="RAM">RAM</option>
+                                <option value="BILSEM">BİLSEM</option>
+                                <option value="Diger">Diğer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label class="form-label">Görüşme şekli</label>
+                            <select class="form-select" id="meetingType">
+                                <option selected>Yüzyüze</option>
+                                <option>Uzaktan</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label class="form-label">  Disiplin / Öğr. Davr. Değ. Görüşmeleri</label>
+                            <select class="form-select" id="disciplineStatus">
+                                <option selected disabled>Disiplin durumu seçin</option>
+                                <option value="kurulaSevk">Kurula sevk edilen öğrenci</option>
+                                <option value="gorusuAlinan">Olayla ilgili görüşü alınan öğrenci / şahit</option>
+                                <option value="akranGorusmesi">Akran görüşmesi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Diğer Kişiler Bölümü -->
+                <div class="section-divider"></div>
+                <h3 class="section-heading">
+                    <i class="fas fa-users"></i> Görüşülen Kişiler
+                </h3>
+                
+                <div class="form-row">
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label class="form-label">Görüşülen kişi</label>
+                            <input type="text" class="form-control" id="contactPerson" placeholder="Ad Soyad">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label class="form-label">Yakınlık derecesi</label>
+                            <select class="form-select" id="contactRelation">
+                                <option selected disabled>Seçiniz</option>
+                                <option value="anne">Anne</option>
+                                <option value="baba">Baba</option>
+                                <option value="buyukanne">Büyükanne</option>
+                                <option value="buyukbaba">Büyükbaba</option>
+                                <option value="kardes">Kardeş</option>
+                                <option value="teyze">Teyze</option>
+                                <option value="hala">Hala</option>
+                                <option value="amca">Amca</option>
+                                <option value="dayi">Dayı</option>
+                                <option value="vasi">Vasi</option>
+                                <option value="diger">Diğer</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Kurum işbirliği</label>
+                    <input type="text" class="form-control" id="contactInstitution" placeholder="Kurum adı">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Aranabilir select fonksiyonu
+function initSearchableSelect() {
+    const selectElements = document.querySelectorAll('.searchable-select');
+    
+    selectElements.forEach(select => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'searchable-select-wrapper';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+        
+        // Gizli orijinal select
+        select.style.display = 'none';
+        
+        // Konteyner oluştur
+        const container = document.createElement('div');
+        container.className = 'select-container';
+        wrapper.appendChild(container);
+        
+        // Arama kutusu konteynerı
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'select-search-container';
+        container.appendChild(searchContainer);
+        
+        // Arama kutusu
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.className = 'select-search-input';
+        searchInput.placeholder = 'Ara...';
+        searchContainer.appendChild(searchInput);
+        
+        // Temizle butonu
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'select-clear-btn';
+        clearBtn.innerHTML = '<i class="fas fa-times"></i>';
+        clearBtn.style.display = 'none';
+        searchContainer.appendChild(clearBtn);
+        
+        // Seçenekler listesi
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'select-options';
+        container.appendChild(optionsContainer);
+        
+        // Seçenekleri oluştur
+        const options = Array.from(select.options);
+        
+        // İlk seçenek seçili ise göster
+        if (select.selectedIndex > 0) {
+            const selectedOption = select.options[select.selectedIndex];
+            searchInput.value = selectedOption.text;
+            clearBtn.style.display = 'block';
+        }
+        
+        function renderOptions(filterText = '') {
+            optionsContainer.innerHTML = '';
+            let found = false;
+            
+            options.forEach(option => {
+                // disabled veya placeholder seçenekleri atlayalım
+                if (option.disabled && option.selected) return;
+                
+                const text = option.text.toLowerCase();
+                const filter = filterText.toLowerCase();
+                
+                // Filtreleme
+                if (filter && !text.includes(filter)) return;
+                found = true;
+                
+                const optionElement = document.createElement('div');
+                optionElement.className = 'select-option';
+                optionElement.textContent = option.text;
+                optionElement.dataset.value = option.value;
+                
+                optionElement.addEventListener('click', () => {
+                    select.value = option.value;
+                    searchInput.value = option.text;
+                    optionsContainer.style.display = 'none';
+                    clearBtn.style.display = 'block';
+                    
+                    // Change olayını tetikle
+                    const event = new Event('change', { bubbles: true });
+                    select.dispatchEvent(event);
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Eğer eşleşen sonuç yoksa
+            if (!found && filterText) {
+                const noResult = document.createElement('div');
+                noResult.className = 'select-option';
+                noResult.textContent = 'Sonuç bulunamadı';
+                noResult.style.fontStyle = 'italic';
+                noResult.style.color = 'var(--gray-mid)';
+                optionsContainer.appendChild(noResult);
+            }
+        }
+        
+        // İlk render
+        renderOptions();
+        
+        // Arama olayları
+        searchInput.addEventListener('focus', () => {
+            renderOptions(searchInput.value);
+            optionsContainer.style.display = 'block';
+        });
+        
+        searchInput.addEventListener('input', () => {
+            renderOptions(searchInput.value);
+            optionsContainer.style.display = 'block';
+            
+            // Temizle butonunu göster/gizle
+            clearBtn.style.display = searchInput.value ? 'block' : 'none';
+        });
+        
+        // Temizle butonu olayı
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            select.selectedIndex = 0;
+            clearBtn.style.display = 'none';
+            
+            // Change olayını tetikle
+            const event = new Event('change', { bubbles: true });
+            select.dispatchEvent(event);
+        });
+        
+        // Dışarı tıklamada kapat
+        document.addEventListener('click', (event) => {
+            if (!container.contains(event.target)) {
+                optionsContainer.style.display = 'none';
+            }
+        });
+        
+        // Seçenek navigasyonu için
+        searchInput.addEventListener('keydown', (e) => {
+            const options = optionsContainer.querySelectorAll('.select-option');
+            const current = optionsContainer.querySelector('.highlighted');
+            
+            if (options.length === 0) return;
+            
+            // ESC tuşu - kapat
+            if (e.key === 'Escape') {
+                optionsContainer.style.display = 'none';
+                return;
+            }
+            
+            // Enter tuşu - seç
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (current) {
+                    current.click();
+                }
+                return;
+            }
+            
+            // Aşağı ok tuşu
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!current) {
+                    options[0].classList.add('highlighted');
+                    options[0].scrollIntoView({ block: 'nearest' });
+                } else {
+                    const next = Array.from(options).findIndex(opt => opt === current) + 1;
+                    if (next < options.length) {
+                        current.classList.remove('highlighted');
+                        options[next].classList.add('highlighted');
+                        options[next].scrollIntoView({ block: 'nearest' });
+                    }
+                }
+                return;
+            }
+            
+            // Yukarı ok tuşu
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (!current) {
+                    options[options.length - 1].classList.add('highlighted');
+                    options[options.length - 1].scrollIntoView({ block: 'nearest' });
+                } else {
+                    const prev = Array.from(options).findIndex(opt => opt === current) - 1;
+                    if (prev >= 0) {
+                        current.classList.remove('highlighted');
+                        options[prev].classList.add('highlighted');
+                        options[prev].scrollIntoView({ block: 'nearest' });
+                    }
+                }
+                return;
+            }
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Zaman kontrol butonları ve değerleri
+    const gelisBtn = document.getElementById('gelisBtn');
+    const gidisBtn = document.getElementById('gidisBtn');
+    const gelisSaat = document.getElementById('gelisSaat');
+    const gidisSaat = document.getElementById('gidisSaat');
+    const gelisDers = document.getElementById('gelisDers');
+    const gidisDers = document.getElementById('gidisDers');
+    
+    // Spinner butonları
+    const gelisArttir = document.getElementById('gelisArttir');
+    const gelisAzalt = document.getElementById('gelisAzalt');
+    const gidisArttir = document.getElementById('gidisArttir');
+    const gidisAzalt = document.getElementById('gidisAzalt');
+    
+    // Aranabilir select için gerekli işlemler
+    initSearchableSelect();
+    
+    // Ders saatleri ve teneffüsleri
+    let lessons = [];
+    let breaks = [];
+    
+    // Ders saatlerini API'den al
+    function loadLessonSchedule() {
+        fetch('/ilk-kayit-formu/kayit-formu/ders-saatleri')
+            .then(response => response.json())
+            .then(data => {
+                // Dersleri oluştur
+                let lessonData = data.sort((a, b) => a.ders_numarasi - b.ders_numarasi);
+                lessons = [];
+                breaks = [];
+                
+                lessonData.forEach(lesson => {
+                    const basHours = parseInt(lesson.baslangic_saati.split(':')[0]);
+                    const basMinutes = parseInt(lesson.baslangic_saati.split(':')[1]);
+                    const bitHours = parseInt(lesson.bitis_saati.split(':')[0]);
+                    const bitMinutes = parseInt(lesson.bitis_saati.split(':')[1]);
+                    
+                    const basTotal = basHours * 60 + basMinutes;
+                    const bitTotal = bitHours * 60 + bitMinutes;
+                    
+                    // Ders bilgisini ekle
+                    lessons.push({
+                        start: basTotal,
+                        end: bitTotal,
+                        name: `${lesson.ders_numarasi}. Ders`,
+                        isBreak: false
+                    });
+                    
+                    // Teneffüs bilgisini ekle (bir sonraki ders için)
+                    const nextLesson = lessonData.find(l => l.ders_numarasi === lesson.ders_numarasi + 1);
+                    if (nextLesson) {
+                        const nextBasHours = parseInt(nextLesson.baslangic_saati.split(':')[0]);
+                        const nextBasMinutes = parseInt(nextLesson.baslangic_saati.split(':')[1]);
+                        const nextBasTotal = nextBasHours * 60 + nextBasMinutes;
+                        
+                        // Eğer iki ders arasında zaman varsa teneffüs olarak ekle
+                        if (nextBasTotal > bitTotal) {
+                            let breakName = `${lesson.ders_numarasi}. Teneffüs`;
+                            
+                            // Öğle arası kontrolü
+                            if (lesson.ogle_arasi) {
+                                breakName = 'Öğle Arası';
+                            }
+                            
+                            breaks.push({
+                                start: bitTotal,
+                                end: nextBasTotal,
+                                name: breakName,
+                                isBreak: true
+                            });
+                        }
+                    }
+                });
+                
+                console.log('Ders saatleri yüklendi:', { lessons, breaks });
+            })
+            .catch(error => {
+                console.error('Ders saatleri yüklenirken hata oluştu:', error);
+                // Hata durumunda varsayılan değerleri kullan
+                initDefaultLessonSchedule();
+            });
+    }
+    
+    // Varsayılan ders programını oluştur (API hatası durumunda)
+    function initDefaultLessonSchedule() {
+        console.warn('Varsayılan ders programı kullanılıyor...');
+        
+        lessons = [
+            { start: 8*60 + 30, end: 9*60 + 10, name: '1. Ders', isBreak: false },
+            { start: 9*60 + 20, end: 10*60, name: '2. Ders', isBreak: false },
+            { start: 10*60 + 10, end: 10*60 + 50, name: '3. Ders', isBreak: false },
+            { start: 11*60, end: 11*60 + 40, name: '4. Ders', isBreak: false },
+            { start: 11*60 + 50, end: 12*60 + 30, name: '5. Ders', isBreak: false },
+            { start: 13*60 + 20, end: 14*60, name: '6. Ders', isBreak: false },
+            { start: 14*60 + 10, end: 14*60 + 50, name: '7. Ders', isBreak: false },
+            { start: 15*60, end: 15*60 + 40, name: '8. Ders', isBreak: false }
+        ];
+        
+        breaks = [
+            { start: 9*60 + 10, end: 9*60 + 20, name: '1. Teneffüs', isBreak: true },
+            { start: 10*60, end: 10*60 + 10, name: '2. Teneffüs', isBreak: true },
+            { start: 10*60 + 50, end: 11*60, name: '3. Teneffüs', isBreak: true },
+            { start: 11*60 + 40, end: 11*60 + 50, name: '4. Teneffüs', isBreak: true },
+            { start: 12*60 + 30, end: 13*60 + 20, name: 'Öğle Arası', isBreak: true },
+            { start: 14*60, end: 14*60 + 10, name: '6. Teneffüs', isBreak: true },
+            { start: 14*60 + 50, end: 15*60, name: '7. Teneffüs', isBreak: true }
+        ];
+    }
+    
+    // Ders saatlerini API'den al
+    loadLessonSchedule();
+    
+    // Açıklama karakteri sayacı
+    const meetingDescription = document.getElementById('meetingDescription');
+    const charCount = document.getElementById('charCount');
+    
+    // Butonlar
+    const btnClear = document.getElementById('btnClear');
+    const btnSave = document.getElementById('btnSave');
+    const btnPrint = document.getElementById('btnPrint');
+    const btnCall = document.getElementById('btnCall');
+    
+    // Mevcut dersi bul
+    function getCurrentLesson(timeStr) {
+        // Zaman değeri yoksa boş dön
+        if (!timeStr) return '';
+        
+        // Zamanı dakika cinsine çevir
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const totalMinutes = hours * 60 + minutes;
+        
+        // Ders saatlerini kontrol et
+        for (const lesson of lessons) {
+            if (totalMinutes >= lesson.start && totalMinutes <= lesson.end) {
+                return lesson.name;
+            }
+        }
+        
+        // Teneffüs saatlerini kontrol et
+        for (const breakTime of breaks) {
+            if (totalMinutes >= breakTime.start && totalMinutes <= breakTime.end) {
+                return breakTime.name;
+            }
+        }
+        
+        // Okul saatleri aralığını belirle (ilk dersin başlangıcı ile son dersin bitişi)
+        const minTime = lessons.length > 0 ? Math.min(...lessons.map(l => l.start)) : 8*60 + 30;
+        const maxTime = lessons.length > 0 ? Math.max(...lessons.map(l => l.end)) : 15*60 + 40;
+        
+        // Eğer ders programı dışındaysa
+        if (totalMinutes < minTime || totalMinutes > maxTime) {
+            return 'Ders Saati Dışında';
+        }
+        
+        return 'Belirsiz';
+    }
+
+    // Şu anki zamanı ayarla
+    function setCurrentTime(type) {
+        const now = new Date();
+        const formattedTime = now.toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        if (type === 'arrival') {
+            gelisSaat.value = formattedTime;
+            gelisDers.value = getCurrentLesson(formattedTime);
+        } else {
+            gidisSaat.value = formattedTime;
+            gidisDers.value = getCurrentLesson(formattedTime);
+        }
+    }
+    
+    // Geliş zamanı butonu
+    if (gelisBtn) {
+        gelisBtn.addEventListener('click', function() {
+            setCurrentTime('arrival');
+        });
+    }
+    
+    // Gidiş zamanı butonu
+    if (gidisBtn) {
+        gidisBtn.addEventListener('click', function() {
+            setCurrentTime('departure');
+        });
+    }
+    
+    // Zaman değiştirme fonksiyonları
+    function parseTime(timeStr) {
+        if (!timeStr) return { hours: 0, minutes: 0 };
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return { hours, minutes };
+    }
+    
+    function formatTime(hours, minutes) {
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+    
+    function updateTimeValue(input, minutes) {
+        const { hours, minutes: mins } = parseTime(input.value);
+        
+        // Toplam dakikayı hesapla ve yeni değeri ayarla
+        let totalMinutes = hours * 60 + mins + minutes;
+        
+        // Gün sınırlarını kontrol et (00:00 - 23:59)
+        if (totalMinutes < 0) totalMinutes += 24 * 60;
+        if (totalMinutes >= 24 * 60) totalMinutes -= 24 * 60;
+        
+        const newHours = Math.floor(totalMinutes / 60);
+        const newMinutes = totalMinutes % 60;
+        
+        // Input değerini güncelle
+        input.value = formatTime(newHours, newMinutes);
+        
+        // İlgili ders bilgisini güncelle
+        const isArrival = input === gelisSaat;
+        if (isArrival) {
+            gelisDers.value = getCurrentLesson(input.value);
+        } else {
+            gidisDers.value = getCurrentLesson(input.value);
+        }
+    }
+    
+    // Spinner butonları için olay dinleyicileri
+    // Geliş saati spinner butonları
+    if (gelisArttir && gelisAzalt) {
+        // Tek tıklama olayları
+        gelisArttir.addEventListener('click', () => updateTimeValue(gelisSaat, 1));
+        gelisAzalt.addEventListener('click', () => updateTimeValue(gelisSaat, -1));
+        
+        // Basılı tutma olayları (1 dakika artır/azalt)
+        let gelisInterval;
+        
+        gelisArttir.addEventListener('mousedown', () => {
+            gelisInterval = setInterval(() => updateTimeValue(gelisSaat, 1), 100);
+        });
+        
+        gelisAzalt.addEventListener('mousedown', () => {
+            gelisInterval = setInterval(() => updateTimeValue(gelisSaat, -1), 100);
+        });
+        
+        // Fare düğmesi bırakıldığında veya fare dışarı çıktığında
+        const clearGelisInterval = () => {
+            if (gelisInterval) {
+                clearInterval(gelisInterval);
+                gelisInterval = null;
+            }
+        };
+        
+        gelisArttir.addEventListener('mouseup', clearGelisInterval);
+        gelisArttir.addEventListener('mouseleave', clearGelisInterval);
+        gelisAzalt.addEventListener('mouseup', clearGelisInterval);
+        gelisAzalt.addEventListener('mouseleave', clearGelisInterval);
+    }
+    
+    // Gidiş saati spinner butonları
+    if (gidisArttir && gidisAzalt) {
+        // Tek tıklama olayları
+        gidisArttir.addEventListener('click', () => updateTimeValue(gidisSaat, 1));
+        gidisAzalt.addEventListener('click', () => updateTimeValue(gidisSaat, -1));
+        
+        // Basılı tutma olayları (1 dakika artır/azalt)
+        let gidisInterval;
+        
+        gidisArttir.addEventListener('mousedown', () => {
+            gidisInterval = setInterval(() => updateTimeValue(gidisSaat, 1), 100);
+        });
+        
+        gidisAzalt.addEventListener('mousedown', () => {
+            gidisInterval = setInterval(() => updateTimeValue(gidisSaat, -1), 100);
+        });
+        
+        // Fare düğmesi bırakıldığında veya fare dışarı çıktığında
+        const clearGidisInterval = () => {
+            if (gidisInterval) {
+                clearInterval(gidisInterval);
+                gidisInterval = null;
+            }
+        };
+        
+        gidisArttir.addEventListener('mouseup', clearGidisInterval);
+        gidisArttir.addEventListener('mouseleave', clearGidisInterval);
+        gidisAzalt.addEventListener('mouseup', clearGidisInterval);
+        gidisAzalt.addEventListener('mouseleave', clearGidisInterval);
+    }
+    
+    // Saat input olayları
+    gelisSaat.addEventListener('change', function() {
+        // Format kontrolü
+        const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
+        if (!timeRegex.test(this.value)) {
+            // Geçersiz format ise varsayılan değere geri dön
+            const now = new Date();
+            this.value = now.toLocaleTimeString('tr-TR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        // Ders bilgisini güncelle
+        gelisDers.value = getCurrentLesson(this.value);
+    });
+    
+    gidisSaat.addEventListener('change', function() {
+        // Format kontrolü
+        const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
+        if (!timeRegex.test(this.value)) {
+            // Geçersiz format ise varsayılan değere geri dön
+            const now = new Date();
+            this.value = now.toLocaleTimeString('tr-TR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        // Ders bilgisini güncelle
+        gidisDers.value = getCurrentLesson(this.value);
+    });
+    
+    // Açıklama karakter sayacı
+    if (meetingDescription && charCount) {
+        meetingDescription.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = `${length}/1000 karakter`;
+            
+            // Karakter limiti kontrolleri
+            if (length > 1000) {
+                charCount.style.color = 'var(--danger-color)';
+                this.value = this.value.substring(0, 1000);
+                charCount.textContent = '1000/1000 karakter';
+            } else if (length < 10) {
+                charCount.style.color = 'var(--warning-color)';
+            } else {
+                charCount.style.color = 'var(--text-light)';
+            }
+        });
+    }
+    
+    // Öğrenci arama fonksiyonları
+    const studentSearchInput = document.getElementById('studentSearchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchSpinner = document.getElementById('searchSpinner');
+    const selectedStudents = document.getElementById('selectedStudents');
+    const noStudentsMessage = document.getElementById('noStudentsMessage');
+    
+    // Debounce fonksiyonu - art arda gelen istekleri sınırlamak için
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(context, args);
+            }, wait);
+        };
+    }
+    
+    // Öğrenci arama işlemi
+    const searchStudent = debounce(function(query) {
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        searchSpinner.style.display = 'block';
+        
+        // Öğrenci arama API'sine istek gönder
+        fetch(`/ilk-kayit-formu/kayit-formu/ogrenci-ara?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                searchSpinner.style.display = 'none';
+                
+                if (data.length === 0) {
+                    searchResults.innerHTML = '<div class="p-3 text-center text-muted">Sonuç bulunamadı</div>';
+                } else {
+                    searchResults.innerHTML = '';
+                    
+                    data.forEach(student => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'search-result-item';
+                        resultItem.dataset.id = student.id;
+                        resultItem.dataset.numara = student.numara;
+                        resultItem.dataset.ad = student.ad;
+                        resultItem.dataset.soyad = student.soyad;
+                        resultItem.dataset.tamAd = student.tam_ad;
+                        resultItem.dataset.sinif = student.sinif;
+                        resultItem.dataset.cinsiyet = student.cinsiyet;
+                        
+                        resultItem.innerHTML = `
+                            <span class="search-result-number">${student.numara}</span>
+                            <span class="search-result-name">${student.tam_ad}</span>
+                            <span class="search-result-class">${student.sinif}</span>
+                        `;
+                        
+                        resultItem.addEventListener('click', function() {
+                            addSelectedStudent(student);
+                            searchResults.style.display = 'none';
+                            studentSearchInput.value = '';
+                        });
+                        
+                        searchResults.appendChild(resultItem);
+                    });
+                }
+                
+                searchResults.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Öğrenci arama hatası:', error);
+                searchSpinner.style.display = 'none';
+                searchResults.innerHTML = '<div class="p-3 text-center text-danger">Arama sırasında bir hata oluştu</div>';
+                searchResults.style.display = 'block';
+            });
+    }, 300);
+    
+    // Öğrenci kartı oluştur ve seçilen öğrencilere ekle
+    function addSelectedStudent(student) {
+        // Eğer bu öğrenci zaten eklenmişse, tekrar ekleme
+        const existingStudent = document.querySelector(`.student-card[data-id="${student.id}"]`);
+        if (existingStudent) {
+            existingStudent.classList.add('highlight');
+            setTimeout(() => {
+                existingStudent.classList.remove('highlight');
+            }, 1000);
+            return;
+        }
+        
+        // Öğrenci yok mesajını gizle
+        noStudentsMessage.style.display = 'none';
+        
+        // Yeni öğrenci kartı oluştur
+        const studentCard = document.createElement('div');
+        studentCard.className = 'student-card';
+        studentCard.dataset.id = student.id;
+        
+        // İsmin baş harflerini alma (avatar için)
+        const initials = student.ad.charAt(0) + student.soyad.charAt(0);
+        
+        // Cinsiyet ikonu belirleme
+        const genderIcon = student.cinsiyet === 'Erkek' ? 'male' : 'female';
+        
+        studentCard.innerHTML = `
+            <button class="student-card-remove" title="Öğrenciyi kaldır">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="student-card-header">
+                <div class="student-card-avatar">${initials}</div>
+                <div class="student-card-info">
+                    <h6 class="student-card-name">${student.tam_ad}</h6>
+                    <div class="student-card-number">${student.numara}</div>
+                </div>
+            </div>
+            <div class="student-card-details">
+                <span class="student-card-class">${student.sinif}</span>
+                <span class="student-card-gender">
+                    <i class="fas fa-${genderIcon}"></i> ${student.cinsiyet}
+                </span>
+            </div>
+        `;
+        
+        // Kaldır butonuna tıklandığında kartı sil
+        const removeButton = studentCard.querySelector('.student-card-remove');
+        removeButton.addEventListener('click', function() {
+            studentCard.remove();
+            
+            // Eğer hiç öğrenci kalmadıysa, öğrenci yok mesajını göster
+            if (selectedStudents.children.length === 0) {
+                noStudentsMessage.style.display = 'flex';
+            }
+        });
+        
+        // Kartı listeye ekle
+        selectedStudents.appendChild(studentCard);
+    }
+    
+    // Arama kutusu olayları
+    if (studentSearchInput) {
+        studentSearchInput.addEventListener('input', function() {
+            searchStudent(this.value.trim());
+        });
+        
+        studentSearchInput.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2) {
+                searchResults.style.display = 'block';
+            }
+        });
+        
+        // Arama sonuçları dışında bir yere tıklandığında sonuçları gizle
+        document.addEventListener('click', function(event) {
+            if (!searchResults.contains(event.target) && event.target !== studentSearchInput) {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
+    
+    // Temizle butonu
+    // Form verilerini localStorage'a kaydetme fonksiyonu
+    function saveFormDataToLocalStorage() {
+        // Öğrenci verilerini toplama
+        const studentData = [];
+        document.querySelectorAll('.student-card').forEach(card => {
+            studentData.push({
+                id: card.dataset.id,
+                numara: card.querySelector('.student-card-number').textContent,
+                tam_ad: card.querySelector('.student-card-name').textContent,
+                sinif: card.querySelector('.student-card-class').textContent,
+                cinsiyet: card.querySelector('.student-card-gender').textContent.trim()
+            });
+        });
+        
+        // Form verilerini toplama
+        const formData = {
+            students: studentData,
+            gorusme_kisi: document.getElementById('contactPerson').value,
+            yakinlik_derecesi: document.getElementById('contactRelation').value,
+            kurum_isbirligi: document.getElementById('contactInstitution').value,
+            gorusme_konusu: document.getElementById('meetingTopic').value,
+            gorusme_yeri: document.getElementById('meetingLocation').value,
+            disiplin_durum: document.getElementById('disciplineStatus').value,
+            gorusme_sekli: document.getElementById('meetingType').value,
+            aciklama: document.getElementById('meetingDescription').value,
+            gelis_saat: gelisSaat.value,
+            gelis_ders: gelisDers.value,
+            gidis_saat: gidisSaat.value,
+            gidis_ders: gidisDers.value
+        };
+        
+        // LocalStorage'a kaydet
+        localStorage.setItem('gorusmeFormData', JSON.stringify(formData));
+    }
+    
+    // Form verilerini localStorage'dan yükleme fonksiyonu
+    function loadFormDataFromLocalStorage() {
+        const savedData = localStorage.getItem('gorusmeFormData');
+        if (!savedData) return;
+        
+        try {
+            const formData = JSON.parse(savedData);
+            
+            // Öğrenci verilerini yükleme
+            if (formData.students && formData.students.length > 0) {
+                // Öğrenci yok mesajını gizle
+                noStudentsMessage.style.display = 'none';
+                
+                formData.students.forEach(student => {
+                    // Öğrenciyi aramak için API'yi kullanmak yerine doğrudan verileri kullanıyoruz
+                    const studentCard = document.createElement('div');
+                    studentCard.className = 'student-card';
+                    studentCard.dataset.id = student.id;
+                    
+                    // İsmin baş harflerini alma (avatar için)
+                    const nameParts = student.tam_ad.split(' ');
+                    const initials = nameParts[0].charAt(0) + (nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0) : '');
+                    
+                    // Cinsiyet ikonu belirleme
+                    const genderIcon = student.cinsiyet.includes('Erkek') ? 'male' : 'female';
+                    
+                    studentCard.innerHTML = `
+                        <button class="student-card-remove" title="Öğrenciyi kaldır">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="student-card-header">
+                            <div class="student-card-avatar">${initials}</div>
+                            <div class="student-card-info">
+                                <h6 class="student-card-name">${student.tam_ad}</h6>
+                                <div class="student-card-number">${student.numara}</div>
+                            </div>
+                        </div>
+                        <div class="student-card-details">
+                            <span class="student-card-class">${student.sinif}</span>
+                            <span class="student-card-gender">
+                                <i class="fas fa-${genderIcon}"></i> ${student.cinsiyet}
+                            </span>
+                        </div>
+                    `;
+                    
+                    // Kaldır butonuna tıklandığında kartı sil
+                    const removeButton = studentCard.querySelector('.student-card-remove');
+                    removeButton.addEventListener('click', function() {
+                        studentCard.remove();
+                        
+                        // Eğer hiç öğrenci kalmadıysa, öğrenci yok mesajını göster
+                        if (selectedStudents.children.length === 0) {
+                            noStudentsMessage.style.display = 'flex';
+                        }
+                        
+                        // Öğrenci kaldırıldığında localStorage'ı güncelle
+                        saveFormDataToLocalStorage();
+                    });
+                    
+                    // Öğrenci kartını listeye ekle
+                    selectedStudents.appendChild(studentCard);
+                });
+            }
+            
+            // Form alanlarını doldur
+            if (formData.gorusme_kisi) document.getElementById('contactPerson').value = formData.gorusme_kisi;
+            if (formData.yakinlik_derecesi) document.getElementById('contactRelation').value = formData.yakinlik_derecesi;
+            if (formData.kurum_isbirligi) document.getElementById('contactInstitution').value = formData.kurum_isbirligi;
+            
+            // Görüşme konusu select elemanını doğru şekilde ayarla
+            if (formData.gorusme_konusu) {
+                const meetingTopicSelect = document.getElementById('meetingTopic');
+                const optionExists = Array.from(meetingTopicSelect.options).some(option => option.value === formData.gorusme_konusu);
+                
+                // Eğer kayıtlı değer select içinde mevcutsa seç, yoksa ilk seçeneği seç
+                if (optionExists) {
+                    meetingTopicSelect.value = formData.gorusme_konusu;
+                }
+            }
+            
+            if (formData.gorusme_yeri) document.getElementById('meetingLocation').value = formData.gorusme_yeri;
+            if (formData.disiplin_durum) document.getElementById('disciplineStatus').value = formData.disiplin_durum;
+            if (formData.gorusme_sekli) document.getElementById('meetingType').value = formData.gorusme_sekli;
+            if (formData.aciklama) {
+                document.getElementById('meetingDescription').value = formData.aciklama;
+                // Karakter sayacını güncelle
+                if (charCount) charCount.textContent = `${formData.aciklama.length}/1000 karakter`;
+            }
+            
+            // Zaman bilgilerini doldur
+            if (formData.gelis_saat) gelisSaat.value = formData.gelis_saat;
+            if (formData.gelis_ders) gelisDers.value = formData.gelis_ders;
+            if (formData.gidis_saat) gidisSaat.value = formData.gidis_saat;
+            if (formData.gidis_ders) gidisDers.value = formData.gidis_ders;
+        } catch (error) {
+            console.error('Form verilerini yüklerken hata oluştu:', error);
+            // Hata durumunda localStorage'ı temizle
+            localStorage.removeItem('gorusmeFormData');
+        }
+    }
+    
+    // Sayfa yüklendiğinde localStorage'dan verileri yükle
+    loadFormDataFromLocalStorage();
+    
+    // Form değişikliklerini dinle ve localStorage'a kaydet
+    document.querySelectorAll('input:not([readonly]), select, textarea').forEach(el => {
+        el.addEventListener('change', saveFormDataToLocalStorage);
+        el.addEventListener('input', saveFormDataToLocalStorage);
+    });
+    
+    // Temizle butonu işlevselliği
+    if (btnClear) {
+        btnClear.addEventListener('click', function() {
+            // Öğrenci listesini temizle
+            selectedStudents.innerHTML = '';
+            noStudentsMessage.style.display = 'flex';
+            
+            // Tüm form alanlarını temizle
+            document.querySelectorAll('input:not([readonly]), select, textarea').forEach(el => {
+                if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0;
+                } else {
+                    el.value = '';
+                }
+            });
+            
+            // Karakter sayacını sıfırla
+            if (charCount) charCount.textContent = '0/1000 karakter';
+            
+            // Zaman bilgilerini temizle
+            gelisSaat.value = '';
+            gidisSaat.value = '';
+            gelisDers.value = '';
+            gidisDers.value = '';
+            
+            // LocalStorage'dan form verilerini sil
+            localStorage.removeItem('gorusmeFormData');
+        });
+    }
+    
+    // Kaydet butonu
+    if (btnSave) {
+        btnSave.addEventListener('click', function() {
+            // Form verilerini toplama
+            const formData = {
+                ogrenciler: [],
+                gorusulen_kisi: document.getElementById('contactPerson').value,
+                yakinlik_derecesi: document.getElementById('contactRelation').value,
+                kurum_isbirligi: document.getElementById('contactInstitution').value,
+                gorusme_konusu: document.getElementById('meetingTopic').value,
+                gorusme_yeri: document.getElementById('meetingLocation').value,
+                disiplin_durumu: document.getElementById('disciplineStatus').value,
+                gorusme_sekli: document.getElementById('meetingType').value,
+                aciklama: document.getElementById('meetingDescription').value,
+                gelis_zamani: gelisSaat.value,
+                gelis_ders: gelisDers.value,
+                gidis_zamani: gidisSaat.value,
+                gidis_ders: gidisDers.value
+            };
+            
+            // Seçili öğrencileri al
+            document.querySelectorAll('.student-card').forEach(card => {
+                formData.ogrenciler.push({
+                    id: card.dataset.id,
+                    numara: card.querySelector('.student-card-number').textContent,
+                    ad_soyad: card.querySelector('.student-card-name').textContent,
+                    sinif: card.querySelector('.student-card-class').textContent
+                });
+            });
+            
+            // Form doğrulama - Zorunlu alanlar
+            if (formData.ogrenciler.length === 0) {
+                alert('En az bir öğrenci seçmelisiniz.');
+                return;
+            }
+            
+            // Görüşme konusu kontrolü
+            if (!formData.gorusme_konusu) {
+                alert('Lütfen bir görüşme konusu seçin.');
+                document.getElementById('meetingTopic').focus();
+                return;
+            }
+            
+            // Zaman bilgileri kontrolü
+            if (!formData.gelis_zamani || formData.gelis_zamani === '00:00') {
+                alert('Lütfen geliş saati belirtin.');
+                document.getElementById('gelisSaat').focus();
+                return;
+            }
+            
+            if (!formData.gidis_zamani || formData.gidis_zamani === '00:00') {
+                alert('Lütfen gidiş saati belirtin.');
+                document.getElementById('gidisSaat').focus();
+                return;
+            }
+            
+            if (!formData.aciklama || formData.aciklama.length < 10) {
+                alert('Görüşme açıklaması en az 10 karakter olmalıdır.');
+                document.getElementById('meetingDescription').focus();
+                return;
+            }
+            
+            // Yükleniyor göstergesi
+            btnSave.disabled = true;
+            const originalBtnText = btnSave.innerHTML;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
+            
+            // API'ye gönder
+            fetch('/gorusme-defteri/api/kaydet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalBtnText;
+                
+                if (data.success) {
+                    alert(data.message || 'Görüşme kaydı başarıyla oluşturuldu.');
+                    // Kayıt başarılıysa formu temizle
+                    if (btnClear) {
+                        btnClear.click();
+                    }
+                } else {
+                    alert(data.message || 'Görüşme kaydı oluşturulurken bir hata oluştu.');
+                }
+            })
+            .catch(error => {
+                console.error('Kayıt hatası:', error);
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalBtnText;
+                alert('Görüşme kaydı oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        });
+    }
+    
+    // Görüşme Fişi butonu
+    if (btnPrint) {
+        btnPrint.addEventListener('click', function() {
+            // Seçili öğrenci kontrolü
+            if (selectedStudents.children.length === 0) {
+                alert('Görüşme fişi oluşturmak için en az bir öğrenci seçmelisiniz.');
+                return;
+            }
+            
+            // Form verilerini toplama
+            const formData = {
+                ogrenciler: [],
+                gorusme_kisi: document.getElementById('contactPerson').value,
+                yakinlik_derecesi: document.getElementById('contactRelation').value,
+                kurum_isbirligi: document.getElementById('contactInstitution').value,
+                gorusme_konusu: document.getElementById('meetingTopic').value,
+                gorusme_yeri: document.getElementById('meetingLocation').value,
+                disiplin_durum: document.getElementById('disciplineStatus').value,
+                gorusme_sekli: document.getElementById('meetingType').value,
+                aciklama: document.getElementById('meetingDescription').value,
+                gelis_saat: gelisSaat.value,
+                gelis_ders: gelisDers.value,
+                gidis_saat: gidisSaat.value,
+                gidis_ders: gidisDers.value
+            };
+            
+            // Seçili öğrencileri al
+            document.querySelectorAll('.student-card').forEach(card => {
+                formData.ogrenciler.push(card.dataset.id);
+            });
+            
+            // Form doğrulama - Öğrenci kontrolü
+            if (formData.ogrenciler.length === 0) {
+                alert('Görüşme fişi oluşturmak için en az bir öğrenci seçmelisiniz.');
+                return;
+            }
+            
+            // Zaman bilgileri kontrolü
+            if (!formData.gelis_saat || formData.gelis_saat.trim() === '') {
+                alert('Lütfen geliş saatini belirtiniz.');
+                gelisSaat.focus();
+                return;
+            }
+            
+            if (!formData.gelis_ders || formData.gelis_ders.trim() === '') {
+                alert('Lütfen geliş dersini belirtiniz.');
+                gelisDers.focus();
+                return;
+            }
+            
+            if (!formData.gidis_saat || formData.gidis_saat.trim() === '') {
+                alert('Lütfen gidiş saatini belirtiniz.');
+                gidisSaat.focus();
+                return;
+            }
+            
+            if (!formData.gidis_ders || formData.gidis_ders.trim() === '') {
+                alert('Lütfen gidiş dersini belirtiniz.');
+                gidisDers.focus();
+                return;
+            }
+            
+            // Görüşme konusu zorunlu değil
+            
+            // Yükleniyor göstergesi
+            btnPrint.disabled = true;
+            const originalBtnText = btnPrint.innerHTML;
+            btnPrint.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Oluşturuluyor...';
+            
+            // API'ye istek gönder
+            fetch('/ilk-kayit-formu/kayit-formu/gorusme-fisi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnPrint.disabled = false;
+                btnPrint.innerHTML = originalBtnText;
+                
+                if (data.success) {
+                    // Başarılı ise PDF'i yeni sekmede aç
+                    window.open(data.pdf_url, '_blank');
+                } else {
+                    // Hata durumunda kullanıcıya bilgi ver
+                    alert('Görüşme fişi oluşturulurken bir hata oluştu: ' + data.message);
+                }
+            })
+            .catch(error => {
+                btnPrint.disabled = false;
+                btnPrint.innerHTML = originalBtnText;
+                console.error('Hata:', error);
+                alert('Görüşme fişi oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        });
+    }
+    
+    // Çağrı Fişi butonu
+    if (btnCall) {
+        btnCall.addEventListener('click', function() {
+            // Seçili öğrenci kontrolü
+            if (selectedStudents.children.length === 0) {
+                alert('Çağrı fişi oluşturmak için en az bir öğrenci seçmelisiniz.');
+                return;
+            }
+            
+            // Zaman bilgileri kontrolü
+            if (!gelisSaat.value || gelisSaat.value.trim() === '') {
+                alert('Lütfen çağrı saatini belirtiniz.');
+                gelisSaat.focus();
+                return;
+            }
+            
+            if (!gelisDers.value || gelisDers.value.trim() === '') {
+                alert('Lütfen çağrının yapıldığı dersi belirtiniz.');
+                gelisDers.focus();
+                return;
+            }
+            
+            // Tüm seçili öğrencilerin ID'lerini al
+            const ogrenci_ids = [];
+            document.querySelectorAll('.student-card').forEach(card => {
+                ogrenci_ids.push(card.dataset.id);
+            });
+            
+            // Form verilerini oluştur
+            const formData = {
+                ogrenci_ids: ogrenci_ids,
+                gelis_saat: gelisSaat.value,
+                gelis_ders: gelisDers.value
+            };
+            
+            // Yükleniyor göstergesi
+            btnCall.disabled = true;
+            const originalBtnText = btnCall.innerHTML;
+            btnCall.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Oluşturuluyor...';
+            
+            // API'ye istek gönder
+            fetch('/ilk-kayit-formu/kayit-formu/cagri-fisi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnCall.disabled = false;
+                btnCall.innerHTML = originalBtnText;
+                
+                if (data.success) {
+                    // Başarılı ise PDF'i yeni sekmede aç
+                    window.open(data.pdf_url, '_blank');
+                } else {
+                    // Hata durumunda kullanıcıya bilgi ver
+                    alert('Çağrı fişi oluşturulurken bir hata oluştu: ' + data.message);
+                }
+            })
+            .catch(error => {
+                btnCall.disabled = false;
+                btnCall.innerHTML = originalBtnText;
+                console.error('Hata:', error);
+                alert('Çağrı fişi oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

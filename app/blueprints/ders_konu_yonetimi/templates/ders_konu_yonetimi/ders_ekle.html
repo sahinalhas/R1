@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}{% if ders %}Ders Düzenle{% else %}Yeni Ders Ekle{% endif %} - YKS Çalışma Programı Takip Sistemi{% endblock %}
+
+{% block content %}
+{% set form_renk = 'warning' if ders else 'primary' %}
+{% set form_ikon = 'edit' if ders else 'plus' %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Header Kart -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-white d-flex align-items-center p-4 border-0">
+                <div class="icon-wrapper bg-{{ form_renk }} bg-opacity-10 rounded-3 p-3 me-3">
+                    <i class="fas fa-{{ form_ikon }} fs-4 text-{{ form_renk }}"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title mb-0 fw-bold">
+                            {% if ders %}Ders Düzenle{% else %}Yeni Ders Ekle{% endif %}
+                        </h4>
+                    </div>
+                    <p class="text-muted small mb-0 mt-1">
+                        {% if ders %}{{ ders.ad }} dersini düzenliyorsunuz{% else %}YKS hazırlık dersi oluşturun{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Kart -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-4">
+                <!-- Açıklama Alert -->
+                <div class="alert alert-{{ form_renk }} bg-opacity-10 border-0 rounded-4 mb-4">
+                    <div class="d-flex">
+                        <i class="fas fa-lightbulb fs-4 me-3 text-{{ form_renk }}"></i>
+                        <div>
+                            <h6 class="fw-bold mb-2">{% if ders %}Ders Düzenleme{% else %}Yeni Ders Oluşturma{% endif %} Hakkında</h6>
+                            <p class="mb-0">
+                                {% if ders %}
+                                Ders bilgilerini güncelleyebilirsiniz. Ders adı zorunlu, açıklama alanı isteğe bağlıdır.
+                                {% else %}
+                                Yeni bir YKS hazırlık dersi oluşturmak için ders adını girmeniz yeterlidir. Dersin içeriğine
+                                dair konuları daha sonra ekleyebilirsiniz.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form -->
+                <form method="post" class="needs-validation" novalidate>
+                    <div class="mb-4">
+                        <label for="ad" class="form-label fw-medium">Ders Adı <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0">
+                                <i class="fas fa-book text-{{ form_renk }}"></i>
+                            </span>
+                            <input type="text" class="form-control border-0" id="ad" name="ad" value="{{ ders.ad if ders else '' }}" 
+                                   required placeholder="Örn: TYT Matematik, AYT Fizik, YDT İngilizce">
+                        </div>
+                        <div class="invalid-feedback">
+                            Lütfen ders adını girin.
+                        </div>
+                        <div class="form-text small text-muted mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            İpucu: Dersin türünü belirtmek için TYT, AYT veya YDT ekini ders adının başına ekleyin.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="aciklama" class="form-label fw-medium">Açıklama <span class="text-muted">(İsteğe bağlı)</span></label>
+                        <div class="shadow-sm rounded-3 overflow-hidden">
+                            <textarea class="form-control border-0" id="aciklama" name="aciklama" rows="4" 
+                                   placeholder="Ders hakkında kısa açıklama...">{{ ders.aciklama if ders else '' }}</textarea>
+                        </div>
+                        <div class="form-text small text-muted mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Ders hakkında kısa bir açıklama ekleyebilirsiniz. Bu alan isteğe bağlıdır.
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="{% if ders %}{{ url_for('ders_konu_yonetimi.detay', ders_id=ders.id) }}{% else %}{{ url_for('ders_konu_yonetimi.lista') }}{% endif %}" 
+                           class="btn btn-outline-secondary rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-arrow-left me-2"></i> {% if ders %}Geri Dön{% else %}İptal{% endif %}
+                        </a>
+                        <button type="submit" class="btn btn-{{ form_renk }} rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-save me-2"></i> 
+                            {% if ders %}Değişiklikleri Kaydet{% else %}Dersi Ekle{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Icon wrapper stillemesi */
+    .icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        transition: all 0.2s ease;
+    }
+    
+    /* Yuvarlatılmış köşeler */
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+    
+    /* Input focus stillemesi */
+    .form-control:focus {
+        box-shadow: none;
+        border-color: rgba(var(--bs-primary-rgb), 0.5);
+    }
+    
+    /* Textarea yüksekliği */
+    textarea.form-control {
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}

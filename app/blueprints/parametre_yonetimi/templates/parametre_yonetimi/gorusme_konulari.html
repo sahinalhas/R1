@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}Görüşme Konuları{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-gradient-light shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <div>
+                            <h1 class="h3 mb-0 text-success fw-bold">Görüşme Konuları</h1>
+                            <p class="text-muted mb-0">Danışman görüşmelerinde kullanılacak konu başlıklarını yönetin</p>
+                        </div>
+                        <a href="{{ url_for('parametre_yonetimi.index') }}" class="btn btn-outline-secondary mt-3 mt-sm-0">
+                            <i class="fas fa-arrow-left me-2"></i>Ayarlar Sayfasına Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Ana İçerik -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 p-4">
+                    <ul class="nav nav-tabs card-header-tabs" id="gorusmeKonulariTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active px-4 py-2" id="metin-tab" data-bs-toggle="tab" data-bs-target="#metin-tab-pane" type="button" role="tab" aria-controls="metin-tab-pane" aria-selected="true">
+                                <i class="fas fa-edit me-2"></i>Metin Editörü
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link px-4 py-2" id="tablo-tab" data-bs-toggle="tab" data-bs-target="#tablo-tab-pane" type="button" role="tab" aria-controls="tablo-tab-pane" aria-selected="false">
+                                <i class="fas fa-table me-2"></i>Tablo Editörü
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="tab-content" id="gorusmeKonulariTabContent">
+                        <!-- Metin Formatı -->
+                        <div class="tab-pane fade show active" id="metin-tab-pane" role="tabpanel" aria-labelledby="metin-tab" tabindex="0">
+                            <form method="POST" action="{{ url_for('parametre_yonetimi.gorusme_konulari') }}" id="metinForm">
+                                <div class="form-group mb-3">
+                                    <label for="konular_metni" class="form-label fw-bold text-success mb-3">
+                                        <i class="fas fa-list-alt me-2"></i>Görüşme Konuları (Her satıra bir konu)
+                                    </label>
+                                    <textarea 
+                                        class="form-control" 
+                                        id="konular_metni" 
+                                        name="konular_metni" 
+                                        rows="15" 
+                                        style="resize: vertical; font-size: 16px;" 
+                                        placeholder="Her satıra bir konu yazın, örnek:&#10;Ders çalışma programının değerlendirilmesi&#10;YKS hazırlık süreci değerlendirmesi&#10;Aile ilişkileri görüşmesi&#10;Zaman yönetimi danışmanlığı&#10;...">{{ konular_metni }}</textarea>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-4">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-secondary" id="clearTextBtn">
+                                            <i class="fas fa-eraser me-2"></i>Temizle
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" id="sortLinesBtn">
+                                            <i class="fas fa-sort-alpha-down me-2"></i>Sırala
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" id="removeDuplicatesBtn">
+                                            <i class="fas fa-clone me-2"></i>Tekrarları Kaldır
+                                        </button>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success px-4">
+                                        <i class="fas fa-save me-2"></i>Kaydet
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Tablo Görünümü -->
+                        <div class="tab-pane fade" id="tablo-tab-pane" role="tabpanel" aria-labelledby="tablo-tab" tabindex="0">
+                            <form method="POST" action="{{ url_for('parametre_yonetimi.gorusme_konulari') }}" id="tableForm">
+                                <input type="hidden" name="konular_metni" id="hiddenTextArea">
+                                
+                                <div class="table-responsive mb-3">
+                                    <table class="table table-hover" id="gorusmeKonulariTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="60" class="text-center">Sıra</th>
+                                                <th>Görüşme Konusu</th>
+                                                <th width="100" class="text-center">İşlem</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if gorusme_konulari %}
+                                                {% for konu in gorusme_konulari %}
+                                                <tr data-konu-id="{{ konu.id }}">
+                                                    <td class="text-center sira-no align-middle">{{ loop.index }}</td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-sm konu-baslik" 
+                                                               value="{{ konu.baslik }}" required>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger remove-row" data-konu-id="{{ konu.id }}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr>
+                                                    <td class="text-center sira-no align-middle">1</td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-sm konu-baslik" 
+                                                               value="Ders çalışma programının değerlendirilmesi" required>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger remove-row">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-success" id="addRowBtn">
+                                        <i class="fas fa-plus me-2"></i>Yeni Konu Ekle
+                                    </button>
+                                    <button type="submit" class="btn btn-success px-4">
+                                        <i class="fas fa-save me-2"></i>Kaydet
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Yardım ve Bilgi -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light p-4">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Bilgi ve Yardım
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-question-circle me-2 text-primary"></i>Nasıl Kullanılır?</h6>
+                        <p class="text-muted mb-3">Görüşme konularını iki farklı şekilde düzenleyebilirsiniz:</p>
+                        <div class="d-flex mb-3">
+                            <div class="icon-circle bg-success text-white me-3 flex-shrink-0" style="width: 32px; height: 32px;">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Metin Editörü</h6>
+                                <p class="small text-muted mb-0">Her satıra bir konu yazarak hızlıca çok sayıda konu ekleyebilirsiniz. Kopyala-yapıştır ile toplu işlem yapabilirsiniz.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="icon-circle bg-info text-white me-3 flex-shrink-0" style="width: 32px; height: 32px;">
+                                <i class="fas fa-table"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Tablo Editörü</h6>
+                                <p class="small text-muted mb-0">Konuları tek tek ekleyip düzenleyebilirsiniz. Görsel olarak daha kolay düzenleme imkanı sunar.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success bg-opacity-10 border-start border-4 border-success rounded-0">
+                        <h6 class="fw-bold mb-2"><i class="fas fa-lightbulb me-2"></i>İpucu</h6>
+                        <p class="small mb-0">Danışman görüşmelerinde kullanacağınız konuları kategorilere ayırarak düzenleyebilirsiniz. Örneğin: "Akademik - Deneme Sınavı Analizi", "Kişisel - Motivasyon Görüşmesi" vb.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mevcut Konular (Önizleme) -->
+            {% if gorusme_konulari %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light p-4">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list-check me-2 text-success"></i>Mevcut Konular
+                    </h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for konu in gorusme_konulari %}
+                    <div class="list-group-item border-0 py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-success bg-opacity-10 text-success me-3 flex-shrink-0" style="width: 28px; height: 28px;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <span>{{ konu.baslik }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.bg-gradient-light {
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: #6c757d;
+    transition: all 0.2s ease;
+}
+
+.nav-tabs .nav-link.active {
+    color: #198754;
+    border-bottom: 2px solid #198754;
+    background-color: transparent;
+    font-weight: 500;
+}
+
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tablo işlemleri
+    // Tablo satırı ekle
+    document.getElementById('addRowBtn').addEventListener('click', function() {
+        const tbody = document.getElementById('gorusmeKonulariTable').getElementsByTagName('tbody')[0];
+        const rowCount = tbody.rows.length;
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td class="text-center sira-no align-middle">${rowCount + 1}</td>
+            <td>
+                <input type="text" class="form-control form-control-sm konu-baslik" value="" required>
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-row">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        // Silme event listener'ı ekle
+        row.querySelector('.remove-row').addEventListener('click', removeRow);
+        
+        tbody.appendChild(row);
+        
+        // Yeni eklenen input'a odaklan
+        row.querySelector('.konu-baslik').focus();
+    });
+    
+    // Mevcut silme butonlarına event listener ekle
+    const removeButtons = document.querySelectorAll('.remove-row');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', removeRow);
+    });
+    
+    function removeRow(e) {
+        const tbody = document.getElementById('gorusmeKonulariTable').getElementsByTagName('tbody')[0];
+        // En az bir satır kalması gerekiyor
+        if (tbody.rows.length > 1) {
+            const row = e.target.closest('tr');
+            const konuId = row.dataset.konuId || row.querySelector('.remove-row').dataset.konuId;
+            
+            // Eğer bir konu ID'si varsa, veritabanından da sil
+            if (konuId) {
+                // API isteği gönder
+                fetch(`/parametre-yonetimi/gorusme-konulari/sil/${konuId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Başarılı olduğunda satırı kaldır
+                        row.remove();
+                        // Sıra numaralarını yeniden düzenle
+                        updateRowNumbers();
+                        
+                        // Bildirim göster
+                        const toast = document.createElement('div');
+                        toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3';
+                        toast.setAttribute('role', 'alert');
+                        toast.setAttribute('aria-live', 'assertive');
+                        toast.setAttribute('aria-atomic', 'true');
+                        toast.innerHTML = `
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="fas fa-check-circle me-2"></i>${data.message}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+                        
+                        // Toast'ı göster
+                        const bsToast = new bootstrap.Toast(toast, {
+                            delay: 3000
+                        });
+                        bsToast.show();
+                        
+                        // Toast kaybolduğunda DOM'dan kaldır
+                        toast.addEventListener('hidden.bs.toast', function() {
+                            toast.remove();
+                        });
+                    } else {
+                        // Hata durumunda uyarı göster
+                        alert('Hata: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Silme işlemi sırasında hata oluştu:', error);
+                    alert('Silme işlemi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+                });
+            } else {
+                // Eğer konu henüz veritabanında yoksa, sadece DOM'dan kaldır
+                row.remove();
+                // Sıra numaralarını yeniden düzenle
+                updateRowNumbers();
+            }
+        } else {
+            alert('En az bir görüşme konusu olmalıdır!');
+        }
+    }
+    
+    function updateRowNumbers() {
+        const rows = document.getElementById('gorusmeKonulariTable').getElementsByTagName('tbody')[0].rows;
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].querySelector('.sira-no').textContent = i + 1;
+        }
+    }
+    
+    // Tablodan metin formatına dönüştür ve gönder
+    document.getElementById('tableForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const rows = document.getElementById('gorusmeKonulariTable').getElementsByTagName('tbody')[0].rows;
+        let textContent = '';
+        let isValid = true;
+        
+        // Tüm satırları kontrol et
+        for (let i = 0; i < rows.length; i++) {
+            const konuInput = rows[i].querySelector('.konu-baslik');
+            const konuBaslik = konuInput.value.trim();
+            
+            if (!konuBaslik) {
+                konuInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                konuInput.classList.remove('is-invalid');
+                textContent += `${konuBaslik}\n`;
+            }
+        }
+        
+        if (!isValid) {
+            alert('Lütfen tüm alanları doldurunuz!');
+            return;
+        }
+        
+        document.getElementById('hiddenTextArea').value = textContent;
+        this.submit();
+    });
+    
+    // Metin İşlemleri
+    // Metni temizle
+    document.getElementById('clearTextBtn').addEventListener('click', function() {
+        if (confirm('Metin alanındaki tüm konuları silmek istediğinize emin misiniz?')) {
+            document.getElementById('konular_metni').value = '';
+            document.getElementById('konular_metni').focus();
+        }
+    });
+    
+    // Satırları alfabetik sırala
+    document.getElementById('sortLinesBtn').addEventListener('click', function() {
+        const textarea = document.getElementById('konular_metni');
+        let lines = textarea.value.split('\n');
+        
+        // Boş satırları kaldır
+        lines = lines.filter(line => line.trim() !== '');
+        
+        // Türkçe karakter duyarlı sıralama
+        lines.sort((a, b) => a.localeCompare(b, 'tr'));
+        
+        textarea.value = lines.join('\n');
+        textarea.focus();
+    });
+    
+    // Tekrar eden satırları kaldır
+    document.getElementById('removeDuplicatesBtn').addEventListener('click', function() {
+        const textarea = document.getElementById('konular_metni');
+        let lines = textarea.value.split('\n');
+        
+        // Boş satırları kaldır
+        lines = lines.filter(line => line.trim() !== '');
+        
+        // Benzersiz satırları al
+        const uniqueLines = [...new Set(lines)];
+        
+        textarea.value = uniqueLines.join('\n');
+        textarea.focus();
+    });
+    
+    // Metin formunu gönder
+    document.getElementById('metinForm').addEventListener('submit', function(e) {
+        const textarea = document.getElementById('konular_metni');
+        const content = textarea.value.trim();
+        
+        if (!content) {
+            e.preventDefault();
+            textarea.classList.add('is-invalid');
+            alert('Lütfen en az bir görüşme konusu ekleyin!');
+        } else {
+            textarea.classList.remove('is-invalid');
+        }
+    });
+    
+    // Tab butonlarının düzgün çalışması için
+    const tabLinks = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabLinks.forEach(tabLink => {
+        tabLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tab = new bootstrap.Tab(this);
+            tab.show();
+        });
+    });
+});
+</script>
+{% endblock %}

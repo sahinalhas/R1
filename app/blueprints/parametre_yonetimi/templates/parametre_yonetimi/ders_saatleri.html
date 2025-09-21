@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block title %}Ders Saatleri{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-gradient-light shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <div>
+                            <h1 class="h3 mb-0 text-info fw-bold">Ders Saatleri</h1>
+                            <p class="text-muted mb-0">Okul zil çizelgesini ve ders programı saatlerini yönetin</p>
+                        </div>
+                        <a href="{{ url_for('parametre_yonetimi.index') }}" class="btn btn-outline-secondary mt-3 mt-sm-0">
+                            <i class="fas fa-arrow-left me-2"></i>Ayarlar Sayfasına Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-4 order-lg-2 mb-4">
+            <!-- Kontrol Paneli -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white p-4">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Zaman Ayarları
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label for="lessonDuration" class="form-label fw-medium">Ders Süresi</label>
+                        <div class="input-group mb-1">
+                            <input type="number" class="form-control" id="lessonDuration" value="40" min="30" max="90">
+                            <span class="input-group-text bg-light">dakika</span>
+                        </div>
+                        <div class="form-text text-muted small">Bir ders saatinin toplam süresi</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="breakDuration" class="form-label fw-medium">Teneffüs Süresi</label>
+                        <div class="input-group mb-1">
+                            <input type="number" class="form-control" id="breakDuration" value="10" min="5" max="30">
+                            <span class="input-group-text bg-light">dakika</span>
+                        </div>
+                        <div class="form-text text-muted small">İki ders arasındaki teneffüs süresi</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="firstLessonTime" class="form-label fw-medium">İlk Ders Başlangıç Saati</label>
+                        <div class="input-group mb-1">
+                            <span class="input-group-text bg-light"><i class="far fa-clock"></i></span>
+                            <input type="time" class="form-control" id="firstLessonTime" value="08:30">
+                        </div>
+                        <div class="form-text text-muted small">Günün ilk dersinin başlangıç saati</div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-info text-white w-100" id="generateTimesBtn">
+                        <i class="fas fa-magic me-2"></i>Saatleri Otomatik Oluştur
+                    </button>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Öğle Arası Ayarları -->
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-utensils me-2 text-warning"></i>Öğle Arası
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <label for="lunchStartTime" class="form-label small text-muted">Başlangıç Saati</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="far fa-clock"></i></span>
+                            <input type="time" class="form-control" id="lunchStartTime" name="lunch_start_time" value="{{ lunch_start }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="lunchEndTime" class="form-label small text-muted">Bitiş Saati</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="far fa-clock"></i></span>
+                            <input type="time" class="form-control" id="lunchEndTime" name="lunch_end_time" value="{{ lunch_end }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light p-4">
+                    <div class="alert alert-info bg-opacity-10 border-start border-4 border-info rounded-0 mb-0">
+                        <h6 class="fw-bold mb-2"><i class="fas fa-lightbulb me-2"></i>İpucu</h6>
+                        <p class="small mb-0">Öğle arası saatleri, ders programı oluşturulurken otomatik olarak dikkate alınır.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8 order-lg-1">
+            <!-- Ders Saatleri Tablosu -->
+            <form method="POST" action="{{ url_for('parametre_yonetimi.ders_saatleri') }}" id="timeTableForm">
+                <input type="hidden" name="ders_saatleri_metin" id="hiddenTextArea">
+                
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-clock me-2 text-info"></i>Zil Çizelgesi
+                        </h5>
+                        <span class="badge bg-info-subtle text-info px-3 py-2">
+                            <i class="fas fa-info-circle me-1"></i>Toplam: <span id="lessonCount">0</span> ders saati
+                        </span>
+                    </div>
+                    
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="timeTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center px-3" style="width: 80px">Ders</th>
+                                        <th class="px-3">Başlangıç Saati</th>
+                                        <th class="px-3">Bitiş Saati</th>
+                                        <th class="text-center px-3" style="width: 80px">Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in range(1, 11) %}
+                                    <tr id="row-{{ i }}" class="time-row">
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center">
+                                                <span class="badge bg-info text-white rounded-pill px-3 py-2">{{ i }}. Ders</span>
+                                                <input type="hidden" class="ders-no" value="{{ i }}">
+                                                <input type="hidden" class="ogle-arasi" value="{% if ders_saatleri and i <= ders_saatleri|length and ders_saatleri[i-1].ogle_arasi %}1{% else %}0{% endif %}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="far fa-clock text-info"></i></span>
+                                                <input type="time" class="form-control baslangic-saati" 
+                                                    value="{% if ders_saatleri and i <= ders_saatleri|length %}{{ ders_saatleri[i-1].baslangic_saati|format_time }}{% endif %}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light"><i class="far fa-clock text-info"></i></span>
+                                                <input type="time" class="form-control bitis-saati" 
+                                                    value="{% if ders_saatleri and i <= ders_saatleri|length %}{{ ders_saatleri[i-1].bitis_saati|format_time }}{% endif %}">
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input lesson-active" type="checkbox" role="switch" 
+                                                    id="active-{{ i }}" 
+                                                    {% if ders_saatleri and i <= ders_saatleri|length %}checked{% endif %}>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-white p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="form-text text-muted small">
+                                <i class="fas fa-info-circle me-1"></i>Aktif olmayan dersler (işaretlenmemiş) kaydedilmez
+                            </div>
+                            <button type="submit" class="btn btn-info text-white px-4" id="saveTableBtn">
+                                <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.bg-gradient-light {
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+}
+
+.form-control:focus {
+    border-color: #0dcaf0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.25);
+}
+
+.time-row {
+    transition: all 0.2s ease;
+}
+
+.time-row:not(.active-row) {
+    opacity: 0.6;
+}
+
+.time-row.active-row {
+    background-color: #f8f9fa;
+}
+
+/* Bootstrap 5 form-check-input stilini özelleştir */
+.form-check-input:checked {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+.bg-info-subtle {
+    background-color: rgba(13, 202, 240, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Satır etkinleştirme/pasifleştirme işlemleri
+    const activeCheckboxes = document.querySelectorAll('.lesson-active');
+    activeCheckboxes.forEach(checkbox => {
+        // Sayfa yüklendiğinde satırların durumunu ayarla
+        updateRowState(checkbox);
+        
+        // Durum değiştiğinde satırı güncelle
+        checkbox.addEventListener('change', function() {
+            updateRowState(this);
+            updateLessonCount();
+        });
+    });
+    
+    // Başlangıçta ders sayısını güncelle
+    updateLessonCount();
+    
+    function updateRowState(checkbox) {
+        const row = checkbox.closest('tr');
+        if (checkbox.checked) {
+            row.classList.add('active-row');
+            row.querySelectorAll('input[type="time"]').forEach(input => {
+                input.disabled = false;
+            });
+        } else {
+            row.classList.remove('active-row');
+            row.querySelectorAll('input[type="time"]').forEach(input => {
+                input.disabled = true;
+            });
+        }
+    }
+    
+    function updateLessonCount() {
+        const activeRows = document.querySelectorAll('.lesson-active:checked').length;
+        document.getElementById('lessonCount').textContent = activeRows;
+    }
+    
+    // Otomatik saat oluşturma fonksiyonu
+    document.getElementById('generateTimesBtn').addEventListener('click', function() {
+        const lessonDuration = parseInt(document.getElementById('lessonDuration').value) || 40;
+        const breakDuration = parseInt(document.getElementById('breakDuration').value) || 10;
+        const firstLessonTime = document.getElementById('firstLessonTime').value || '08:30';
+        
+        // Başlangıç saatini parçalara ayır
+        const [hours, minutes] = firstLessonTime.split(':').map(Number);
+        let currentTime = new Date();
+        currentTime.setHours(hours, minutes, 0);
+        
+        // Tüm satırları dön ve zamanları hesapla
+        const rows = document.querySelectorAll('#timeTable tbody tr');
+        rows.forEach((row, index) => {
+            // Başlangıç saati
+            const startTimeInput = row.querySelector('.baslangic-saati');
+            startTimeInput.value = formatTime(currentTime);
+            
+            // Bitiş saati (başlangıç + ders süresi)
+            let endTime = new Date(currentTime);
+            endTime.setMinutes(endTime.getMinutes() + lessonDuration);
+            const endTimeInput = row.querySelector('.bitis-saati');
+            endTimeInput.value = formatTime(endTime);
+            
+            // Sonraki ders için başlangıç saatini güncelle
+            currentTime = new Date(endTime);
+            currentTime.setMinutes(currentTime.getMinutes() + breakDuration);
+            
+            // Satırı aktifleştir
+            const checkbox = row.querySelector('.lesson-active');
+            checkbox.checked = true;
+            updateRowState(checkbox);
+        });
+        
+        // Ders sayısını güncelle
+        updateLessonCount();
+    });
+    
+    // Zaman formatı yardımcı fonksiyonu
+    function formatTime(date) {
+        return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+    
+    // Form gönderilmeden önce verileri hazırla
+    document.getElementById('timeTableForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const rows = document.querySelectorAll('#timeTable tbody tr');
+        let textContent = '';
+        
+        rows.forEach(row => {
+            const checkbox = row.querySelector('.lesson-active');
+            
+            // Sadece aktif satırları ekle
+            if (checkbox.checked) {
+                const startTime = row.querySelector('.baslangic-saati').value;
+                const endTime = row.querySelector('.bitis-saati').value;
+                
+                // Eğer başlangıç ve bitiş saati doluysa, veriyi ekle
+                if (startTime && endTime) {
+                    const dersNo = row.querySelector('.ders-no').value;
+                    const ogleArasi = row.querySelector('.ogle-arasi').value;
+                    
+                    textContent += `${dersNo},${startTime},${endTime},${ogleArasi}\n`;
+                }
+            }
+        });
+        
+        // Öğle arası bilgilerini de kaydet
+        const lunchStartTime = document.getElementById('lunchStartTime').value;
+        const lunchEndTime = document.getElementById('lunchEndTime').value;
+        
+        document.getElementById('hiddenTextArea').value = textContent;
+        
+        // Formda lunch_start_time ve lunch_end_time değerleri ayarlı olduğundan
+        // direkt olarak submit edebiliriz
+        this.submit();
+    });
+});
+</script>
+{% endblock %}

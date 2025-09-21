@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}Sistem Ayarları{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-0 text-gray-800">Sistem Ayarları</h1>
+            <p class="mt-2">Rehberlik servisinin çalışma parametrelerini düzenleyerek sistemin doğru ve verimli çalışmasını sağlayın.</p>
+        </div>
+    </div>
+
+    <!-- Ana Kart Bölümü -->
+    <div class="row">
+        <!-- Okul Bilgileri Kartı -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Okul Profili</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Okul Bilgileri</div>
+                            <p class="mt-2">Okulunuzun temel bilgilerini ve rehber öğretmen bilgilerini tanımlayın.</p>
+                            <a href="{{ url_for('parametre_yonetimi.okul_bilgileri') }}" class="btn btn-sm btn-primary mt-2">
+                                {% if okul_bilgisi %}Düzenle{% else %}Ekle{% endif %}
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-school fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ders Saatleri Kartı -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Zaman Çizelgesi</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Ders Saatleri</div>
+                            <p class="mt-2">Günlük ders programı için zaman çizelgesini ve teneffüs sürelerini belirleyin.</p>
+                            <a href="{{ url_for('parametre_yonetimi.ders_saatleri') }}" class="btn btn-sm btn-info mt-2">
+                                {% if ders_saatleri %}Düzenle{% else %}Ekle{% endif %}
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Görüşme Konuları Kartı -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Rehberlik Başlıkları</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Görüşme Konuları</div>
+                            <p class="mt-2">Rehberlik servisinde kullanılacak standart görüşme konularını tanımlayın.</p>
+                            <a href="{{ url_for('parametre_yonetimi.gorusme_konulari') }}" class="btn btn-sm btn-success mt-2">
+                                {% if gorusme_konulari %}Düzenle{% else %}Ekle{% endif %}
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İlerleme Durumu -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Sistem Ayarları Durumu</h6>
+                    <a href="{{ url_for('ana_sayfa.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-home mr-1"></i> Ana Sayfa
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h4 class="small font-weight-bold">Tamamlanan Ayarlar 
+                        {% set completed = [okul_bilgisi, ders_saatleri, gorusme_konulari]|select|list|length %}
+                        {% set total = 3 %}
+                        {% set percentage = (completed / total * 100)|int %}
+                        <span class="float-right">{{ percentage }}%</span>
+                    </h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ percentage }}%"
+                            aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card mb-4 {% if okul_bilgisi %}bg-success{% else %}bg-warning{% endif %} text-white shadow">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto mr-3">
+                                            <i class="fas {% if okul_bilgisi %}fa-check{% else %}fa-exclamation-triangle{% endif %} fa-2x"></i>
+                                        </div>
+                                        <div class="col">
+                                            Okul Bilgileri
+                                            <div class="text-white-50 small">{% if okul_bilgisi %}Yapılandırıldı{% else %}Yapılandırılmadı{% endif %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="card mb-4 {% if ders_saatleri %}bg-success{% else %}bg-warning{% endif %} text-white shadow">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto mr-3">
+                                            <i class="fas {% if ders_saatleri %}fa-check{% else %}fa-exclamation-triangle{% endif %} fa-2x"></i>
+                                        </div>
+                                        <div class="col">
+                                            Ders Saatleri
+                                            <div class="text-white-50 small">{% if ders_saatleri %}Yapılandırıldı{% else %}Yapılandırılmadı{% endif %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="card mb-4 {% if gorusme_konulari %}bg-success{% else %}bg-warning{% endif %} text-white shadow">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto mr-3">
+                                            <i class="fas {% if gorusme_konulari %}fa-check{% else %}fa-exclamation-triangle{% endif %} fa-2x"></i>
+                                        </div>
+                                        <div class="col">
+                                            Görüşme Konuları
+                                            <div class="text-white-50 small">{% if gorusme_konulari %}Yapılandırıldı{% else %}Yapılandırılmadı{% endif %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ayar Detayları -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Parametre Detayları</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Okul Bilgileri Detay -->
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="m-0 font-weight-bold">Okul Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if okul_bilgisi %}
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 40px; height: 40px">
+                                                {{ okul_bilgisi.okul_adi[0]|upper }}
+                                            </div>
+                                            <h5 class="mb-0">{{ okul_bilgisi.okul_adi }}</h5>
+                                        </div>
+                                        <div class="mb-3">
+                                            <i class="fas fa-map-marker-alt text-primary mr-2"></i>
+                                            {{ okul_bilgisi.il }}, {{ okul_bilgisi.ilce }}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-user-tie text-primary mr-2"></i>
+                                            {{ okul_bilgisi.danisman_adi }}
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <div class="mb-3">
+                                                <i class="fas fa-school fa-3x text-gray-300"></i>
+                                            </div>
+                                            <p>Okul bilgileri henüz tanımlanmamış</p>
+                                            <a href="{{ url_for('parametre_yonetimi.okul_bilgileri') }}" class="btn btn-primary">
+                                                <i class="fas fa-plus mr-1"></i> Şimdi Ekle
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ders Saatleri Detay -->
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="m-0 font-weight-bold">Ders Saatleri</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if ders_saatleri %}
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span>Günlük Program</span>
+                                            <span class="badge badge-info">{{ ders_saatleri|length }} ders</span>
+                                        </div>
+                                        <ul class="list-group">
+                                            {% for ders in ders_saatleri[:5] %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span class="badge badge-info badge-pill mr-2">{{ ders.ders_numarasi }}</span>
+                                                    {{ ders.baslangic_saati|format_time }} - {{ ders.bitis_saati|format_time }}
+                                                    {% if ders.ogle_arasi %}
+                                                        <span class="badge badge-warning badge-pill">Öğle arası</span>
+                                                    {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                            
+                                            {% if ders_saatleri|length > 5 %}
+                                                <li class="list-group-item text-center text-muted">
+                                                    <i class="fas fa-ellipsis-h"></i> ve {{ ders_saatleri|length - 5 }} ders daha
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <div class="mb-3">
+                                                <i class="fas fa-clock fa-3x text-gray-300"></i>
+                                            </div>
+                                            <p>Ders saatleri henüz tanımlanmamış</p>
+                                            <a href="{{ url_for('parametre_yonetimi.ders_saatleri') }}" class="btn btn-info">
+                                                <i class="fas fa-plus mr-1"></i> Şimdi Ekle
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Görüşme Konuları Detay -->
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="m-0 font-weight-bold">Görüşme Konuları</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if gorusme_konulari %}
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span>Tanımlı Konular</span>
+                                            <span class="badge badge-success">{{ gorusme_konulari|length }} konu</span>
+                                        </div>
+                                        <div class="d-flex flex-wrap">
+                                            {% for konu in gorusme_konulari[:8] %}
+                                                <span class="badge badge-light border m-1 p-2">
+                                                    <i class="fas fa-comment-dots text-success mr-1"></i>
+                                                    {{ konu.baslik }}
+                                                </span>
+                                            {% endfor %}
+                                            
+                                            {% if gorusme_konulari|length > 8 %}
+                                                <span class="badge badge-success m-1 p-2">
+                                                    <i class="fas fa-plus mr-1"></i>
+                                                    {{ gorusme_konulari|length - 8 }} daha
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <div class="mb-3">
+                                                <i class="fas fa-comments fa-3x text-gray-300"></i>
+                                            </div>
+                                            <p>Görüşme konuları henüz tanımlanmamış</p>
+                                            <a href="{{ url_for('parametre_yonetimi.gorusme_konulari') }}" class="btn btn-success">
+                                                <i class="fas fa-plus mr-1"></i> Şimdi Ekle
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tooltip aktivasyonu
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Kartlar için hover efekti
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+            this.style.transition = 'all 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+            this.style.transition = 'all 0.3s ease';
+        });
+    });
+});
+</script>
+{% endblock scripts %}

@@ -1,0 +1,33 @@
+```
++-----------------+       +----------------+        +------------------+
+|                 |       |                |        |                  |
+|  Presentation   |       |   Controller   |        |    Services      |
+|     Layer       +------>+     Layer      +------->+     Layer        |
+|                 |       |                |        |                  |
++-----------------+       +----------------+        +------------------+
+|                 |       |                |        |                  |
+| - Templates     |       | - Blueprints   |        | - OgrenciService |
+| - Static Files  |       | - Routes       |        | - DersService    |
+| - JavaScript    |       | - View Funcs   |        | - ProgramService |
+| - CSS           |       | - Forms        |        | - RaporService   |
+|                 |       |                |        |                  |
++-----------------+       +----------------+        +------------------+
+                                                            |
+                                                            |
+                                                            v
+                              +----------------+    +------------------+
+                              |                |    |                  |
+                              |    Models      |    |     Utilities    |
+                              |     Layer      |    |                  |
+                              |                |    |                  |
+                              +----------------+    +------------------+
+                              |                |    |                  |
+                              | - Ogrenci      |    | - Auth           |
+                              | - Ders         |    | - Session        |
+                              | - Konu         |    | - Program        |
+                              | - DersProgrami |    | - Report         |
+                              | - KonuTakip    |    | - Filters        |
+                              |                |    |                  |
+                              +----------------+    +------------------+
+
+```

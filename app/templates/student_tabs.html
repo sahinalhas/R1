@@ -1,0 +1,74 @@
+<!-- Öğrenci Tab Bar -->
+<div class="container-fluid bg-white shadow-sm py-2 mb-3">
+    <div class="row align-items-center mb-2">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                    <i class="fas fa-user-graduate text-white fa-lg"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-semibold">{{ ogrenci.ad }} {{ ogrenci.soyad }}</h5>
+                    <p class="text-muted mb-0 small">{{ ogrenci.sinif }} - {{ ogrenci.okul }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-2 mt-md-0">
+            <!-- Öğrenci seçimi temizleme butonu kaldırıldı -->
+        </div>
+    </div>
+    
+    <ul class="nav nav-tabs border-0" id="student-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a href="{{ url_for('ogrenci_yonetimi.profil', ogrenci_id=ogrenci.id) }}" 
+               class="nav-link px-3 py-2 rounded-0 {% if active_tab == 'profil' %}active{% endif %}">
+                <i class="fas fa-user me-1"></i> Öğrenci Profili
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="{{ url_for('calisma_programi.haftalik_plan', ogrenci_id=ogrenci.id) }}" 
+               class="nav-link px-3 py-2 rounded-0 {% if active_tab == 'haftalik_plan' %}active{% endif %}">
+                <i class="fas fa-calendar-week me-1"></i> Haftalık Plan
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="{{ url_for('calisma_programi.konu_plani', ogrenci_id=ogrenci.id) }}" 
+               class="nav-link px-3 py-2 rounded-0 {% if active_tab == 'konu_plani' %}active{% endif %}">
+                <i class="fas fa-list-check me-1"></i> Konu Planı
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id) }}" 
+               class="nav-link px-3 py-2 rounded-0 {% if active_tab == 'konu_takip' %}active{% endif %}">
+                <i class="fas fa-tasks me-1"></i> Konu Takip
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="{{ url_for('deneme_sinavlari.sonuclar', ogrenci_id=ogrenci.id) }}" 
+               class="nav-link px-3 py-2 rounded-0 {% if active_tab == 'deneme_sonuclari' %}active{% endif %}">
+                <i class="fas fa-file-alt me-1"></i> Deneme Sonuçları
+            </a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle px-3 py-2 rounded-0" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                <i class="fas fa-file-pdf me-1"></i> PDF Raporlar
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{{ url_for('rapor_yonetimi.haftalik_plan_pdf', ogrenci_id=ogrenci.id) }}" class="dropdown-item" target="_blank">
+                        <i class="fas fa-file-pdf me-1 text-danger"></i> Haftalık Plan (PDF)
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('rapor_yonetimi.konu_plani_pdf', ogrenci_id=ogrenci.id) }}" class="dropdown-item" target="_blank">
+                        <i class="fas fa-file-pdf me-1 text-danger"></i> Konu Planı (PDF)
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('rapor_yonetimi.ilerleme_raporu_pdf', ogrenci_id=ogrenci.id) }}" class="dropdown-item" target="_blank">
+                        <i class="fas fa-file-pdf me-1 text-danger"></i> İlerleme Raporu (PDF)
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

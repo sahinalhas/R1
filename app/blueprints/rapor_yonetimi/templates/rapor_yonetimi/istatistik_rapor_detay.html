@@ -1,0 +1,619 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ rapor.baslik }} - Detay{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">İstatistik Raporu Detayı</h1>
+        <div>
+            <a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Raporlar Listesine Dön
+            </a>
+        </div>
+    </div>
+
+    <!-- Rapor Başlık ve Genel Bilgiler -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% if rapor.rapor_tipi == 'analiz' %}
+                                Genel Analiz Raporu
+                                {% elif rapor.rapor_tipi == 'karşılaştırma' %}
+                                Öğrenci Grupları Karşılaştırma
+                                {% elif rapor.rapor_tipi == 'performans' %}
+                                Rehberlik Performans Raporu
+                                {% elif rapor.rapor_tipi == 'yönetim_özeti' %}
+                                Okul Yönetimi Özet Raporu
+                                {% endif %}
+                            </div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-800">{{ rapor.baslik }}</div>
+                            <p class="mt-2 mb-0">
+                                <span class="badge bg-secondary">{{ rapor.baslangic_tarihi.strftime('%d.%m.%Y') }} - {{ rapor.bitis_tarihi.strftime('%d.%m.%Y') }}</span>
+                                <span class="badge bg-info">{{ rapor.olusturma_tarihi.strftime('%d.%m.%Y %H:%M') }}</span>
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if rapor.rapor_tipi == 'analiz' %}
+        <!-- Genel Analiz Raporu İçeriği -->
+        <div class="row">
+            <!-- Görüşme Türleri Dağılımı -->
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Görüşme Türleri Dağılımı</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                            <canvas id="gorusmeTurleriChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center small">
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-primary"></i> Bireysel
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-success"></i> Veli
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-info"></i> Grup
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-warning"></i> Personel
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Çalışma Alanları Dağılımı -->
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Çalışma Alanları Dağılımı</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="calismaAlanlariChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif rapor.rapor_tipi == 'karşılaştırma' %}
+        <!-- Öğrenci Grupları Karşılaştırma İçeriği -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Öğrenci Grupları Karşılaştırması</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="grupKarsilastirmaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Grup Detayları</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Grup</th>
+                                        <th>Öğrenci Sayısı</th>
+                                        <th>Görüşme Sayısı</th>
+                                        <th>Deneme Ortalama</th>
+                                        <th>Öğrenci Başına Görüşme</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grup in rapor.rapor_verileri.gruplar %}
+                                    <tr>
+                                        <td>{{ grup.grup_adi }}</td>
+                                        <td>{{ grup.ogrenci_sayisi }}</td>
+                                        <td>{{ grup.gorusme_sayisi }}</td>
+                                        <td>{{ grup.deneme_ortalama }}</td>
+                                        <td>
+                                            {% if grup.ogrenci_sayisi > 0 %}
+                                            {{ "%.2f"|format(grup.gorusme_sayisi / grup.ogrenci_sayisi) }}
+                                            {% else %}
+                                            0
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif rapor.rapor_tipi == 'performans' %}
+        <!-- Rehberlik Performans Raporu İçeriği -->
+        <div class="row">
+            <!-- Özet Performans Kartları -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Günlük Ortalama Görüşme
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ rapor.rapor_verileri.gunluk_gorusme }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Haftalık Ortalama Görüşme
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ rapor.rapor_verileri.haftalik_gorusme }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar-week fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Öğrenci Başına Görüşme
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ rapor.rapor_verileri.ogrenci_basina_gorusme }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Önceki Döneme Göre Değişim
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    % {{ rapor.rapor_verileri.gorusme_degisim }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Performans Göstergeleri Grafiği -->
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Performans Göstergeleri</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="performansGostergelerChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dönem Karşılaştırma Grafiği -->
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Dönem Karşılaştırması</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="donemKarsilastirmaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif rapor.rapor_tipi == 'yönetim_özeti' %}
+        <!-- Okul Yönetimi Özet Raporu İçeriği -->
+        <div class="row">
+            <!-- Aylık Trend Grafiği -->
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Aylık Görüşme Eğilimi</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="aylikTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Durumu Grafiği -->
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Öğrenci Risk Durumu</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                            <canvas id="riskDurumuChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center small">
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-danger"></i> Yüksek Risk
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-warning"></i> Orta Risk
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-success"></i> Düşük Risk
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sınıf İlerleme Grafiği -->
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Sınıf Bazlı İlerleme Durumu</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="sinifIlerlemeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sınıf Detayları Tablosu -->
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Sınıf Detayları</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Sınıf</th>
+                                        <th>Öğrenci Sayısı</th>
+                                        <th>Ortalama İlerleme</th>
+                                        <th>Görüşme Sayısı</th>
+                                        <th>Yüksek Risk</th>
+                                        <th>Orta Risk</th>
+                                        <th>Düşük Risk</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sinif_veri in rapor.rapor_verileri.sinif_gelisim %}
+                                    <tr>
+                                        <td>{{ sinif_veri.sinif }}</td>
+                                        <td>{{ sinif_veri.ogrenci_sayisi }}</td>
+                                        <td>% {{ sinif_veri.ortalama_ilerleme }}</td>
+                                        <td>{{ sinif_veri.gorusme_sayisi }}</td>
+                                        <td>{{ sinif_veri.risk_durumu.yüksek }}</td>
+                                        <td>{{ sinif_veri.risk_durumu.orta }}</td>
+                                        <td>{{ sinif_veri.risk_durumu.düşük }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Değerlendirme ve Yorumlar -->
+    {% if rapor.yorum %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Değerlendirme ve Yorumlar</h6>
+                </div>
+                <div class="card-body">
+                    {{ rapor.yorum|nl2br }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block page_script %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if rapor.rapor_tipi == 'analiz' %}
+        // Görüşme Türleri Dağılımı Grafiği
+        const gorusmeTurleriCtx = document.getElementById('gorusmeTurleriChart').getContext('2d');
+        const gorusmeTurleriData = {
+            labels: {{ rapor.grafikler.gorusme_turleri.labels|tojson }},
+            datasets: [{
+                data: {{ rapor.grafikler.gorusme_turleri.values|tojson }},
+                backgroundColor: {{ rapor.grafikler.gorusme_turleri.colors|tojson }},
+                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }]
+        };
+        
+        const gorusmeTurleriChart = new Chart(gorusmeTurleriCtx, {
+            type: 'doughnut',
+            data: gorusmeTurleriData,
+            options: {
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Çalışma Alanları Grafiği
+        const calismaAlanlariCtx = document.getElementById('calismaAlanlariChart').getContext('2d');
+        const calismaAlanlariData = {
+            labels: {{ rapor.grafikler.calisma_alanlari.labels|tojson }},
+            datasets: [{
+                label: 'Görüşme Sayısı',
+                backgroundColor: 'rgba(28, 200, 138, 0.8)',
+                borderColor: 'rgba(28, 200, 138, 1)',
+                borderWidth: 1,
+                data: {{ rapor.grafikler.calisma_alanlari.values|tojson }}
+            }]
+        };
+        
+        const calismaAlanlariChart = new Chart(calismaAlanlariCtx, {
+            type: 'bar',
+            data: calismaAlanlariData,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+    {% elif rapor.rapor_tipi == 'karşılaştırma' %}
+        // Grup Karşılaştırma Grafiği
+        const grupKarsilastirmaCtx = document.getElementById('grupKarsilastirmaChart').getContext('2d');
+        const grupKarsilastirmaData = {
+            labels: {{ rapor.grafikler.grup_karsilastirma.labels|tojson }},
+            datasets: [
+                {
+                    label: 'Öğrenci Sayısı',
+                    backgroundColor: {{ rapor.grafikler.grup_karsilastirma.datasets[0].backgroundColor|tojson }},
+                    data: {{ rapor.grafikler.grup_karsilastirma.datasets[0].data|tojson }}
+                },
+                {
+                    label: 'Görüşme Sayısı',
+                    backgroundColor: {{ rapor.grafikler.grup_karsilastirma.datasets[1].backgroundColor|tojson }},
+                    data: {{ rapor.grafikler.grup_karsilastirma.datasets[1].data|tojson }}
+                },
+                {
+                    label: 'Deneme Ortalaması',
+                    backgroundColor: {{ rapor.grafikler.grup_karsilastirma.datasets[2].backgroundColor|tojson }},
+                    data: {{ rapor.grafikler.grup_karsilastirma.datasets[2].data|tojson }}
+                }
+            ]
+        };
+        
+        const grupKarsilastirmaChart = new Chart(grupKarsilastirmaCtx, {
+            type: 'bar',
+            data: grupKarsilastirmaData,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+    {% elif rapor.rapor_tipi == 'performans' %}
+        // Performans Göstergeleri Grafiği
+        const performansGostergelerCtx = document.getElementById('performansGostergelerChart').getContext('2d');
+        const performansGostergelerData = {
+            labels: {{ rapor.grafikler.performans.labels|tojson }},
+            datasets: [{
+                label: 'Değer',
+                backgroundColor: {{ rapor.grafikler.performans.colors|tojson }},
+                data: {{ rapor.grafikler.performans.values|tojson }}
+            }]
+        };
+        
+        const performansGostergelerChart = new Chart(performansGostergelerCtx, {
+            type: 'bar',
+            data: performansGostergelerData,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Dönem Karşılaştırma Grafiği
+        const donemKarsilastirmaCtx = document.getElementById('donemKarsilastirmaChart').getContext('2d');
+        const donemKarsilastirmaData = {
+            labels: {{ rapor.grafikler.degisim.labels|tojson }},
+            datasets: [{
+                label: 'Görüşme Sayısı',
+                backgroundColor: {{ rapor.grafikler.degisim.colors|tojson }},
+                data: {{ rapor.grafikler.degisim.values|tojson }}
+            }]
+        };
+        
+        const donemKarsilastirmaChart = new Chart(donemKarsilastirmaCtx, {
+            type: 'bar',
+            data: donemKarsilastirmaData,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+    {% elif rapor.rapor_tipi == 'yönetim_özeti' %}
+        // Aylık Trend Grafiği
+        const aylikTrendCtx = document.getElementById('aylikTrendChart').getContext('2d');
+        const aylikTrendData = {
+            labels: {{ rapor.grafikler.aylik_trend.labels|tojson }},
+            datasets: [{
+                label: 'Görüşme Sayısı',
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                borderColor: {{ rapor.grafikler.aylik_trend.color|tojson }},
+                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                data: {{ rapor.grafikler.aylik_trend.values|tojson }},
+                fill: true
+            }]
+        };
+        
+        const aylikTrendChart = new Chart(aylikTrendCtx, {
+            type: 'line',
+            data: aylikTrendData,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Risk Durumu Grafiği
+        const riskDurumuCtx = document.getElementById('riskDurumuChart').getContext('2d');
+        const riskDurumuData = {
+            labels: {{ rapor.grafikler.risk_durumu.labels|tojson }},
+            datasets: [{
+                data: {{ rapor.grafikler.risk_durumu.values|tojson }},
+                backgroundColor: {{ rapor.grafikler.risk_durumu.colors|tojson }},
+                hoverBackgroundColor: ['#a02a2a', '#c09a1f', '#0d8e5c'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }]
+        };
+        
+        const riskDurumuChart = new Chart(riskDurumuCtx, {
+            type: 'doughnut',
+            data: riskDurumuData,
+            options: {
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Sınıf İlerleme Grafiği
+        const sinifIlerlemeCtx = document.getElementById('sinifIlerlemeChart').getContext('2d');
+        const sinifIlerlemeData = {
+            labels: {{ rapor.grafikler.sinif_ilerleme.labels|tojson }},
+            datasets: [{
+                label: 'Ortalama İlerleme (%)',
+                backgroundColor: {{ rapor.grafikler.sinif_ilerleme.colors|tojson }},
+                data: {{ rapor.grafikler.sinif_ilerleme.values|tojson }}
+            }]
+        };
+        
+        const sinifIlerlemeChart = new Chart(sinifIlerlemeCtx, {
+            type: 'bar',
+            data: sinifIlerlemeData,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    {% endif %}
+});
+</script>
+{% endblock %}

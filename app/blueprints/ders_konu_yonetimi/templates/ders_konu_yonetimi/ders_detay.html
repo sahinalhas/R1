@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ders.ad }} - Konular{% endblock %}
+
+{% block content %}
+<!-- Ders bilgileri üst kart -->
+{% set ders_renk = 'primary' %}
+{% set ders_ikon = 'book' %}
+{% set ders_tip = '' %}
+
+{% if 'TYT' in ders.ad %}
+    {% set ders_renk = 'info' %}
+    {% set ders_ikon = 'check-circle' %}
+    {% set ders_tip = 'TYT' %}
+{% elif 'AYT' in ders.ad %}
+    {% set ders_renk = 'success' %}
+    {% set ders_ikon = 'star' %}
+    {% set ders_tip = 'AYT' %}
+{% elif 'YDT' in ders.ad or 'Dil' in ders.ad or 'İngilizce' in ders.ad or 'Almanca' in ders.ad or 'Fransızca' in ders.ad %}
+    {% set ders_renk = 'warning' %}
+    {% set ders_ikon = 'globe' %}
+    {% set ders_tip = 'YDT' %}
+{% endif %}
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center p-4 border-0">
+        <div class="d-flex align-items-center">
+            <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-3 p-3 me-3">
+                <i class="fas fa-{{ ders_ikon }} fs-4 text-{{ ders_renk }}"></i>
+            </div>
+            <div>
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title mb-0 fw-bold">{{ ders.ad }}</h4>
+                    {% if ders_tip %}
+                    <span class="badge bg-{{ ders_renk }} bg-opacity-10 text-{{ ders_renk }} rounded-pill px-3 py-2 ms-2">{{ ders_tip }}</span>
+                    {% endif %}
+                </div>
+                {% if ders.aciklama %}
+                <p class="text-muted small mb-0 mt-1">{{ ders.aciklama }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('ders_konu_yonetimi.duzenle', ders_id=ders.id) }}" class="btn btn-outline-{{ ders_renk }} rounded-pill px-4 py-2 shadow-sm">
+                <i class="fas fa-edit me-2"></i> Dersi Düzenle
+            </a>
+            <button type="button" class="btn btn-outline-danger rounded-pill px-4 py-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#silDersModal">
+                <i class="fas fa-trash me-2"></i> Dersi Sil
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- İstatistik kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                    <i class="fas fa-list-ul fs-4 text-{{ ders_renk }}"></i>
+                </div>
+                <h2 class="mb-0 fw-bold">{{ ders.konu_sayisi() }}</h2>
+                <div class="text-muted">Toplam Konu</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                    <i class="fas fa-clock fs-4 text-{{ ders_renk }}"></i>
+                </div>
+                <h2 class="mb-0 fw-bold">{{ ders.toplam_sure() }}</h2>
+                <div class="text-muted">Toplam Dakika</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                    <i class="fas fa-hourglass-half fs-4 text-{{ ders_renk }}"></i>
+                </div>
+                <h2 class="mb-0 fw-bold">{{ (ders.toplam_sure() / 60)|round(1) }}</h2>
+                <div class="text-muted">Toplam Saat</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 text-center">
+                <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                    <i class="fas fa-tachometer-alt fs-4 text-{{ ders_renk }}"></i>
+                </div>
+                <h2 class="mb-0 fw-bold">{{ (ders.toplam_sure() / ders.konu_sayisi())|round(1) if ders.konu_sayisi() > 0 else 0 }}</h2>
+                <div class="text-muted">Ort. Süre (dk)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Konu Yönetimi -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center p-4 border-0">
+        <div class="d-flex align-items-center">
+            <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-3 p-3 me-3">
+                <i class="fas fa-list-ul fs-4 text-{{ ders_renk }}"></i>
+            </div>
+            <div>
+                <h5 class="mb-0 fw-bold">Konular</h5>
+                <p class="text-muted small mb-0">Derse ait konu listesi</p>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('ders_konu_yonetimi.konular_toplu_ekle', ders_id=ders.id) }}" class="btn btn-outline-success rounded-pill px-4 py-2 shadow-sm">
+                <i class="fas fa-file-import me-2"></i> Toplu Konu Ekle
+            </a>
+            <a href="{{ url_for('ders_konu_yonetimi.konu_ekle', ders_id=ders.id) }}" class="btn btn-{{ ders_renk }} rounded-pill px-4 py-2 shadow-sm">
+                <i class="fas fa-plus me-2"></i> Yeni Konu Ekle
+            </a>
+        </div>
+    </div>
+    
+    <div class="card-body p-4">
+        {% if konular %}
+        <div class="table-responsive">
+            <table id="konuTable" class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th class="rounded-start-3">Sıra</th>
+                        <th>Konu Adı</th>
+                        <th>Tahmini Süre (dk)</th>
+                        <th class="rounded-end-3 text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for konu in konular %}
+                    <tr class="align-middle">
+                        <td class="fw-medium">{{ konu.sira }}</td>
+                        <td>{{ konu.ad }}</td>
+                        <td>
+                            <span class="badge bg-{{ ders_renk }} bg-opacity-10 text-{{ ders_renk }} rounded-pill px-3 py-2">
+                                <i class="fas fa-clock me-1"></i> {{ konu.tahmini_sure }} dk
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group" aria-label="Konu İşlemleri">
+                                <a href="{{ url_for('ders_konu_yonetimi.konu_duzenle', konu_id=konu.id) }}" class="btn btn-sm btn-outline-{{ ders_renk }} rounded-start-pill" data-bs-toggle="tooltip" title="Düzenle">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-end-pill" data-bs-toggle="modal" data-bs-target="#silModal{{ konu.id }}" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Silme Onay Modal -->
+                            <div class="modal fade" id="silModal{{ konu.id }}" tabindex="-1" aria-labelledby="silModalLabel{{ konu.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow rounded-4">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title" id="silModalLabel{{ konu.id }}">Konu Silme Onayı</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="text-center mb-4">
+                                                <div class="icon-wrapper bg-danger bg-opacity-10 rounded-circle p-4 d-inline-flex mb-3">
+                                                    <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                                                </div>
+                                            </div>
+                                            <p class="text-center">
+                                                <strong>{{ konu.ad }}</strong> konusunu silmek istediğinizden emin misiniz?
+                                            </p>
+                                            <div class="alert alert-warning bg-opacity-10 border-0 rounded-3">
+                                                <div class="d-flex">
+                                                    <i class="fas fa-info-circle me-2 text-warning"></i>
+                                                    <p class="mb-0 small">Bu işlem geri alınamaz ve konuya ait tüm takip verileri silinecektir.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Vazgeç</button>
+                                            <form action="{{ url_for('ders_konu_yonetimi.konu_sil', konu_id=konu.id) }}" method="post">
+                                                <button type="submit" class="btn btn-danger rounded-pill px-4">Evet, Sil</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="icon-wrapper bg-{{ ders_renk }} bg-opacity-10 rounded-circle p-4 d-inline-flex mb-3">
+                <i class="fas fa-list-ul fa-3x text-{{ ders_renk }} opacity-75"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Bu derse ait konu bulunmamaktadır</h5>
+            <p class="text-muted mb-4">Derse konu ekleyerek içeriği oluşturabilirsiniz.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('ders_konu_yonetimi.konular_toplu_ekle', ders_id=ders.id) }}" class="btn btn-outline-success rounded-pill px-4 py-2 shadow-sm">
+                    <i class="fas fa-file-import me-2"></i> Toplu Konu Ekle
+                </a>
+                <a href="{{ url_for('ders_konu_yonetimi.konu_ekle', ders_id=ders.id) }}" class="btn btn-{{ ders_renk }} rounded-pill px-4 py-2 shadow-sm">
+                    <i class="fas fa-plus me-2"></i> Yeni Konu Ekle
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Silme Onay Modalı -->
+<div class="modal fade" id="silDersModal" tabindex="-1" aria-labelledby="silDersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="silDersModalLabel">Ders Silme Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="icon-wrapper bg-danger bg-opacity-10 rounded-circle p-4 d-inline-flex mb-3">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                    </div>
+                </div>
+                <p class="text-center">
+                    <strong>{{ ders.ad }}</strong> dersini silmek istediğinizden emin misiniz?
+                </p>
+                <div class="alert alert-warning bg-opacity-10 border-0 rounded-3">
+                    <div class="d-flex">
+                        <i class="fas fa-info-circle me-2 text-warning"></i>
+                        <p class="mb-0 small">Bu işlem geri alınamaz ve derse ait tüm konular ve ilerleme verileri silinecektir!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Vazgeç</button>
+                <form action="{{ url_for('ders_konu_yonetimi.sil', ders_id=ders.id) }}" method="post">
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Evet, Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Icon wrapper stillemesi */
+    .icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        transition: all 0.2s ease;
+    }
+    
+    /* Yuvarlatılmış köşeler */
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+    
+    /* Tablo satırları için hover efekti */
+    .table-hover tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    /* Tablo başlığı için yuvarlatılmış köşeler */
+    .rounded-start-3 {
+        border-top-left-radius: 0.5rem !important;
+        border-bottom-left-radius: 0.5rem !important;
+    }
+    
+    .rounded-end-3 {
+        border-top-right-radius: 0.5rem !important;
+        border-bottom-right-radius: 0.5rem !important;
+    }
+</style>
+{% endblock %}

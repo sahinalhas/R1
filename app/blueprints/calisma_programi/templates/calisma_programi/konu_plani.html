@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Konu Bazlı Çalışma Planı - {{ ogrenci.ad }} {{ ogrenci.soyad }}{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{% with active_tab='konu_plani' %}
+    {% include 'student_tabs.html' %}
+{% endwith %}
+
+<!-- Modern Konu Bazlı Çalışma Planı -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-book-open me-2"></i>
+                <span>KONU BAZLI ÇALIŞMA PLANI</span>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('calisma_programi.haftalik_plan', ogrenci_id=ogrenci.id) }}" class="modern-action-btn me-2">
+                    <i class="fas fa-calendar-week me-1"></i> Haftalık Plan
+                </a>
+                <a href="{{ url_for('calisma_programi.konu_takip', ogrenci_id=ogrenci.id) }}" class="modern-action-btn me-2">
+                    <i class="fas fa-check-circle me-1"></i> Konu Takibi
+                </a>
+                <a href="{{ url_for('rapor_yonetimi.konu_plani_pdf', ogrenci_id=ogrenci.id) }}" class="modern-action-btn me-2" target="_blank">
+                    <i class="fas fa-file-pdf me-1"></i> PDF İndir
+                </a>
+                <button id="calisma-tamamlandi-btn" class="modern-action-btn">
+                    <i class="fas fa-check-double me-1"></i> Çalışma Tamamlandı
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <!-- Öğrenci Bilgileri -->
+        <div class="border rounded mb-4">
+            <div class="bg-light p-3 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="fw-bold text-primary">
+                        <i class="fas fa-user-graduate me-2"></i> ÖĞRENCİ BİLGİLERİ
+                    </div>
+                    <div class="ms-auto fw-bold">{{ ogrenci.ad }} {{ ogrenci.soyad }}</div>
+                </div>
+            </div>
+            <div class="p-3">
+                <div class="alert alert-info mb-0">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold mb-1">Otomatik Oluşturulan Plan</div>
+                            <p class="mb-0">Bu plan, öğrencinin haftalık ders programına göre otomatik olarak oluşturulmuştur. 
+                            Her ders bloğu için hangi konuların çalışılacağı detaylı olarak listelenmiştir.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Günlere Göre Konu Planları -->
+        {% for gun_index, gun_plani in konu_plani.items() %}
+        <div class="border rounded mb-4">
+            <div class="bg-primary text-white p-2">
+                <div class="fw-bold">
+                    <i class="fas fa-calendar-day me-2"></i> {{ gunler[gun_index] }}
+                </div>
+            </div>
+            <div class="p-3">
+                {% if gun_plani %}
+                <div class="table-responsive">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th width="15%">Saat</th>
+                                <th width="20%">Ders</th>
+                                <th>Konu</th>
+                                <th width="15%">Süre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for plan in gun_plani %}
+                            <tr class="ders-renk-{{ (plan.ders_id % 10) }}">
+                                <td>{{ plan.baslangic }} - {{ plan.bitis }}</td>
+                                <td>{{ plan.ders_adi }}</td>
+                                <td>{{ plan.konu_adi }}</td>
+                                <td>{{ plan.sure }} dakika</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-light text-center py-4">
+                    <i class="fas fa-calendar-times fa-2x mb-3 text-muted"></i>
+                    <p class="mb-0 text-muted">Bu gün için planlanmış çalışma bulunmamaktadır.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+<!-- Çalışma Tamamlandı için Modal -->
+<div class="modal fade" id="calisma-tamamlandi-modal" tabindex="-1" aria-labelledby="calisma-tamamlandi-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="calisma-tamamlandi-modal-label">
+                    <i class="fas fa-check-double me-2"></i>
+                    Çalışmayı Tamamla
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold mb-1">Onay İşlemi</div>
+                            <p class="mb-0">Bu sayfada gösterilen tüm çalışmaları tamamladınız mı? Onayladığınızda, tüm konuların süreleri çalışılmış olarak işaretlenecek ve ilerleme durumları güncellenecektir.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> İptal
+                </button>
+                <button type="button" class="btn btn-primary" id="calisma-tamamlandi-onay">
+                    <i class="fas fa-check me-1"></i> Evet, Tamamlandı
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal ve buton elementlerini al
+    const calismaBtn = document.getElementById('calisma-tamamlandi-btn');
+    const calismaModal = new bootstrap.Modal(document.getElementById('calisma-tamamlandi-modal'));
+    const calismaOnayBtn = document.getElementById('calisma-tamamlandi-onay');
+    
+    // Çalışma planı verilerini topla
+    const konuPlani = [];
+    
+    {% for gun_index, gun_plani in konu_plani.items() %}
+        {% for plan in gun_plani %}
+            konuPlani.push({
+                konu_id: {{ plan.konu_id }},
+                sure: {{ plan.sure }}
+            });
+        {% endfor %}
+    {% endfor %}
+    
+    // Çalışma Tamamlandı butonuna tıklandığında
+    calismaBtn.addEventListener('click', function() {
+        calismaModal.show();
+    });
+    
+    // Modal içinde onay butonuna tıklandığında
+    calismaOnayBtn.addEventListener('click', function() {
+        // Konuları işaretle
+        fetch("{{ url_for('calisma_programi.calisma_tamamla', ogrenci_id=ogrenci.id) }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                konu_plani: konuPlani 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Başarılı olduğunda
+                calismaModal.hide();
+                
+                // Kullanıcıya bildir
+                alert(data.message);
+                
+                // Sayfayı yenile ve güncel konu planını göster
+                window.location.reload();
+            } else {
+                // Hata oluştuğunda
+                alert('Hata: ' + data.message);
+                calismaModal.hide();
+            }
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            alert('İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+            calismaModal.hide();
+        });
+    });
+});
+</script>
+
+{% endblock %}

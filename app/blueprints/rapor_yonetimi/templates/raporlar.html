@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Raporlar - YKS Çalışma Programı Takip Sistemi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-chart-bar me-2 text-primary"></i>
+        Raporlar
+    </h2>
+    <div>
+        <a href="{{ url_for('ogrenci_profil', ogrenci_id=ogrenci.id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Öğrenci Profiline Dön
+        </a>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            <div>
+                <h5 class="mb-0">{{ ogrenci.ad }} {{ ogrenci.soyad }}</h5>
+                <p class="mb-0 text-muted">{{ ogrenci.numara }}, {{ ogrenci.sinif }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-week fa-3x text-primary mb-3"></i>
+                <h5>Haftalık Ders Programı</h5>
+                <p class="text-muted">Haftalık ders programının PDF çıktısını alın.</p>
+                <p>Öğrencinin Pazartesi'den Pazar'a kadar hangi saatlerde hangi derslere çalışacağını gösteren plan.</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('haftalik_plan_pdf', ogrenci_id=ogrenci.id) }}" class="btn btn-primary w-100" target="_blank">
+                    <i class="fas fa-download me-1"></i> PDF İndir
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-tasks fa-3x text-success mb-3"></i>
+                <h5>Konu Bazlı Çalışma Planı</h5>
+                <p class="text-muted">Konu planının PDF çıktısını alın.</p>
+                <p>Haftalık plana göre öğrencinin hangi gün, hangi saatte, hangi dersin hangi konusunu çalışacağını gösteren detaylı plan.</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('konu_plani_pdf', ogrenci_id=ogrenci.id) }}" class="btn btn-success w-100" target="_blank">
+                    <i class="fas fa-download me-1"></i> PDF İndir
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                <h5>İlerleme Raporu</h5>
+                <p class="text-muted">Detaylı ilerleme raporunu PDF olarak indirin.</p>
+                <p>Öğrencinin tüm derslerdeki ilerlemesi, tamamlanan konular, deneme sonuçları ve analizleri içeren kapsamlı rapor.</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('ilerleme_raporu_pdf', ogrenci_id=ogrenci.id) }}" class="btn btn-info text-white w-100" target="_blank">
+                    <i class="fas fa-download me-1"></i> PDF İndir
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                <h5>Gelişmiş Raporlar</h5>
+                <p class="text-muted">MEB standartlarına uygun gelişmiş raporlama</p>
+                <p>Dönemsel rehberlik faaliyet raporları, istatistik raporları ve yönetim özet raporlarına erişim.</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('rapor_yonetimi.rapor_yonetimi_index') }}" class="btn btn-primary text-white w-100">
+                    <i class="fas fa-file-alt me-1"></i> Tüm Raporlar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Raporlar Hakkında</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p><i class="fas fa-lightbulb me-1"></i> <strong>Bilgi:</strong> 
+                    Oluşturulan PDF raporlar indirilebilir formatta sunulur ve çıktı alınabilir.</p>
+                </div>
+                
+                <h6 class="mt-3 mb-2"><i class="fas fa-calendar-week me-2 text-primary"></i> Haftalık Ders Programı</h6>
+                <p>Bu rapor, öğrencinin hafta boyunca (Pazartesi-Pazar) hangi saatlerde hangi derslere çalışacağını gösteren programı içerir. 
+                Her ders farklı bir renkle belirtilmiştir. Sabah 7:00'den akşam 24:00'e kadar olan zaman dilimini kapsar.</p>
+                
+                <h6 class="mt-3 mb-2"><i class="fas fa-tasks me-2 text-success"></i> Konu Bazlı Çalışma Planı</h6>
+                <p>Bu rapor, haftalık programa dayalı olarak her ders bloğunda hangi konuların çalışılacağını detaylı bir şekilde gösterir. 
+                Her günün çalışma planı ayrı listelenmiş ve her bir çalışma bloğunda hangi dersin hangi konusunun ne kadar süreyle çalışılacağı belirtilmiştir.</p>
+                
+                <h6 class="mt-3 mb-2"><i class="fas fa-chart-line me-2 text-info"></i> İlerleme Raporu</h6>
+                <p>Bu kapsamlı rapor, öğrencinin çalışma ilerlemesini detaylı olarak gösterir:</p>
+                <ul>
+                    <li>Tamamlanan konu sayısı ve genel ilerleme yüzdesi</li>
+                    <li>Ders bazında ilerleme yüzdeleri ve tahmini bitiş tarihleri</li>
+                    <li>Ders ve konu bazında tamamlanma durumları</li>
+                    <li>Çözülen soru sayıları ve doğruluk oranları</li>
+                    <li>Deneme sınavı sonuçları ve analizi</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

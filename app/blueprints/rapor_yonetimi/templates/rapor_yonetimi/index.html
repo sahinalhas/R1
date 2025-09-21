@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}Rapor Yönetimi{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item active">Rapor Yönetimi</li>
+{% endblock %}
+
+{% block content %}
+<!-- Modern Rapor Yönetimi -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-chart-line me-2"></i>
+                <span>RAPOR YÖNETİMİ</span>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('rapor_yonetimi.donemsel_rapor') }}" class="modern-action-btn me-2">
+                    <i class="fas fa-file-alt me-1"></i> Dönemsel Rapor Oluştur
+                </a>
+                <a href="{{ url_for('rapor_yonetimi.istatistik_raporu') }}" class="modern-action-btn">
+                    <i class="fas fa-chart-bar me-1"></i> İstatistik Raporu Oluştur
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <!-- Sayfa açıklaması -->
+        <div class="border rounded mb-4">
+            <div class="bg-light p-3 border-bottom">
+                <div class="fw-bold text-primary">
+                    <i class="fas fa-info-circle me-2"></i> MODÜL BİLGİSİ
+                </div>
+            </div>
+            <div class="p-3">
+                <div class="row align-items-center">
+                    <div class="col-md-10">
+                        <h5 class="fw-bold text-primary mb-2">MEB Standartlarına Uygun Gelişmiş Raporlama</h5>
+                        <p class="mb-0">Bu modül ile dönemsel faaliyet raporları, istatistiksel analiz raporları oluşturabilir, 
+                        PDF ve Excel formatında dışa aktarabilirsiniz. Oluşturulan raporlar MEB E-Rehberlik sistemi ile uyumludur.</p>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <i class="fas fa-clipboard-list fa-3x text-primary opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Raporlar Listesi -->
+        <div class="row g-4">
+            <!-- Faaliyet Raporları -->
+            <div class="col-lg-6">
+                <div class="border rounded">
+                    <div class="bg-primary text-white p-2">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="fw-bold">
+                                <i class="fas fa-file-alt me-2"></i> FAALİYET RAPORLARI
+                            </div>
+                            <a href="{{ url_for('rapor_yonetimi.donemsel_rapor') }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                                <i class="fas fa-plus me-1"></i> Yeni Oluştur
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        {% if faaliyet_raporlari %}
+                        <div class="table-responsive">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rapor Başlığı</th>
+                                        <th>Dönem</th>
+                                        <th>Durum</th>
+                                        <th>Oluşturma Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rapor in faaliyet_raporlari %}
+                                    <tr>
+                                        <td>{{ rapor.baslik }}</td>
+                                        <td>{{ rapor.donem }}</td>
+                                        <td>
+                                            {% if rapor.durum == 'taslak' %}
+                                            <span class="badge bg-warning text-dark py-1 px-2 rounded-1">Taslak</span>
+                                            {% elif rapor.durum == 'tamamlandı' %}
+                                            <span class="badge bg-success py-1 px-2 rounded-1">Tamamlandı</span>
+                                            {% elif rapor.durum == 'onaylandı' %}
+                                            <span class="badge bg-primary py-1 px-2 rounded-1">Onaylandı</span>
+                                            {% elif rapor.durum == 'mebbis_aktarıldı' %}
+                                            <span class="badge bg-info py-1 px-2 rounded-1">MEBBİS'e Aktarıldı</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ rapor.olusturma_tarihi.strftime('%d.%m.%Y %H:%M') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('rapor_yonetimi.rapor_detay', rapor_id=rapor.id) }}" class="btn btn-sm btn-outline-primary me-1" title="Görüntüle">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('rapor_yonetimi.rapor_pdf', rapor_id=rapor.id) }}" class="btn btn-sm btn-outline-danger me-1" title="PDF İndir">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                            <a href="{{ url_for('rapor_yonetimi.rapor_excel', rapor_id=rapor.id) }}" class="btn btn-sm btn-outline-success" title="Excel İndir">
+                                                <i class="fas fa-file-excel"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold mb-1">Henüz oluşturulmuş faaliyet raporu bulunmamaktadır</div>
+                                    <p class="mb-0">Yeni rapor oluşturmak için "Yeni Oluştur" butonunu kullanabilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistik Raporları -->
+            <div class="col-lg-6">
+                <div class="border rounded">
+                    <div class="bg-primary text-white p-2">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="fw-bold">
+                                <i class="fas fa-chart-bar me-2"></i> İSTATİSTİK RAPORLARI
+                            </div>
+                            <a href="{{ url_for('rapor_yonetimi.istatistik_raporu') }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                                <i class="fas fa-plus me-1"></i> Yeni Oluştur
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        {% if istatistik_raporlari %}
+                        <div class="table-responsive">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rapor Başlığı</th>
+                                        <th>Rapor Tipi</th>
+                                        <th>Tarih Aralığı</th>
+                                        <th>Oluşturma Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rapor in istatistik_raporlari %}
+                                    <tr>
+                                        <td>{{ rapor.baslik }}</td>
+                                        <td>
+                                            {% if rapor.rapor_tipi == 'analiz' %}
+                                            <span class="badge bg-primary py-1 px-2 rounded-1">Analiz</span>
+                                            {% elif rapor.rapor_tipi == 'karşılaştırma' %}
+                                            <span class="badge bg-success py-1 px-2 rounded-1">Karşılaştırma</span>
+                                            {% elif rapor.rapor_tipi == 'performans' %}
+                                            <span class="badge bg-info py-1 px-2 rounded-1">Performans</span>
+                                            {% elif rapor.rapor_tipi == 'yönetim_özeti' %}
+                                            <span class="badge bg-warning text-dark py-1 px-2 rounded-1">Yönetim Özeti</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ rapor.baslangic_tarihi.strftime('%d.%m.%Y') }} - {{ rapor.bitis_tarihi.strftime('%d.%m.%Y') }}</td>
+                                        <td>{{ rapor.olusturma_tarihi.strftime('%d.%m.%Y %H:%M') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('rapor_yonetimi.istatistik_rapor_detay', rapor_id=rapor.id) }}" class="btn btn-sm btn-outline-primary" title="Görüntüle">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold mb-1">Henüz oluşturulmuş istatistik raporu bulunmamaktadır</div>
+                                    <p class="mb-0">Yeni rapor oluşturmak için "Yeni Oluştur" butonunu kullanabilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEB Raporlama Bilgileri -->
+        <div class="border rounded mt-4">
+            <div class="bg-primary text-white p-2">
+                <div class="fw-bold">
+                    <i class="fas fa-university me-2"></i> MEB E-REHBERLİK SİSTEMİ ENTEGRASYONU
+                </div>
+            </div>
+            <div class="p-3">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="border rounded bg-light p-3 h-100">
+                            <h6 class="fw-bold text-primary mb-3">MEB Raporlama Gereksinimleri</h6>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Dönemsel Raporlama</span>
+                                    <span class="badge bg-primary rounded-1 py-1 px-2">✓</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Yıllık Faaliyet Raporları</span>
+                                    <span class="badge bg-primary rounded-1 py-1 px-2">✓</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Görüşme İstatistikleri</span>
+                                    <span class="badge bg-primary rounded-1 py-1 px-2">✓</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Excel Formatında Dışa Aktarım</span>
+                                    <span class="badge bg-primary rounded-1 py-1 px-2">✓</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded bg-light p-3 h-100">
+                            <h6 class="fw-bold text-primary mb-3">Kullanım Adımları</h6>
+                            <ol class="list-group list-group-numbered">
+                                <li class="list-group-item">Dönemsel Rapor Oluştur butonuna tıklayın</li>
+                                <li class="list-group-item">Tarih aralığını ve rapor bilgilerini doldurun</li>
+                                <li class="list-group-item">Raporu oluşturun ve görüntüleyin</li>
+                                <li class="list-group-item">Excel formatında indirip E-Rehberlik sistemine yükleyin</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_script %}
+<script>
+$(document).ready(function() {
+    $('.modern-table').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json',
+        },
+        order: [[3, 'desc']]
+    });
+});
+</script>
+{% endblock %}

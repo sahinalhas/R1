@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Etkinlik Detayı{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-calendar-check me-2"></i>Etkinlik Detayı
+            </h5>
+            <div>
+                <a href="{{ url_for('etkinlik_kayit.etkinlik_duzenle', etkinlik_id=etkinlik.id) }}" class="btn btn-sm btn-warning me-1">
+                    <i class="fas fa-edit me-1"></i>Düzenle
+                </a>
+                <a href="{{ url_for('etkinlik_kayit.index') }}" class="btn btn-sm btn-light">
+                    <i class="fas fa-arrow-left me-1"></i>Listeye Dön
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="border-bottom pb-2 mb-3">Etkinlik Bilgileri</h6>
+                    
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-bold">Etkinlik Tarihi:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">{{ etkinlik.etkinlik_tarihi|format_date }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-bold">Çalışma Yöntemi:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">{{ etkinlik.calisma_yontemi }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-bold">Hedef Türü:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">
+                                <span class="badge bg-primary">{{ etkinlik.hedef_turu }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-bold">Faaliyet Türü:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">
+                                <span class="badge bg-secondary">{{ etkinlik.faaliyet_turu }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if etkinlik.resmi_yazi_sayisi %}
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label fw-bold">Resmi Yazı Sayısı:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">{{ etkinlik.resmi_yazi_sayisi }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6">
+                    <h6 class="border-bottom pb-2 mb-3">Katılımcı Bilgileri</h6>
+                    
+                    <div class="mb-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-header py-2">
+                                        <h6 class="mb-0">Katılımcı Sayıları</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="text-center mb-3">
+                                                    <span class="d-block fw-bold text-primary">Öğretmen</span>
+                                                    <span class="badge bg-primary fs-5">{{ etkinlik.ogretmen_sayisi }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="text-center mb-3">
+                                                    <span class="d-block fw-bold text-primary">Veli</span>
+                                                    <span class="badge bg-primary fs-5">{{ etkinlik.veli_sayisi }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="text-center mb-3">
+                                                    <span class="d-block fw-bold text-primary">Diğer</span>
+                                                    <span class="badge bg-primary fs-5">{{ etkinlik.diger_katilimci_sayisi }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mt-2">
+                                            <div class="col-md-6">
+                                                <div class="text-center mb-3">
+                                                    <span class="d-block fw-bold text-success">Erkek Öğrenci</span>
+                                                    <span class="badge bg-success fs-5">{{ etkinlik.erkek_ogrenci_sayisi }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="text-center mb-3">
+                                                    <span class="d-block fw-bold text-success">Kız Öğrenci</span>
+                                                    <span class="badge bg-success fs-5">{{ etkinlik.kiz_ogrenci_sayisi }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="border-top pt-2 text-center">
+                                            <span class="d-block fw-bold text-danger">Toplam Katılımcı</span>
+                                            <span class="badge bg-danger fs-5">{{ etkinlik.toplam_katilimci_sayisi }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if etkinlik.sinif_bilgisi %}
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label fw-bold">Sınıf Bilgisi:</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext">{{ etkinlik.sinif_bilgisi }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-12 mt-3">
+                    <h6 class="border-bottom pb-2 mb-3">Açıklama</h6>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text">{{ etkinlik.aciklama|nl2br }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-danger" 
+                    onclick="silmeIslemi('{{ url_for('etkinlik_kayit.etkinlik_sil', etkinlik_id=etkinlik.id) }}')">
+                <i class="fas fa-trash me-1"></i>Etkinliği Sil
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Silme Onay Modalı -->
+<div class="modal fade" id="silmeOnayi" tabindex="-1" aria-labelledby="silmeOnayiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="silmeOnayiLabel">Etkinlik Silme Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu etkinlik kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form id="silmeFormu" method="post" action="">
+                    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function silmeIslemi(silmeUrl) {
+        document.getElementById('silmeFormu').action = silmeUrl;
+        var silmeModal = new bootstrap.Modal(document.getElementById('silmeOnayi'));
+        silmeModal.show();
+    }
+</script>
+{% endblock %}

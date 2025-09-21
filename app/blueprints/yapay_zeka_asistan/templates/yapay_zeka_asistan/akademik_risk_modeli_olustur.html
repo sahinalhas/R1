@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Akademik Risk Modeli Oluştur{% endblock %}
+
+{% block styles %}
+<style>
+    .model-info {
+        transition: all 0.3s ease;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc!important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Akademik Risk Modeli Oluştur</h1>
+        <a href="{{ url_for('yapay_zeka_asistan.index') }}" class="btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Asistana Dön
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Model Eğitim Formu</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('yapay_zeka_asistan.akademik_risk_modeli_olustur') }}">
+                        <div class="form-group">
+                            <label for="sinif">Sınıf Seviyesi</label>
+                            <select class="form-control" id="sinif" name="sinif">
+                                <option value="all">Tüm Sınıflar</option>
+                                <option value="9">9. Sınıf</option>
+                                <option value="10">10. Sınıf</option>
+                                <option value="11">11. Sınıf</option>
+                                <option value="12">12. Sınıf</option>
+                            </select>
+                            <small class="form-text text-muted">Model hangi sınıf seviyesindeki öğrenciler için eğitilsin?</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="model_tipi">Model Tipi</label>
+                            <select class="form-control" id="model_tipi" name="model_tipi">
+                                <option value="temel">Temel Model</option>
+                                <option value="gelismis" selected>Gelişmiş Model</option>
+                                <option value="kapsamli">Kapsamlı Model</option>
+                            </select>
+                            <small class="form-text text-muted">Oluşturulacak model tipi. Daha kapsamlı modeller daha detaylı analiz sunar.</small>
+                        </div>
+                        
+                        <div class="card mb-4 border-left-info">
+                            <div class="card-body py-2">
+                                <div class="model-info" id="model-temel-info" style="display: none;">
+                                    <h6 class="font-weight-bold text-info">Temel Model</h6>
+                                    <p class="mb-0">Temel sınav sonuçları ve ilerleme verilerine dayalı basit tahmin modeli. Minimum veri gereksinimiyle çalışır.</p>
+                                </div>
+                                <div class="model-info" id="model-gelismis-info">
+                                    <h6 class="font-weight-bold text-info">Gelişmiş Model</h6>
+                                    <p class="mb-0">Sınav sonuçları, ilerleme ve trend analizi içeren gelişmiş tahmin modeli. Daha hassas risk analizi sunar.</p>
+                                </div>
+                                <div class="model-info" id="model-kapsamli-info" style="display: none;">
+                                    <h6 class="font-weight-bold text-info">Kapsamlı Model</h6>
+                                    <p class="mb-0">Çoklu model yaklaşımı kullanan ve motivasyon, çalışma düzeni gibi faktörleri de içeren kapsamlı analiz modeli.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="mb-4">
+                            Not: Model eğitimi, mevcut veritabanı verilerine dayanacaktır. Yeterli sayıda öğrenci verisi olmadan model oluşturulamaz.
+                        </p>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cogs"></i> Modeli Eğit ve Oluştur
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Model Hakkında</h6>
+                </div>
+                <div class="card-body">
+                    <p>Akademik risk modeli, öğrencilerin aşağıdaki verilerine dayanarak akademik risk durumlarını tahmin eder:</p>
+                    <ul>
+                        <li>Deneme sınav sonuçları (net ortalamaları)</li>
+                        <li>Çalışma planı ilerleme durumları</li>
+                        <li>Devamsızlık durumları (mevcut olduğunda)</li>
+                    </ul>
+                    <p>Model, öğrencileri "risk altında" ve "normal ilerleme" şeklinde sınıflandırır ve her öğrenci için kişiselleştirilmiş öneriler sunar.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Model eğitimi için en az 10 öğrenci verisi gerekmektedir.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Akademik Risk Modeli Çalışma Prensibi</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Model Oluşturma Süreci</h5>
+                            <ol>
+                                <li>Veritabanından öğrenci verileri toplanır.</li>
+                                <li>Veriler ön işlemden geçirilir ve özellikler çıkarılır.</li>
+                                <li>Verilerin %70'i eğitim, %30'u test için ayrılır.</li>
+                                <li>Random Forest algoritması ile model eğitilir.</li>
+                                <li>Modelin başarısı test verileri üzerinde değerlendirilir.</li>
+                                <li>Model dosyası kaydedilir ve veritabanında referansı tutulur.</li>
+                            </ol>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Model Analiz Süreci</h5>
+                            <ol>
+                                <li>Öğrencinin güncel akademik verileri toplanır.</li>
+                                <li>Veriler aynı şekilde ön işlemeye tabi tutulur.</li>
+                                <li>Eğitilmiş model kullanılarak risk tahmini yapılır.</li>
+                                <li>Tahmin sonuçları ve olasılık değerleri kaydedilir.</li>
+                                <li>Risk durumuna göre öneriler otomatik oluşturulur.</li>
+                                <li>Sonuçlar ve öneriler kullanıcıya sunulur.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modelTipiSelect = document.getElementById('model_tipi');
+        var temelInfo = document.getElementById('model-temel-info');
+        var gelismisInfo = document.getElementById('model-gelismis-info');
+        var kapsamliInfo = document.getElementById('model-kapsamli-info');
+        
+        // İlk yükleme
+        updateModelInfo(modelTipiSelect.value);
+        
+        // Model tipi değiştirildiğinde
+        modelTipiSelect.addEventListener('change', function() {
+            updateModelInfo(this.value);
+        });
+        
+        // Model bilgisi güncelleme fonksiyonu
+        function updateModelInfo(modelTipi) {
+            // Tüm bilgileri gizle
+            temelInfo.style.display = 'none';
+            gelismisInfo.style.display = 'none';
+            kapsamliInfo.style.display = 'none';
+            
+            // Seçilen modelin bilgisini göster
+            if (modelTipi === 'temel') {
+                temelInfo.style.display = 'block';
+            } else if (modelTipi === 'gelismis') {
+                gelismisInfo.style.display = 'block';
+            } else if (modelTipi === 'kapsamli') {
+                kapsamliInfo.style.display = 'block';
+            }
+        }
+    });
+</script>
+{% endblock %}

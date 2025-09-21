@@ -1,0 +1,556 @@
+{% extends 'base.html' %}
+
+{% block title %}Haftalık Çalışma Planı | {{ ogrenci.ad }} {{ ogrenci.soyad }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<style>
+    .fc-event {
+        cursor: pointer;
+        border-radius: 0;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85em;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+    }
+    
+    .fc-timegrid-event {
+        margin: 0 !important;
+    }
+    
+    .fc-timegrid-event-harness {
+        margin: 0 !important;
+    }
+    
+    .fc-timegrid-event .fc-event-time {
+        white-space: normal;
+        padding: 2px 5px 0 5px;
+    }
+    
+    .fc-event-title {
+        white-space: normal;
+        padding: 0 5px 2px 5px;
+    }
+    
+    .ders-item {
+        padding: 4px 6px;
+        margin: 2px;
+        border-radius: 3px;
+        color: white;
+        cursor: move;
+        font-weight: bold;
+        transition: all 0.2s;
+        font-size: 0.75em;
+        flex-grow: 0;
+        flex-shrink: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 130px;
+    }
+    
+    .ders-item:hover, 
+    .ders-item-hover {
+        transform: translateY(-1px) scale(1.02);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        transition: all 0.2s ease;
+    }
+    
+    .ders-item-dragging {
+        opacity: 0.5 !important;
+    }
+    
+    #ders-listesi {
+        max-height: 550px;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: flex-start;
+    }
+    
+    .ders-item.hidden {
+        display: none;
+    }
+    
+    .plan-controls {
+        margin-bottom: 20px;
+    }
+    
+    /* Bu CSS sınıfları sadece soldaki ders listesi için, takvim için değil */
+    .ders-item.bg-ders-0 { background-color: #6200ea; }
+    .ders-item.bg-ders-1 { background-color: #e91e63; }
+    .ders-item.bg-ders-2 { background-color: #2e7d32; }
+    .ders-item.bg-ders-3 { background-color: #8e24aa; }
+    .ders-item.bg-ders-4 { background-color: #37474f; }
+    .ders-item.bg-ders-5 { background-color: #c2185b; }
+    .ders-item.bg-ders-6 { background-color: #f57c00; }
+    .ders-item.bg-ders-7 { background-color: #00897b; }
+    .ders-item.bg-ders-8 { background-color: #1565c0; }
+    .ders-item.bg-ders-9 { background-color: #512da8; }
+    
+    .fc-toolbar-title {
+        font-size: 18px !important;
+    }
+    
+    @media (max-width: 992px) {
+        #calendar {
+            margin-top: 20px;
+        }
+    }
+    
+    /* Sürükleme ve bırakma vurgulamaları */
+    .fc-highlight-cell {
+        background-color: rgba(255, 99, 71, 0.2) !important;
+        box-shadow: inset 0 0 3px rgba(255, 99, 71, 0.8);
+        border: 2px solid #ff6347 !important; /* kırmızı tonunda sınır */
+        transition: all 0.1s ease;
+        position: relative;
+        z-index: 5;
+    }
+    
+    /* İşlem başarılı animasyonu */
+    .operation-success {
+        animation: successPulse 0.8s ease;
+        box-shadow: 0 0 10px 3px rgba(76, 175, 80, 0.8) !important;
+    }
+    
+    @keyframes successPulse {
+        0% { box-shadow: 0 0 5px 2px rgba(76, 175, 80, 0.3); }
+        50% { box-shadow: 0 0 15px 5px rgba(76, 175, 80, 0.7); }
+        100% { box-shadow: 0 0 5px 2px rgba(76, 175, 80, 0.3); }
+    }
+    
+    .ui-draggable-dragging {
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .ders-drag-helper {
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        cursor: grabbing !important;
+        transition: transform 0.1s ease !important;
+    }
+    
+    /* Ders süre listesi stilleri */
+    .ders-sure-listesi {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .ders-sure-listesi .ders-sure-item {
+        padding: 10px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease;
+        border-left-width: 4px;
+        border-left-style: solid;
+    }
+    
+    .ders-sure-listesi .ders-sure-item:hover {
+        transform: translateX(2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Sürükleme animasyonları */
+    .drop-target-visualizer {
+        animation: pulse 1.5s infinite;
+    }
+    
+    /* Takvim görünümünü düzenle */
+    .fc .fc-toolbar {
+        display: none !important; /* Başlık çubuğunu gizle */
+    }
+    
+    .fc .fc-col-header-cell-cushion {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 1.1em;
+        color: #333;
+    }
+    
+    /* Çakışan etkinlikler için stil */
+    .fc-timegrid-event-harness {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Aynı zaman dilimine birden fazla etkinlik gelmesi durumunda kenarlık ekle */
+    .fc-timegrid-event-harness + .fc-timegrid-event-harness {
+        border-left: 2px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Takvim hücrelerine kenarsız tam genişlik */
+    .fc-timegrid-slot, .fc-timegrid-slot-lane {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Takvim hücrelerinde tam doluluk için */
+    .fc-timegrid-col-frame {
+        padding: 0 !important;
+    }
+    
+    /* Etkinlik için daha net stil */
+    .fc-v-event {
+        border: none !important;
+        background-color: var(--fc-event-bg-color); /* FullCalendar değişkenini kullan */
+    }
+    
+    /* Süre uyarı stillleri */
+    .short-duration-alert {
+        box-shadow: 0 0 8px 3px rgba(244, 67, 54, 0.6) !important;
+        border: 2px solid #f44336 !important;
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    .long-duration-alert {
+        box-shadow: 0 0 8px 3px rgba(255, 152, 0, 0.6) !important;
+        border: 2px solid #ff9800 !important;
+        animation: pulse 0.8s ease-in-out;
+    }
+    
+    /* Renk sınıfları */
+    .bg-primary-light {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    .text-primary {
+        color: #0d6efd !important;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-5px); }
+        40%, 80% { transform: translateX(5px); }
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 0.8; }
+        50% { opacity: 1; }
+        100% { opacity: 0.8; }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{% with active_tab='haftalik_plan' %}
+    {% include 'student_tabs.html' %}
+{% endwith %}
+
+<div class="container-fluid">
+    <!-- Modern Haftalık Çalışma Planı -->
+    <div class="modern-section">
+        <div class="modern-section-title">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-calendar-week me-2"></i>
+                    <span>HAFTALIK ÇALIŞMA PLANI</span>
+                </div>
+                <div class="d-flex">
+                    <a href="{{ url_for('rapor_yonetimi.haftalik_plan_pdf', ogrenci_id=ogrenci.id) }}" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;" target="_blank">
+                        <i class="fas fa-file-pdf"></i> PDF İndir
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modern-panel pb-3">
+            <!-- Öğrenci Bilgisi ve İşlem Butonları -->
+            <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+                <div>
+                    <span class="fw-bold text-primary">Öğrenci:</span> {{ ogrenci.ad }} {{ ogrenci.soyad }}
+                    <span id="toplam-ders-suresi" class="ms-3 badge bg-primary text-white">Toplam: 0 saat</span>
+                </div>
+                <div>
+                    <button id="temizle-btn" class="modern-action-btn me-2" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                        <i class="fas fa-trash-alt"></i> Planı Temizle
+                    </button>
+                    <button id="otomatik-plan-btn" class="modern-action-btn" style="font-size: 0.75rem; padding: 0.35rem 0.7rem;">
+                        <i class="fas fa-magic"></i> Otomatik Plan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtreleme Butonları -->
+            <div class="d-flex justify-content-end mb-3 px-2">
+                <div class="btn-group" role="group" aria-label="Sınav Tipi Filtresi">
+                    <button type="button" class="modern-action-btn active" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 0;" data-filter="all">Tümü</button>
+                    <button type="button" class="modern-action-btn" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 0;" data-filter="TYT">TYT</button>
+                    <button type="button" class="modern-action-btn" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 0;" data-filter="AYT">AYT</button>
+                    <button type="button" class="modern-action-btn" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 0;" data-filter="YDT">YDT</button>
+                </div>
+            </div>
+            
+            <!-- Ders Listesi -->
+            <div class="border p-2 mb-3 rounded bg-light">
+                <div class="fw-bold small mb-2 text-primary"><i class="fas fa-book me-1"></i> DERSLER:</div>
+                <div id="ders-listesi" style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-start;">
+                    {% for ders in dersler %}
+                        {% set ders_ad = ders.ad %}
+                        {% set kategori = "" %}
+                        {% if "(TYT)" in ders_ad %}
+                            {% set kategori = "TYT" %}
+                        {% elif "(AYT)" in ders_ad %}
+                            {% set kategori = "AYT" %}
+                        {% elif "(YDT)" in ders_ad %}
+                            {% set kategori = "YDT" %}
+                        {% endif %}
+                        
+                        <div class="ders-wrapper" data-ders-id="{{ ders.id }}">
+                            <div class="ders-item bg-ders-{{ loop.index0 % 10 }}" 
+                                 data-ders-id="{{ ders.id }}" 
+                                 data-ders-ad="{{ ders.ad }}"
+                                 data-kategori="{{ kategori }}">
+                                {{ ders.ad }}
+                            </div>
+                            <div class="ders-sure text-danger" id="ders-sure-{{ ders.id }}">
+                                <!-- Süre bilgisi JS tarafından doldurulacak -->
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Takvim -->
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Ders Düzenleme Modalı -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="eventModalLabel"><i class="fas fa-edit me-2"></i>Ders Programını Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <input type="hidden" id="event-id">
+                    <div class="mb-3">
+                        <label for="event-title" class="form-label fw-bold text-primary">Ders</label>
+                        <select class="form-select" id="event-ders" required>
+                            <option value="">Ders Seçiniz</option>
+                            {% for ders in dersler %}
+                                <option value="{{ ders.id }}">{{ ders.ad }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-gun" class="form-label fw-bold text-primary">Gün</label>
+                        <select class="form-select" id="event-gun" required>
+                            <option value="0">Pazartesi</option>
+                            <option value="1">Salı</option>
+                            <option value="2">Çarşamba</option>
+                            <option value="3">Perşembe</option>
+                            <option value="4">Cuma</option>
+                            <option value="5">Cumartesi</option>
+                            <option value="6">Pazar</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="event-start" class="form-label fw-bold text-primary">Başlangıç Saati</label>
+                                <input type="time" class="form-control" id="event-start" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="event-end" class="form-label fw-bold text-primary">Bitiş Saati</label>
+                                <input type="time" class="form-control" id="event-end" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modern-action-btn" id="delete-event" style="background-color: #dc3545">
+                    <i class="fas fa-trash-alt"></i> Sil
+                </button>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="modern-action-btn" id="save-event">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Otomatik Plan Modalı -->
+<div class="modal fade" id="autoPlanModal" tabindex="-1" aria-labelledby="autoPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="autoPlanModalLabel"><i class="fas fa-magic me-2"></i>Otomatik Plan Oluştur</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <form id="autoPlanForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-primary">Çalışma Günleri</label>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="0" id="gun-0" checked>
+                                    <label class="form-check-label" for="gun-0">Pazartesi</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="1" id="gun-1" checked>
+                                    <label class="form-check-label" for="gun-1">Salı</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="2" id="gun-2" checked>
+                                    <label class="form-check-label" for="gun-2">Çarşamba</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="3" id="gun-3" checked>
+                                    <label class="form-check-label" for="gun-3">Perşembe</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="4" id="gun-4" checked>
+                                    <label class="form-check-label" for="gun-4">Cuma</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="5" id="gun-5" checked>
+                                    <label class="form-check-label" for="gun-5">Cumartesi</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="6" id="gun-6">
+                                    <label class="form-check-label" for="gun-6">Pazar</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="baslangic-saat" class="form-label fw-bold text-primary">Günlük Başlangıç</label>
+                                <input type="time" class="form-control" id="baslangic-saat" value="09:00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="bitis-saat" class="form-label fw-bold text-primary">Günlük Bitiş</label>
+                                <input type="time" class="form-control" id="bitis-saat" value="21:00" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ders-sure" class="form-label fw-bold text-primary">Ders Süresi (dakika)</label>
+                        <input type="number" class="form-control" id="ders-sure" value="45" min="15" max="120" step="15" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mola-sure" class="form-label fw-bold text-primary">Mola Süresi (dakika)</label>
+                        <input type="number" class="form-control" id="mola-sure" value="15" min="5" max="30" step="5" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="modern-action-btn" id="create-auto-plan">
+                    <i class="fas fa-magic"></i> Plan Oluştur
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onay Modalı -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="confirmModalLabel"><i class="fas fa-question-circle me-2"></i>Onay</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span id="confirm-message">İşlemi onaylıyor musunuz?</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="modern-action-btn" id="confirm-action" style="background-color: #dc3545">
+                    <i class="fas fa-check"></i> Onayla
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales-all.global.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script type="text/javascript">
+    // FullCalendar API endpoint - doğru URL formatı
+    const API_ENDPOINT = '/program/{{ ogrenci.id }}/api/haftalik-plan';
+    
+    // Renk paleti
+    const COLOR_PALETTE = [
+        '#6200ea', '#e91e63', '#2e7d32', '#8e24aa', '#37474f', 
+        '#c2185b', '#f57c00', '#00897b', '#1565c0', '#512da8'
+    ];
+</script>
+<script src="{{ url_for('static', filename='js/calendar-fix.js') }}"></script>
+<script src="{{ url_for('static', filename='js/simple-calendar.js') }}"></script>
+<script>
+    // Ders filtresi işlevselliği
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const dersItems = document.querySelectorAll('.ders-item');
+        
+        // Filtre butonlarına tıklama olayı ekle
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Aktif sınıfı kaldır
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Tıklanan butona aktif sınıfını ekle
+                this.classList.add('active');
+                
+                // Filtre kategorisini al
+                const filterValue = this.getAttribute('data-filter');
+                
+                // Dersleri filtrele
+                const dersWrappers = document.querySelectorAll('.ders-wrapper');
+                dersWrappers.forEach(wrapper => {
+                    const item = wrapper.querySelector('.ders-item');
+                    if (!item) return;
+                    
+                    const kategori = item.getAttribute('data-kategori');
+                    
+                    if (filterValue === 'all' || filterValue === kategori) {
+                        wrapper.style.display = 'flex';
+                    } else {
+                        wrapper.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,736 @@
+{% extends "base.html" %}
+
+{% block title %}Görüşme Defteri - Rehberlik Sistemi{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa.index') }}">Anasayfa</a></li>
+<li class="breadcrumb-item active">Görüşme Defteri</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .column-select {
+        position: relative;
+        display: inline-block;
+    }
+
+    .column-select-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 200px;
+        max-height: 280px;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        padding: 0.25rem;
+    }
+
+    .column-select-content.show {
+        display: block;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        gap: 0.25rem;
+        cursor: pointer;
+        font-size: 0.8125rem;
+        min-height: 24px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        margin: 0;
+    }
+
+    .gorusme-table-container {
+        max-height: calc(100vh - 220px);
+        overflow-y: auto;
+    }
+
+    .gorusme-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .gorusme-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+        .gorusme-toolbar {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .gorusme-toolbar .d-flex {
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 0.5rem;
+        }
+
+        .gorusme-table-container {
+            max-height: calc(100vh - 280px);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- E-Devlet Görüşme Defteri -->
+<div class="modern-section">
+    <div class="modern-section-title">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-comments me-2"></i>
+                <span>GÖRÜŞME DEFTERİ</span>
+            </div>
+            <div class="d-flex">
+                <a href="#" class="modern-action-btn" onclick="printDiary(); return false;">
+                    <i class="fas fa-print me-1"></i> Yazdır
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modern-panel pb-3">
+        <!-- Görüşme Defteri Araçları -->
+        <div class="border rounded mb-4">
+            <div class="bg-light p-3 border-bottom">
+                <div class="fw-bold text-primary">
+                    <i class="fas fa-filter me-2"></i> FİLTRE VE GÖRÜNTÜLEME AYARLARI
+                </div>
+            </div>
+            <div class="p-3">
+                <div class="row align-items-center gorusme-toolbar">
+                    <div class="col-md-8">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <label for="monthSelect" class="form-label mb-0 fw-bold text-primary">Ay:</label>
+                            <select class="form-select" id="monthSelect" style="width: auto; min-width: 120px;">
+                                <option value="1">Ocak</option>
+                                <option value="2">Şubat</option>
+                                <option value="3">Mart</option>
+                                <option value="4">Nisan</option>
+                                <option value="5">Mayıs</option>
+                                <option value="6">Haziran</option>
+                                <option value="7">Temmuz</option>
+                                <option value="8">Ağustos</option>
+                                <option value="9">Eylül</option>
+                                <option value="10">Ekim</option>
+                                <option value="11">Kasım</option>
+                                <option value="12">Aralık</option>
+                            </select>
+                            
+                            <div class="column-select ms-3">
+                                <button class="btn btn-outline-primary" id="columnSelectButton">
+                                    <i class="fas fa-columns me-1"></i>
+                                    Sütunları Düzenle
+                                </button>
+                                <div class="column-select-content shadow" id="columnSelect">
+                                    <!-- Sütunlar JavaScript ile doldurulacak -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <button class="btn btn-outline-info" onclick="syncMebbis()">
+                            <i class="fas fa-sync me-1"></i>
+                            MEBBİS'e Aktar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Görüşme Defteri Tablosu -->
+        <div class="border rounded">
+            <div class="bg-primary text-white p-2">
+                <div class="fw-bold">
+                    <i class="fas fa-list-alt me-2"></i> GÖRÜŞME KAYITLARI
+                </div>
+            </div>
+            <div class="gorusme-table-container">
+                <table class="modern-table gorusme-table">
+                    <thead>
+                        <tr id="tableHeader">
+                            <!-- Başlıklar JavaScript ile doldurulacak -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Veriler JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Okul adını JavaScript değişkeninde sakla
+window.okulAdi = "{{ okul_adi }}";
+const columns = [
+    { key: "mebbisStatus", label: "MEBBİS" },
+    { key: "studentNumber", label: "Numara" },
+    { key: "studentClass", label: "Sınıf" },
+    { key: "studentGender", label: "Cinsiyet" },
+    { key: "studentName", label: "Ad-Soyad" },
+    { key: "startTime", label: "Başlangıç Saati" },
+    { key: "endTime", label: "Bitiş Saati" },
+    { key: "date", label: "Tarih" },
+    { key: "sessionCount", label: "Görüşme Sayısı" },
+    { key: "personMet", label: "Görüşülen Kişi" },
+    { key: "personRole", label: "Kişi Rolü" },
+    { key: "relationship", label: "Yakınlık Derecesi" },
+    { key: "topic", label: "Görüşme Konusu" },
+    { key: "workArea", label: "Çalışma Alanı" },
+    { key: "workCategory", label: "Çalışma Kategorisi" },
+    { key: "serviceType", label: "Hizmet Türü" },
+    { key: "institutionalCooperation", label: "Kurum İşbirliği" },
+    { key: "meetingPlace", label: "Görüşme Yeri" },
+    { key: "isDisciplinary", label: "Disiplin Görüşmesi" },
+    { key: "isLegalReferral", label: "Adli/Sevk" },
+    { key: "workMethod", label: "Çalışma Yöntemi" },
+    { key: "summary", label: "Özet" },
+    { key: "actions", label: "İşlemler" }
+];
+
+// Varsayılan görünür sütunlar
+let visibleColumns = new Set([
+    "actions",
+    "mebbisStatus",
+    "studentNumber",
+    "studentName",
+    "studentClass",
+    "date",
+    "startTime",
+    "endTime",
+    "personMet",
+    "topic",
+    "summary"
+]);
+
+// Local storage'dan kayıtlı sütunları al
+const storedColumns = localStorage.getItem('visibleColumns');
+if (storedColumns) {
+    visibleColumns = new Set(JSON.parse(storedColumns));
+}
+
+function formatDate(dateStr) {
+    return new Date(dateStr).toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+    });
+}
+
+function getCurrentMonth() {
+    return (new Date().getMonth() + 1).toString();
+}
+
+// Ay seçimini varsayılan olarak güncel aya ayarla
+document.getElementById('monthSelect').value = getCurrentMonth();
+
+// Sütun seçici menüsünü doldur
+function initializeColumnSelect() {
+    const container = document.getElementById('columnSelect');
+    container.innerHTML = ''; // Önceki içeriği temizle
+
+    columns.forEach(column => {
+        const item = document.createElement('div');
+        item.className = 'checkbox-item';
+        item.innerHTML = `
+            <input type="checkbox" id="${column.key}" 
+                   ${visibleColumns.has(column.key) ? 'checked' : ''}>
+            <label for="${column.key}">${column.label}</label>
+        `;
+
+        const checkbox = item.querySelector('input');
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                visibleColumns.add(column.key);
+            } else {
+                visibleColumns.delete(column.key);
+            }
+            localStorage.setItem('visibleColumns', JSON.stringify(Array.from(visibleColumns)));
+            renderTable();
+        });
+
+        container.appendChild(item);
+    });
+}
+
+// Tabloyu render et
+function renderTable() {
+    // Başlıkları render et
+    const header = document.getElementById('tableHeader');
+    header.innerHTML = columns
+        .filter(column => visibleColumns.has(column.key))
+        .map(column => `<th>${column.label}</th>`)
+        .join('');
+
+    // Verileri render et
+    loadMeetings();
+}
+
+// Verileri yükle
+async function loadMeetings() {
+    try {
+        const selectedMonth = document.getElementById('monthSelect').value;
+        const response = await fetch(`/gorusme-defteri/api/meeting-diary?ay=${selectedMonth}`);
+        const meetings = await response.json();
+        
+        renderMeetings(meetings);
+    } catch (error) {
+        console.error('[Görüşme Yükleme Hatası]', error);
+        toastr.error('Görüşme kayıtları yüklenirken bir hata oluştu', 'Sistem Hatası');
+    }
+}
+
+function renderMeetings(meetings) {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    meetings.forEach(meeting => {
+        const row = document.createElement('tr');
+        row.innerHTML = columns
+            .filter(column => visibleColumns.has(column.key))
+            .map(column => {
+                let value = meeting[column.key];
+
+                if (column.key === 'date') {
+                    value = formatDate(value);
+                } else if (column.key === 'isDisciplinary' || column.key === 'isLegalReferral') {
+                    value = value ? 'Evet' : 'Hayır';
+                } else if (column.key === 'actions') {
+                    // İşlem butonlarını oluştur
+                    return `<td class="actions-cell">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary edit-btn" 
+                                data-id="${meeting.id}" 
+                                title="Düzenle">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-btn" 
+                                data-id="${meeting.id}" 
+                                title="Sil">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </td>`;
+                }
+
+                return `<td>${value || ''}</td>`;
+            })
+            .join('');
+        tbody.appendChild(row);
+        
+        // Düzenle butonları için event listener
+        const editBtn = row.querySelector('.edit-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', () => {
+                editMeeting(meeting);
+            });
+        }
+        
+        // Sil butonları için event listener
+        const deleteBtn = row.querySelector('.delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                deleteMeeting(meeting.id);
+            });
+        }
+    });
+}
+
+// Sütun seçici butonunu yapılandır
+const columnSelectButton = document.getElementById('columnSelectButton');
+const columnSelectContent = document.getElementById('columnSelect');
+
+columnSelectButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (columnSelectContent.classList.contains('show')) {
+        columnSelectContent.classList.remove('show');
+    } else {
+        columnSelectContent.classList.add('show');
+    }
+});
+
+document.addEventListener('click', (e) => {
+    if (!columnSelectContent.contains(e.target) && !columnSelectButton.contains(e.target)) {
+        columnSelectContent.classList.remove('show');
+    }
+});
+
+// Sayfa yüklendiğinde olayları dinle - Bu kısmı aşağıda DOMContentLoaded içinde işleyeceğiz
+
+// MEBBİS senkronizasyon işlevi
+function syncMebbis() {
+    toastr.info('MEBBİS senkronizasyonu başlatıldı...', 'İşlem Başladı');
+
+    fetch('/gorusme-defteri/api/sync-mebbis', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(data.message, 'Başarılı');
+                loadMeetings(); // Güncel verileri yükle
+            } else {
+                toastr.error(data.message || 'MEBBİS senkronizasyonu başarısız oldu', 'Hata');
+            }
+        })
+        .catch(error => {
+            console.error('[MEBBİS Senkronizasyon Hatası]', error);
+            toastr.error('MEBBİS senkronizasyonu sırasında bir hata oluştu', 'Sistem Hatası');
+        });
+}
+
+function printDiary() {
+    const selectedMonth = document.getElementById('monthSelect');
+    const monthName = selectedMonth.options[selectedMonth.selectedIndex].text;
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        toastr.error('Yazdırma penceresi açılamadı. Lütfen popup engelleyiciyi kontrol edin.', 'Yazdırma Hatası');
+        return;
+    }
+
+    // Okul bilgisini al (Tüm sayfalarda erişilebilir global değişken)
+    const okulAdi = window.okulAdi || 'Rehberlik Servisi Yönetim Sistemi';
+    const egitimYili = currentDate.getFullYear() + "-" + (currentDate.getFullYear() + 1);
+
+    // Yazdırma içeriğini oluştur
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Görüşme Defteri - ${monthName}</title>
+            <style>
+                @page {
+                    size: landscape;
+                    margin: 1cm;
+                }
+                body { 
+                    font-family: Arial, sans-serif; 
+                    margin: 20px;
+                    color: #333;
+                }
+                .header {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #4f46e5;
+                    padding-bottom: 15px;
+                }
+                .logo-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 10px;
+                }
+                .logo {
+                    max-width: 80px;
+                    max-height: 80px;
+                    margin-right: 15px;
+                }
+                h1 { 
+                    font-size: 24px;
+                    color: #4f46e5;
+                    margin: 0;
+                    text-align: center;
+                }
+                h2 {
+                    font-size: 20px;
+                    color: #4f46e5;
+                    margin: 5px 0;
+                    text-align: center;
+                }
+                .subheader {
+                    display: flex;
+                    justify-content: space-between;
+                    width: 100%;
+                    margin: 10px 0;
+                    color: #666;
+                    font-size: 14px;
+                }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    font-size: 12px;
+                }
+                th, td { 
+                    border: 1px solid #ddd; 
+                    padding: 8px; 
+                    text-align: left; 
+                }
+                th { 
+                    background-color: #f8f9fa;
+                    color: #4f46e5;
+                    font-weight: 600;
+                }
+                tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+                .footer {
+                    margin-top: 30px;
+                    font-size: 12px;
+                    text-align: center;
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="logo-container">
+                    <h1>${okulAdi}</h1>
+                </div>
+                <h2>Rehberlik Servisi Görüşme Defteri - ${monthName}</h2>
+                <div class="subheader">
+                    <span>Eğitim Öğretim Yılı: ${egitimYili}</span>
+                    <span>Yazdırma Tarihi: ${formattedDate}</span>
+                </div>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        ${columns
+                            .filter(column => visibleColumns.has(column.key))
+                            .map(column => `<th>${column.label}</th>`)
+                            .join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${document.getElementById('tableBody').innerHTML}
+                </tbody>
+            </table>
+            
+            <div class="footer">
+                <p>Bu belge ${formattedDate} tarihinde Rehberlik Servisi Yönetim Sistemi tarafından oluşturulmuştur.</p>
+            </div>
+        </body>
+        </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // Yüklendikten sonra yazdır
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+
+// Görüşme kaydını sil
+function deleteMeeting(meetingId) {
+    // Onay penceresi göster
+    if (confirm('Bu görüşme kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) {
+        // Silme işlemini gerçekleştir
+        fetch(`/gorusme-defteri/api/delete/${meetingId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(data.message, 'Başarılı');
+                // Tabloyu yenile
+                loadMeetings();
+            } else {
+                toastr.error(data.message || 'Görüşme kaydı silinirken bir hata oluştu', 'Hata');
+            }
+        })
+        .catch(error => {
+            console.error('[Görüşme Silme Hatası]', error);
+            toastr.error('Görüşme kaydı silinirken bir hata oluştu', 'Sistem Hatası');
+        });
+    }
+}
+
+// Tarih formatını hazırla (YYYY-MM-DD)
+function formatDateForInput(dateStr) {
+    const date = new Date(dateStr);
+    return date.toISOString().split('T')[0]; // YYYY-MM-DD formatına dönüştür
+}
+
+// Görüşme kaydı düzenleme için fonksiyon
+function editMeeting(meeting) {
+    // Tarih değerini input için formatla
+    const formattedDate = formatDateForInput(meeting.date);
+    
+    // Düzenleme modalını oluştur
+    let modalHtml = `
+    <div class="modal fade" id="editMeetingModal" tabindex="-1" aria-labelledby="editMeetingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMeetingModalLabel">Görüşme Kaydını Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMeetingForm">
+                        <input type="hidden" id="editMeetingId" value="${meeting.id}">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editDate" class="form-label">Tarih</label>
+                                <input type="date" class="form-control" id="editDate" value="${formattedDate}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="editStartTime" class="form-label">Başlangıç Saati</label>
+                                <input type="time" class="form-control" id="editStartTime" value="${meeting.startTime}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="editEndTime" class="form-label">Bitiş Saati</label>
+                                <input type="time" class="form-control" id="editEndTime" value="${meeting.endTime}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editPersonMet" class="form-label">Görüşülen Kişi</label>
+                                <input type="text" class="form-control" id="editPersonMet" value="${meeting.personMet || ''}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editTopic" class="form-label">Görüşme Konusu</label>
+                                <input type="text" class="form-control" id="editTopic" value="${meeting.topic || ''}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="editSummary" class="form-label">Özet / Notlar</label>
+                                <textarea class="form-control" id="editSummary" rows="3">${meeting.summary || ''}</textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="saveMeetingBtn">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Eğer daha önce oluşturulmuş bir modal varsa kaldır
+    const existingModal = document.getElementById('editMeetingModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Modal elementini body'ye ekle
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Modal'ı göster
+    const modal = new bootstrap.Modal(document.getElementById('editMeetingModal'));
+    modal.show();
+    
+    // Kaydet butonuna tıklanınca
+    document.getElementById('saveMeetingBtn').addEventListener('click', function() {
+        // Form verilerini al
+        const formData = {
+            date: document.getElementById('editDate').value,
+            startTime: document.getElementById('editStartTime').value,
+            endTime: document.getElementById('editEndTime').value,
+            personMet: document.getElementById('editPersonMet').value,
+            topic: document.getElementById('editTopic').value,
+            summary: document.getElementById('editSummary').value
+        };
+        
+        // Güncelleme API'sini çağır
+        const meetingId = document.getElementById('editMeetingId').value;
+        
+        fetch(`/gorusme-defteri/api/update/${meetingId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Modal'ı kapat
+                modal.hide();
+                // Başarı mesajı göster
+                toastr.success(data.message, 'Başarılı');
+                // Tabloyu yenile
+                loadMeetings();
+            } else {
+                toastr.error(data.message || 'Görüşme kaydı güncellenirken bir hata oluştu', 'Hata');
+            }
+        })
+        .catch(error => {
+            console.error('[Görüşme Güncelleme Hatası]', error);
+            toastr.error('Görüşme kaydı güncellenirken bir hata oluştu', 'Sistem Hatası');
+        });
+    });
+}
+
+// Eylem sütunu için CSS
+document.head.insertAdjacentHTML('beforeend', `
+    <style>
+        .actions-cell {
+            white-space: nowrap;
+            width: 1%;
+        }
+        
+        .actions-cell .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .actions-cell .btn i {
+            font-size: 0.875rem;
+        }
+        
+        .edit-btn {
+            color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        
+        .edit-btn:hover {
+            background-color: #4f46e5;
+            color: white;
+        }
+        
+        .delete-btn {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .delete-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+`);
+
+// Sayfa yüklendiğinde
+document.addEventListener('DOMContentLoaded', function() {
+    initializeColumnSelect();
+    renderTable();
+    
+    // Ay değiştiğinde tabloyu güncelle
+    document.getElementById('monthSelect').addEventListener('change', renderTable);
+});
+</script>
+{% endblock %}
