@@ -25,7 +25,9 @@ def create_app(config=None):
     else:
         # Use SQLite in a subdirectory of app
         basedir = os.path.abspath(os.path.dirname(__file__))
-        db_path = os.path.join(basedir, 'database', 'yks_takip.db')
+        db_dir = os.path.join(basedir, 'database')
+        os.makedirs(db_dir, exist_ok=True)
+        db_path = os.path.join(db_dir, 'yks_takip.db')
         app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
