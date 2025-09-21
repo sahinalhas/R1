@@ -457,7 +457,7 @@ body {
   display: none;
 }
 
-/* Aktif öğrenci container için özel stil */
+/* Aktif ö��renci container için özel stil */
 .active-student-container {
   background-color: rgba(28, 55, 97, 0.05);
   margin: 0.5rem 0.5rem 1rem 0.5rem !important;
@@ -1045,6 +1045,13 @@ body {
   .modal-dialog {
     margin: 0.5rem;
   }
+}
+
+/* Küçük öğrenci avatarı için yardımcı sınıf */
+.student-avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
 }
 
 /* Navbar styles */
