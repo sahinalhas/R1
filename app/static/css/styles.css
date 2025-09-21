@@ -457,7 +457,7 @@ body {
   display: none;
 }
 
-/* Aktif ö��renci container için özel stil */
+/* Aktif öğrenci container için özel stil */
 .active-student-container {
   background-color: rgba(28, 55, 97, 0.05);
   margin: 0.5rem 0.5rem 1rem 0.5rem !important;
@@ -1057,6 +1057,12 @@ body {
 /* Navbar styles */
 .navbar {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Öğrenci başlık avatarı (inline stil dönüşümü) */
+.student-header-avatar {
+  width: 48px;
+  height: 48px;
 }
 
 .navbar-brand {
