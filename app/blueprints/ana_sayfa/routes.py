@@ -47,20 +47,24 @@ def index():
     from app.blueprints.ogrenci_yonetimi.models import Ogrenci
     from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
     from app.blueprints.calisma_programi.models import DersIlerleme
-    
+
     ogrenci_sayisi = Ogrenci.query.count()
     ders_sayisi = Ders.query.count()
     konu_sayisi = Konu.query.count()
-    
+
     # Ortalama ilerleme
     ortalama_ilerleme = 0
     ders_ilerlemeleri = DersIlerleme.query.all()
     if ders_ilerlemeleri:
         ortalama_ilerleme = sum(di.tamamlama_yuzdesi for di in ders_ilerlemeleri) / len(ders_ilerlemeleri)
-    
-    # Basit template render edelim
+
+    # Son eklenen öğrenciler
+    son_ogrenciler = Ogrenci.query.order_by(Ogrenci.id.desc()).limit(5).all()
+
+    # Template'i render et
     return render_template('ana_sayfa/index.html',
                           ogrenci_sayisi=ogrenci_sayisi,
                           ders_sayisi=ders_sayisi,
                           konu_sayisi=konu_sayisi,
-                          ortalama_ilerleme=ortalama_ilerleme)
+                          ortalama_ilerleme=ortalama_ilerleme,
+                          son_ogrenciler=son_ogrenciler)
