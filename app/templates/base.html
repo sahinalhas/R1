@@ -34,7 +34,7 @@
     <link href="{{ url_for('static', filename='css/animations.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/minimal.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/student_tabs.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/modern_design.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/modern_design.css') }}?v={% if current_user.is_authenticated %}auth{% else %}guest{% endif %}" rel="stylesheet">
     
     {% block extra_css %}{% endblock %}
     
