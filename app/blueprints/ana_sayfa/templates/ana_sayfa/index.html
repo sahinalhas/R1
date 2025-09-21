@@ -33,9 +33,9 @@
                 <h1 class="hero-title-modern">Hoş Geldiniz, <span class="text-gradient">{{ current_user.tam_ad }}</span></h1>
                 <p class="hero-subtitle-modern">Yapay zeka destekli rehberlik sistemi ile öğrencilerinizin akademik başarılarını ve kişisel gelişimlerini maksimize edin. Veri odaklı bir yaklaşımla eğitim kalitesini artırın.</p>
                 <div class="hero-buttons">
-                    <a href="{{ url_for('ogrenci_yonetimi.liste') }}" class="btn btn-primary btn-lg">
+                    <a href="{{ url_for('ogrenci_yonetimi.liste') }}" class="btn-modern-primary">
                         <span>Öğrenci Yönetimi</span>
-                        <i class="fas fa-arrow-right ms-2"></i>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                     <a href="#moduller" class="btn-video ms-3">
                         <span class="btn-video-icon">
@@ -90,9 +90,9 @@
                 <h1 class="hero-title-modern">Eğitimde Yeni Nesil <span class="text-gradient">Dijital Dönüşüm</span></h1>
                 <p class="hero-subtitle-modern">Yapay zeka destekli rehberlik sistemi ile öğrencilerinizin akademik başarılarını ve kişisel gelişimlerini maksimize edin. Veri odaklı bir yaklaşımla eğitim kalitesini artırın.</p>
                 <div class="hero-buttons">
-                    <a href="#login-section" class="btn btn-primary btn-lg">
+                    <a href="#login-section" class="btn-modern-primary">
                         <span>Hemen Başlayın</span>
-                        <i class="fas fa-arrow-right ms-2"></i>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                     <a href="#moduller" class="btn-video ms-3">
                         <span class="btn-video-icon">
@@ -103,53 +103,51 @@
                 </div>
             </div>
             <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200" id="login-section">
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-4">
-                        <div class="text-center mb-4">
-                            <h3 class="h4 font-weight-bold text-primary mb-2">Hoş Geldiniz</h3>
-                            <p class="text-muted mb-0">Sisteme giriş yapın</p>
-                        </div>
-                        
-                        {% if login_form %}
-                        <form method="POST" action="{{ url_for('auth.login') }}">
-                            {{ login_form.hidden_tag() }}
-                            
-                            <div class="mb-3">
-                                {{ login_form.email.label(class="form-label") }}
-                                {{ login_form.email(class="form-control") }}
-                                {% for error in login_form.email.errors %}
-                                    <div class="text-danger small mt-1">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            
-                            <div class="mb-3">
-                                {{ login_form.password.label(class="form-label") }}
-                                {{ login_form.password(class="form-control") }}
-                                {% for error in login_form.password.errors %}
-                                    <div class="text-danger small mt-1">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            
-                            <div class="mb-3 form-check">
-                                {{ login_form.remember_me(class="form-check-input") }}
-                                {{ login_form.remember_me.label(class="form-check-label") }}
-                            </div>
-                            
-                            <div class="d-grid mb-3">
-                                {{ login_form.submit(class="btn btn-primary") }}
-                            </div>
-                        </form>
-                        
-                        <div class="text-center">
-                            <p class="text-muted mb-0">
-                                Hesabınız yok mu? 
-                                <a href="{{ url_for('auth.register') }}" class="text-primary text-decoration-none">
-                                    Kayıt Ol
-                                </a>
-                            </p>
-                        </div>
-                        {% endif %}
+                <div class="glass-card login-form-modern">
+                    <div class="text-center mb-4">
+                        <h3 class="h4 font-weight-bold mb-2" style="color: #1a202c;">Hoş Geldiniz</h3>
+                        <p class="mb-0" style="color: rgba(26, 32, 44, 0.7);">Sisteme giriş yapın</p>
                     </div>
+                    
+                    {% if login_form %}
+                    <form method="POST" action="{{ url_for('auth.login') }}">
+                        {{ login_form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ login_form.email.label(class="form-label") }}
+                            {{ login_form.email(class="form-control", placeholder="ornek@email.com") }}
+                            {% for error in login_form.email.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ login_form.password.label(class="form-label") }}
+                            {{ login_form.password(class="form-control", placeholder="Parolanızı girin") }}
+                            {% for error in login_form.password.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ login_form.remember_me(class="form-check-input") }}
+                            {{ login_form.remember_me.label(class="form-check-label", style="color: #1a202c;") }}
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            {{ login_form.submit(class="btn btn-login-modern") }}
+                        </div>
+                    </form>
+                    
+                    <div class="text-center">
+                        <p class="mb-0" style="color: rgba(26, 32, 44, 0.7);">
+                            Hesabınız yok mu? 
+                            <a href="{{ url_for('auth.register') }}" class="text-decoration-none" style="color: #667eea; font-weight: 600;">
+                                Kayıt Ol
+                            </a>
+                        </p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -162,47 +160,39 @@
 </section>
 {% endif %}
 
-<!-- İstatistikler - Daha Dinamik Görünüm -->
-<section class="stats-modern py-5">
+<!-- Modern İstatistikler -->
+<section class="py-5">
     <div class="container">
-        <div class="stats-wrapper">
-            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="100">
-                <div class="stat-icon-circle bg-primary-light">
-                    <i class="fas fa-user-graduate text-primary"></i>
-                </div>
-                <div class="stat-modern-content">
-                    <div class="stat-modern-value">{{ ogrenci_sayisi }}</div>
-                    <div class="stat-modern-title">Aktif Öğrenci</div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="stat-modern-card">
+                    <i class="fas fa-user-graduate text-white mb-3" style="font-size: 2.5rem;"></i>
+                    <div class="stat-value-modern">{{ ogrenci_sayisi }}</div>
+                    <div class="stat-label-modern">Aktif Öğrenci</div>
                 </div>
             </div>
             
-            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="200">
-                <div class="stat-icon-circle bg-success-light">
-                    <i class="fas fa-book text-success"></i>
-                </div>
-                <div class="stat-modern-content">
-                    <div class="stat-modern-value">{{ ders_sayisi }}</div>
-                    <div class="stat-modern-title">Ders</div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="stat-modern-card">
+                    <i class="fas fa-book text-white mb-3" style="font-size: 2.5rem;"></i>
+                    <div class="stat-value-modern">{{ ders_sayisi }}</div>
+                    <div class="stat-label-modern">Ders</div>
                 </div>
             </div>
             
-            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="300">
-                <div class="stat-icon-circle bg-info-light">
-                    <i class="fas fa-list text-info"></i>
-                </div>
-                <div class="stat-modern-content">
-                    <div class="stat-modern-value">{{ konu_sayisi }}</div>
-                    <div class="stat-modern-title">Konu</div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                <div class="stat-modern-card">
+                    <i class="fas fa-list text-white mb-3" style="font-size: 2.5rem;"></i>
+                    <div class="stat-value-modern">{{ konu_sayisi }}</div>
+                    <div class="stat-label-modern">Konu</div>
                 </div>
             </div>
             
-            <div class="stat-modern-item" data-aos="zoom-in" data-aos-delay="400">
-                <div class="stat-icon-circle bg-accent-light">
-                    <i class="fas fa-chart-line text-accent"></i>
-                </div>
-                <div class="stat-modern-content">
-                    <div class="stat-modern-value">%{{ ortalama_ilerleme|round(1) }}</div>
-                    <div class="stat-modern-title">Başarı Oranı</div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
+                <div class="stat-modern-card">
+                    <i class="fas fa-chart-line text-white mb-3" style="font-size: 2.5rem;"></i>
+                    <div class="stat-value-modern">%{{ ortalama_ilerleme|round(1) }}</div>
+                    <div class="stat-label-modern">Başarı Oranı</div>
                 </div>
             </div>
         </div>
@@ -220,17 +210,17 @@
         
         <div class="row g-4">
             <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
-                <div class="quick-access-card">
-                    <div class="quick-access-icon">
+                <div class="quick-access-modern">
+                    <div class="quick-access-icon-modern">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h3 class="quick-access-title">Öğrenci Yönetimi</h3>
-                    <p class="quick-access-desc">Öğrenci kayıtları, detaylı profil yönetimi ve sınıf organizasyonu</p>
-                    <div class="quick-access-actions">
-                        <a href="{{ url_for('ogrenci_yonetimi.liste') }}" class="btn btn-outline-primary">
+                    <h3 class="quick-access-title-modern">Öğrenci Yönetimi</h3>
+                    <p class="quick-access-desc-modern">Öğrenci kayıtları, detaylı profil yönetimi ve sınıf organizasyonu</p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('ogrenci_yonetimi.liste') }}" class="btn btn-outline-light flex-fill">
                             <i class="fas fa-list me-2"></i> Listele
                         </a>
-                        <a href="{{ url_for('ogrenci_yonetimi.ekle') }}" class="btn btn-primary">
+                        <a href="{{ url_for('ogrenci_yonetimi.ekle') }}" class="btn btn-light flex-fill">
                             <i class="fas fa-plus me-2"></i> Ekle
                         </a>
                     </div>
@@ -238,17 +228,17 @@
             </div>
             
             <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
-                <div class="quick-access-card">
-                    <div class="quick-access-icon">
+                <div class="quick-access-modern">
+                    <div class="quick-access-icon-modern">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <h3 class="quick-access-title">Görüşme Yönetimi</h3>
-                    <p class="quick-access-desc">Öğrenci ve veli görüşmeleri, planlama ve kayıt sistemi</p>
-                    <div class="quick-access-actions">
-                        <a href="{{ url_for('gorusme_defteri.index') }}" class="btn btn-outline-primary">
+                    <h3 class="quick-access-title-modern">Görüşme Yönetimi</h3>
+                    <p class="quick-access-desc-modern">Öğrenci ve veli görüşmeleri, planlama ve kayıt sistemi</p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('gorusme_defteri.index') }}" class="btn btn-outline-light flex-fill">
                             <i class="fas fa-list me-2"></i> Görüşmeler
                         </a>
-                        <a href="{{ url_for('gorusme_defteri.index') }}" class="btn btn-primary">
+                        <a href="{{ url_for('gorusme_defteri.index') }}" class="btn btn-light flex-fill">
                             <i class="fas fa-plus me-2"></i> Yeni
                         </a>
                     </div>
@@ -256,17 +246,17 @@
             </div>
             
             <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-                <div class="quick-access-card">
-                    <div class="quick-access-icon">
+                <div class="quick-access-modern">
+                    <div class="quick-access-icon-modern">
                         <i class="fas fa-book"></i>
                     </div>
-                    <h3 class="quick-access-title">Ders Konu Yönetimi</h3>
-                    <p class="quick-access-desc">Ders ve konu yapılandırması, müfredat takibi</p>
-                    <div class="quick-access-actions">
-                        <a href="{{ url_for('ders_konu_yonetimi.lista') }}" class="btn btn-outline-primary">
+                    <h3 class="quick-access-title-modern">Ders Konu Yönetimi</h3>
+                    <p class="quick-access-desc-modern">Ders ve konu yapılandırması, müfredat takibi</p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('ders_konu_yonetimi.lista') }}" class="btn btn-outline-light flex-fill">
                             <i class="fas fa-list me-2"></i> Dersler
                         </a>
-                        <a href="{{ url_for('ders_konu_yonetimi.ekle') }}" class="btn btn-primary">
+                        <a href="{{ url_for('ders_konu_yonetimi.ekle') }}" class="btn btn-light flex-fill">
                             <i class="fas fa-plus me-2"></i> Yeni
                         </a>
                     </div>
