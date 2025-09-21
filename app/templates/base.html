@@ -1218,18 +1218,6 @@
                 }
             });
             
-            // Mobil menü davranışı
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    document.querySelector('.sidebar').classList.toggle('mobile-active');
-                    document.querySelector('.mobile-overlay').classList.toggle('active');
-                    // Mobil menü açıldığında sayfanın scroll'unu engelle
-                    document.body.style.overflow = 
-                        document.querySelector('.sidebar').classList.contains('mobile-active') 
-                        ? 'hidden' : '';
-                });
-            }
             
             // Mobil menüyü kapatma butonu
             const closeSidebarBtn = document.querySelector('.close-sidebar');
