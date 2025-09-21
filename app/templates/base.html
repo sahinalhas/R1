@@ -1053,10 +1053,35 @@
                     </li>
                 </ul>
                 <div class="ms-3">
-                    <a href="{{ url_for('ogrenci_yonetimi.liste') }}" class="btn btn-primary btn-hover-effect">
-                        <span>Sisteme Giriş</span>
-                        <i class="fas fa-arrow-right ms-2"></i>
+                    {% if current_user.is_authenticated %}
+                    <!-- Kullanıcı giriş yapmış -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-2"></i>{{ current_user.tam_ad }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('ogrenci_yonetimi.liste') }}"><i class="fas fa-tachometer-alt me-2"></i>Panel</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fas fa-user me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}"><i class="fas fa-key me-2"></i>Parola Değiştir</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ url_for('auth.logout') }}" style="margin: 0;">
+                                    <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left;">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <!-- Kullanıcı giriş yapmamış -->
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
                     </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-hover-effect">
+                        <i class="fas fa-user-plus me-1"></i>Kayıt Ol
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

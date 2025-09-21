@@ -5,6 +5,7 @@ packages = ["cairo", "fontconfig", "ghostscript", "glib", "glibcLocales", "harfb
 
 [agent]
 expertMode = true
+integrations = ["flask_authentication:1.0.0"]
 
 [workflows]
 runButton = "Project"
@@ -33,6 +34,10 @@ waitForPort = 5000
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 36873
+externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Profil - YKS Takip Sistemi{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="card-title">Kullanıcı Profili</h2>
+                        <p class="text-muted">Hesap bilgilerinizi buradan görüntüleyebilirsiniz</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Ad</label>
+                                <p class="form-control-static h5">{{ current_user.ad }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Soyad</label>
+                                <p class="form-control-static h5">{{ current_user.soyad }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted">E-posta Adresi</label>
+                        <p class="form-control-static h5">{{ current_user.email }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Kayıt Tarihi</label>
+                        <p class="form-control-static">{{ current_user.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Hesap Durumu</label>
+                        <p class="form-control-static">
+                            {% if current_user.aktif %}
+                                <span class="badge bg-success">Aktif</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pasif</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('auth.change_password') }}" class="btn btn-primary me-2">
+                            <i class="fas fa-key me-2"></i>Parola Değiştir
+                        </a>
+                        <a href="{{ url_for('ana_sayfa.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

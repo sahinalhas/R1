@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import Flask, g, request
+from flask_login import LoginManager
 from app.extensions import db
 
 def create_app(config=None):
@@ -12,8 +13,10 @@ def create_app(config=None):
                 template_folder='templates',
                 static_folder='static')
     
-    # Configure the app
-    app.secret_key = os.environ.get("SESSION_SECRET", "yks-calisma-takip-sistemi-gizli-anahtar")
+    # Configure the app - Require SESSION_SECRET for security
+    app.secret_key = os.environ.get("SESSION_SECRET")
+    if not app.secret_key:
+        raise ValueError("SESSION_SECRET environment variable is required for security")
     
     # Database configuration
     # Use PostgreSQL in production, SQLite in development
@@ -33,6 +36,18 @@ def create_app(config=None):
     # Initialize extensions
     db.init_app(app)
     
+    # Initialize Flask-Login
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Lütfen giriş yapın.'
+    login_manager.login_message_category = 'info'
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.blueprints.auth.models import User
+        return User.query.get(int(user_id))
+    
     # Register template filters
     from app.utils.filters import register_filters
     register_filters(app)
@@ -46,6 +61,7 @@ def create_app(config=None):
     with app.app_context():
         # Import route modules BEFORE registering blueprints
         # to ensure routes are registered with the blueprint
+        from app.blueprints.auth import routes, auth_bp
         from app.blueprints.ana_sayfa import routes, ana_sayfa_bp
         from app.blueprints.ogrenci_yonetimi import routes, ogrenci_yonetimi_bp
         from app.blueprints.ders_konu_yonetimi import routes, ders_konu_yonetimi_bp
@@ -60,6 +76,7 @@ def create_app(config=None):
         from app.blueprints.yapay_zeka_asistan import routes, yapay_zeka_asistan_bp
         
         # Register blueprints
+        app.register_blueprint(auth_bp, url_prefix='/auth')
         app.register_blueprint(ana_sayfa_bp)
         app.register_blueprint(ogrenci_yonetimi_bp, url_prefix='/ogrenci-yonetimi')
         app.register_blueprint(ders_konu_yonetimi_bp, url_prefix='/ders-konu-yonetimi')
@@ -73,11 +90,12 @@ def create_app(config=None):
         app.register_blueprint(anket_yonetimi_bp, url_prefix='/anket-yonetimi')
         app.register_blueprint(yapay_zeka_asistan_bp, url_prefix='/yapay-zeka-asistan')
         
-        # Skip model imports and table creation since database tables already exist
-        # If you need to create tables, run the following code manually:
-        # from app.extensions import Base
-        # from app.blueprints.ogrenci_yonetimi.models import Ogrenci
-        # ... (other model imports)
-        # db.create_all()
+        # Import all models to ensure they are created
+        from app.blueprints.auth.models import User
+        from app.blueprints.ogrenci_yonetimi.models import Ogrenci
+        # Import other models as needed...
+        
+        # Create all database tables
+        db.create_all()
     
     return app
