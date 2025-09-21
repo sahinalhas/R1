@@ -1,7 +1,7 @@
-modules = ["python-3.11"]
+modules = ["python-3.11", "web", "c-clang14", "cpp-clang14"]
 [nix]
 channel = "stable-25_05"
-packages = ["unzip", "glib", "cairo", "pango", "harfbuzz", "pkg-config"]
+packages = ["cairo", "fontconfig", "ghostscript", "glib", "glibcLocales", "harfbuzz", "libxcrypt", "openssl", "pango", "pkg-config", "postgresql", "unzip", "xsimd"]
 
 [agent]
 expertMode = true
@@ -22,22 +22,18 @@ args = "Flask App"
 name = "Flask App"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "uv run python main.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 46825
-externalPort = 3000
-
 [deployment]
 deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind=0.0.0.0:5000", "--reuse-port", "main:app"]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
