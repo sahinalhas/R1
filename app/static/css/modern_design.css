@@ -71,6 +71,11 @@ body {
     z-index: 2;
 }
 
+.hero-modern .col-lg-5 {
+    position: relative;
+    z-index: 20;
+}
+
 /* Modern Başlık Tasarımı */
 .hero-title-modern {
     font-size: clamp(2.5rem, 5vw, 4rem);
@@ -145,6 +150,7 @@ body {
     transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
+    z-index: 10;
 }
 
 .glass-card::before {
@@ -166,6 +172,8 @@ body {
 /* Modern Login Form */
 .login-form-modern {
     padding: 2rem;
+    position: relative;
+    z-index: 15;
 }
 
 .login-form-modern .form-control {
