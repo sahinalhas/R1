@@ -2,6 +2,7 @@ import os
 import logging
 from flask import Flask, g, request
 from flask_login import LoginManager
+from werkzeug.middleware.proxy_fix import ProxyFix
 from app.extensions import db
 
 def create_app(config=None):
@@ -13,6 +14,9 @@ def create_app(config=None):
                 template_folder='templates',
                 static_folder='static')
     
+    # Configure proxy support for Replit environment
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+    
     # Configure the app - Require SESSION_SECRET for security
     app.secret_key = os.environ.get("SESSION_SECRET")
     if not app.secret_key:
@@ -21,10 +25,15 @@ def create_app(config=None):
     # Database configuration
     # Use PostgreSQL in production, SQLite in development
     database_url = os.environ.get("DATABASE_URL")
-    if database_url and database_url.startswith("postgres://"):
-        # Heroku postgres:// format -> postgresql:// for SQLAlchemy
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    if database_url:
+        if database_url.startswith("postgres://"):
+            # Heroku postgres:// format -> postgresql:// for SQLAlchemy
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
         app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+            "pool_recycle": 300,
+            "pool_pre_ping": True,
+        }
     else:
         # Use SQLite in a subdirectory of app
         basedir = os.path.abspath(os.path.dirname(__file__))
