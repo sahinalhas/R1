@@ -1,5 +1,7 @@
 from flask import render_template, redirect, url_for
+from flask_login import current_user
 from app.blueprints.ana_sayfa import ana_sayfa_bp
+from app.blueprints.auth.forms import LoginForm
 from app.blueprints.ogrenci_yonetimi.models import Ogrenci
 from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
 from app.blueprints.calisma_programi.models import DersIlerleme
@@ -42,25 +44,35 @@ def simple_index():
 
 @ana_sayfa_bp.route('/')
 def index():
-    """Ana sayfa - tüm modüller için giriş noktası"""
-    # İstatistik değerleri doğrudan burada oluşturalım
-    from app.blueprints.ogrenci_yonetimi.models import Ogrenci
-    from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
-    from app.blueprints.calisma_programi.models import DersIlerleme
+    """Ana sayfa - giriş yapmış kullanıcılar için dashboard, yapmamış için welcome + login"""
+    # Giriş yapmamış kullanıcılar için login formu oluştur
+    login_form = None
+    if not current_user.is_authenticated:
+        login_form = LoginForm()
     
-    ogrenci_sayisi = Ogrenci.query.count()
-    ders_sayisi = Ders.query.count()
-    konu_sayisi = Konu.query.count()
-    
-    # Ortalama ilerleme
+    # İstatistik değerleri sadece giriş yapmış kullanıcılar için hesapla
+    ogrenci_sayisi = 0
+    ders_sayisi = 0
+    konu_sayisi = 0
     ortalama_ilerleme = 0
-    ders_ilerlemeleri = DersIlerleme.query.all()
-    if ders_ilerlemeleri:
-        ortalama_ilerleme = sum(di.tamamlama_yuzdesi for di in ders_ilerlemeleri) / len(ders_ilerlemeleri)
     
-    # Basit template render edelim
+    if current_user.is_authenticated:
+        from app.blueprints.ogrenci_yonetimi.models import Ogrenci
+        from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
+        from app.blueprints.calisma_programi.models import DersIlerleme
+        
+        ogrenci_sayisi = Ogrenci.query.count()
+        ders_sayisi = Ders.query.count()
+        konu_sayisi = Konu.query.count()
+        
+        # Ortalama ilerleme
+        ders_ilerlemeleri = DersIlerleme.query.all()
+        if ders_ilerlemeleri:
+            ortalama_ilerleme = sum(di.tamamlama_yuzdesi for di in ders_ilerlemeleri) / len(ders_ilerlemeleri)
+    
     return render_template('ana_sayfa/index.html',
                           ogrenci_sayisi=ogrenci_sayisi,
                           ders_sayisi=ders_sayisi,
                           konu_sayisi=konu_sayisi,
-                          ortalama_ilerleme=ortalama_ilerleme)
+                          ortalama_ilerleme=ortalama_ilerleme,
+                          login_form=login_form)

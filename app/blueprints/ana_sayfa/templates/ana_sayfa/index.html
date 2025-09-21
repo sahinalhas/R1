@@ -3,7 +3,23 @@
 {% block title %}Öğrenci Takip Platformu - Dijital Rehberlik Hizmetleri{% endblock %}
 
 {% block content %}
-<!-- Yeni Modern Ana Sayfa -->
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container-fluid flash-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<!-- Ana İçerik -->
+{% if current_user.is_authenticated %}
+<!-- Giriş yapılmış kullanıcılar için dashboard -->
 
 <!-- Hero Section - Video Background ile Daha Etkileyici -->
 <section class="hero-modern">
@@ -14,11 +30,11 @@
     <div class="container hero-container">
         <div class="row align-items-center">
             <div class="col-lg-7" data-aos="fade-up">
-                <h1 class="hero-title-modern">Eğitimde Yeni Nesil <span class="text-gradient">Dijital Dönüşüm</span></h1>
+                <h1 class="hero-title-modern">Hoş Geldiniz, <span class="text-gradient">{{ current_user.tam_ad }}</span></h1>
                 <p class="hero-subtitle-modern">Yapay zeka destekli rehberlik sistemi ile öğrencilerinizin akademik başarılarını ve kişisel gelişimlerini maksimize edin. Veri odaklı bir yaklaşımla eğitim kalitesini artırın.</p>
                 <div class="hero-buttons">
                     <a href="{{ url_for('ogrenci_yonetimi.liste') }}" class="btn btn-primary btn-lg">
-                        <span>Hemen Başlayın</span>
+                        <span>Öğrenci Yönetimi</span>
                         <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                     <a href="#moduller" class="btn-video ms-3">
@@ -60,6 +76,91 @@
         </svg>
     </div>
 </section>
+
+{% else %}
+<!-- Giriş yapmamış kullanıcılar için welcome + login -->
+<section class="hero-modern">
+    <div class="hero-overlay"></div>
+    <video autoplay muted loop class="hero-video">
+        <source src="https://cdn.dribbble.com/uploads/48226/original/b8bd4e4273cceae2889d9d259b04f732.mp4?1689028949" type="video/mp4">
+    </video>
+    <div class="container hero-container">
+        <div class="row align-items-center">
+            <div class="col-lg-7" data-aos="fade-up">
+                <h1 class="hero-title-modern">Eğitimde Yeni Nesil <span class="text-gradient">Dijital Dönüşüm</span></h1>
+                <p class="hero-subtitle-modern">Yapay zeka destekli rehberlik sistemi ile öğrencilerinizin akademik başarılarını ve kişisel gelişimlerini maksimize edin. Veri odaklı bir yaklaşımla eğitim kalitesini artırın.</p>
+                <div class="hero-buttons">
+                    <a href="#login-section" class="btn btn-primary btn-lg">
+                        <span>Hemen Başlayın</span>
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    <a href="#moduller" class="btn-video ms-3">
+                        <span class="btn-video-icon">
+                            <i class="fas fa-th-large"></i>
+                        </span>
+                        <span class="btn-video-text">Özellikler</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200" id="login-section">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h3 class="h4 font-weight-bold text-primary mb-2">Hoş Geldiniz</h3>
+                            <p class="text-muted mb-0">Sisteme giriş yapın</p>
+                        </div>
+                        
+                        {% if login_form %}
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            {{ login_form.hidden_tag() }}
+                            
+                            <div class="mb-3">
+                                {{ login_form.email.label(class="form-label") }}
+                                {{ login_form.email(class="form-control") }}
+                                {% for error in login_form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ login_form.password.label(class="form-label") }}
+                                {{ login_form.password(class="form-control") }}
+                                {% for error in login_form.password.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                {{ login_form.remember_me(class="form-check-input") }}
+                                {{ login_form.remember_me.label(class="form-check-label") }}
+                            </div>
+                            
+                            <div class="d-grid mb-3">
+                                {{ login_form.submit(class="btn btn-primary") }}
+                            </div>
+                        </form>
+                        
+                        <div class="text-center">
+                            <p class="text-muted mb-0">
+                                Hesabınız yok mu? 
+                                <a href="{{ url_for('auth.register') }}" class="text-primary text-decoration-none">
+                                    Kayıt Ol
+                                </a>
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,170.7C960,160,1056,160,1152,170.7C1248,181,1344,203,1392,213.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+{% endif %}
 
 <!-- İstatistikler - Daha Dinamik Görünüm -->
 <section class="stats-modern py-5">

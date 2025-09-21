@@ -9,11 +9,16 @@ from app.extensions import db
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """Giriş sayfası"""
+    """Giriş sayfası - GET istekleri ana sayfaya yönlendirilir, POST işlenir"""
     # Eğer kullanıcı zaten giriş yapmışsa ana sayfaya yönlendir
     if current_user.is_authenticated:
         return redirect(url_for('ana_sayfa.index'))
     
+    # GET istekleri ana sayfaya yönlendir (login formu orada gösterilir)
+    if request.method == 'GET':
+        return redirect(url_for('ana_sayfa.index'))
+    
+    # POST istekleri için login işlemi
     form = LoginForm()
     if form.validate_on_submit():
         # Email'i normalize et
@@ -35,7 +40,8 @@ def login():
         else:
             flash('Hatalı e-posta adresi veya parola.', 'danger')
     
-    return render_template('auth/login.html', form=form)
+    # Form doğrulaması başarısız olursa ana sayfaya yönlendir (hata mesajları flash ile gösterilir)
+    return redirect(url_for('ana_sayfa.index'))
 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
