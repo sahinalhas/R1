@@ -37,6 +37,12 @@ const chartCommonOptions = {
  * Chart.js global ayarları
  */
 function setupChartGlobalDefaults(isDarkMode = false) {
+  // Chart.js'in mevcut olup olmadığını kontrol et
+  if (typeof Chart === 'undefined' || !Chart.defaults) {
+    console.warn('Chart.js mevcut değil, grafik ayarları uygulanamadı');
+    return;
+  }
+  
   const theme = chartCommonOptions.getTheme(isDarkMode);
   
   Chart.defaults.font.family = theme.fontFamily;
@@ -47,42 +53,66 @@ function setupChartGlobalDefaults(isDarkMode = false) {
   Chart.defaults.animation.easing = 'easeOutQuart';
   
   // Tooltip Ayarları
-  Chart.defaults.plugins.tooltip.backgroundColor = theme.tooltipBackgroundColor;
-  Chart.defaults.plugins.tooltip.titleColor = theme.fontColor;
-  Chart.defaults.plugins.tooltip.bodyColor = theme.fontColor;
-  Chart.defaults.plugins.tooltip.borderColor = theme.tooltipBorderColor;
-  Chart.defaults.plugins.tooltip.borderWidth = 1;
-  Chart.defaults.plugins.tooltip.padding = 10;
-  Chart.defaults.plugins.tooltip.cornerRadius = 6;
-  Chart.defaults.plugins.tooltip.displayColors = true;
-  Chart.defaults.plugins.tooltip.boxPadding = 4;
-  Chart.defaults.plugins.tooltip.usePointStyle = true;
-  Chart.defaults.plugins.tooltip.bodyFont = {
-    family: theme.fontFamily,
-    size: theme.fontSize
-  };
-  Chart.defaults.plugins.tooltip.titleFont = {
-    family: theme.fontFamily,
-    size: theme.fontSize
-  };
+  try {
+    if (Chart.defaults.plugins && Chart.defaults.plugins.tooltip) {
+      Chart.defaults.plugins.tooltip.backgroundColor = theme.tooltipBackgroundColor;
+      Chart.defaults.plugins.tooltip.titleColor = theme.fontColor;
+      Chart.defaults.plugins.tooltip.bodyColor = theme.fontColor;
+      Chart.defaults.plugins.tooltip.borderColor = theme.tooltipBorderColor;
+      Chart.defaults.plugins.tooltip.borderWidth = 1;
+      Chart.defaults.plugins.tooltip.padding = 10;
+      Chart.defaults.plugins.tooltip.cornerRadius = 6;
+      Chart.defaults.plugins.tooltip.displayColors = true;
+      Chart.defaults.plugins.tooltip.boxPadding = 4;
+      Chart.defaults.plugins.tooltip.usePointStyle = true;
+      Chart.defaults.plugins.tooltip.bodyFont = {
+        family: theme.fontFamily,
+        size: theme.fontSize
+      };
+      Chart.defaults.plugins.tooltip.titleFont = {
+        family: theme.fontFamily,
+        size: theme.fontSize
+      };
+    }
+  } catch (error) {
+    console.warn('Chart.js tooltip ayarları uygulanamadı:', error.message);
+  }
   
-  // Ölçek Ayarları
-  Chart.defaults.scales.linear.grid.color = theme.gridColor;
-  Chart.defaults.scales.linear.grid.lineWidth = 1;
-  Chart.defaults.scales.linear.border.color = theme.borderColor;
-  
-  Chart.defaults.scales.category.grid.color = theme.gridColor;
-  Chart.defaults.scales.category.grid.lineWidth = 1;
-  Chart.defaults.scales.category.border.color = theme.borderColor;
+  // Ölçek Ayarları - Sadece mevcut ölçekler için ayarla
+  try {
+    if (Chart.defaults.scales && Chart.defaults.scales.linear) {
+      if (!Chart.defaults.scales.linear.grid) Chart.defaults.scales.linear.grid = {};
+      if (!Chart.defaults.scales.linear.border) Chart.defaults.scales.linear.border = {};
+      Chart.defaults.scales.linear.grid.color = theme.gridColor;
+      Chart.defaults.scales.linear.grid.lineWidth = 1;
+      Chart.defaults.scales.linear.border.color = theme.borderColor;
+    }
+    
+    if (Chart.defaults.scales && Chart.defaults.scales.category) {
+      if (!Chart.defaults.scales.category.grid) Chart.defaults.scales.category.grid = {};
+      if (!Chart.defaults.scales.category.border) Chart.defaults.scales.category.border = {};
+      Chart.defaults.scales.category.grid.color = theme.gridColor;
+      Chart.defaults.scales.category.grid.lineWidth = 1;
+      Chart.defaults.scales.category.border.color = theme.borderColor;
+    }
+  } catch (error) {
+    console.warn('Chart.js ölçek ayarları uygulanamadı:', error.message);
+  }
   
   // Legend Ayarları
-  Chart.defaults.plugins.legend.labels.font = {
-    family: theme.fontFamily,
-    size: theme.fontSize
-  };
-  Chart.defaults.plugins.legend.labels.usePointStyle = true;
-  Chart.defaults.plugins.legend.labels.boxWidth = 8;
-  Chart.defaults.plugins.legend.labels.padding = 15;
+  try {
+    if (Chart.defaults.plugins && Chart.defaults.plugins.legend && Chart.defaults.plugins.legend.labels) {
+      Chart.defaults.plugins.legend.labels.font = {
+        family: theme.fontFamily,
+        size: theme.fontSize
+      };
+      Chart.defaults.plugins.legend.labels.usePointStyle = true;
+      Chart.defaults.plugins.legend.labels.boxWidth = 8;
+      Chart.defaults.plugins.legend.labels.padding = 15;
+    }
+  } catch (error) {
+    console.warn('Chart.js legend ayarları uygulanamadı:', error.message);
+  }
 }
 
 /**
@@ -461,5 +491,10 @@ function updateChartThemes() {
 
 // Sayfa yüklendiğinde varsayılan grafik ayarlarını belirle
 document.addEventListener('DOMContentLoaded', function() {
-  setupChartGlobalDefaults(false);
+  // Chart.js'in yüklendiğinden emin ol
+  if (typeof Chart !== 'undefined' && Chart.defaults) {
+    setupChartGlobalDefaults(false);
+  } else {
+    console.warn('Chart.js henüz yüklenmedi, grafik tema ayarları atlandı');
+  }
 });
