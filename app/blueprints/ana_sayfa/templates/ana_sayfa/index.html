@@ -6,18 +6,20 @@
 <style>
 /* Modern Ana Sayfa Stilleri */
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --accent-color: #f093fb;
-    --text-dark: #1a202c;
-    --text-light: #718096;
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --accent-color: #0ea5e9;
+    --success-color: #10b981;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --bg-light: #f8fafc;
     --glass-bg: rgba(255, 255, 255, 0.1);
     --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 .hero-section {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 70%, var(--accent-color) 100%);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -91,7 +93,7 @@
 }
 
 .dashboard-section {
-    background: #f8fafc;
+    background: var(--bg-light);
     min-height: 100vh;
     padding: 80px 0;
 }
@@ -143,7 +145,7 @@
     width: 60px;
     height: 60px;
     border-radius: 15px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -188,7 +190,7 @@
     width: 80px;
     height: 80px;
     border-radius: 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--success-color));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -212,7 +214,7 @@
 .btn-module {
     padding: 12px 30px;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     border: none;
     color: white;
     text-decoration: none;
@@ -222,9 +224,10 @@
 }
 
 .btn-module:hover {
-    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    background: linear-gradient(135deg, var(--accent-color), var(--success-color));
     transform: translateY(-2px);
     color: white;
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
 }
 
 .login-section {
@@ -538,58 +541,6 @@
     </div>
 </section>
 
-<!-- Giriş Formu Modal Tarzı -->
-<section class="login-section" id="login-modal" style="display: none;">
-    <div class="container">
-        <div class="login-container">
-            <h2 class="login-title">
-                <i class="fas fa-graduation-cap me-2"></i>
-                Sisteme Giriş
-            </h2>
-            
-            {% if login_form %}
-            <form method="POST" action="{{ url_for('auth.login') }}">
-                {{ login_form.hidden_tag() }}
-                
-                <div class="form-group">
-                    {{ login_form.email(class="form-control form-control-modern", placeholder="E-posta adresiniz") }}
-                    {% for error in login_form.email.errors %}
-                        <div class="text-danger mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="form-group">
-                    {{ login_form.password(class="form-control form-control-modern", placeholder="Parolanız") }}
-                    {% for error in login_form.password.errors %}
-                        <div class="text-danger mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="form-group">
-                    <div class="d-flex justify-content-between align-items-center text-white">
-                        <div class="form-check">
-                            {{ login_form.remember_me(class="form-check-input") }}
-                            {{ login_form.remember_me.label(class="form-check-label") }}
-                        </div>
-                        <a href="#" class="text-white opacity-75">Parolamı Unuttum</a>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    {{ login_form.submit(class="btn btn-login") }}
-                </div>
-            </form>
-            {% endif %}
-            
-            <div class="text-center mt-3">
-                <p class="text-white opacity-75">
-                    Henüz hesabınız yok mu? 
-                    <a href="{{ url_for('auth.register') }}" class="text-white fw-bold">Kayıt Olun</a>
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
 {% endif %}
 
 {% endblock %}
