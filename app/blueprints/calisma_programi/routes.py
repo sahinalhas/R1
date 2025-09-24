@@ -13,6 +13,16 @@ from app.utils.auth import session_required, log_activity
 from app.blueprints.calisma_programi import calisma_programi_bp
 
 
+@calisma_programi_bp.route('/')
+def index():
+    """Çalışma Programı ana girişi: aktif öğrenci varsa haftalık plana yönlendirir."""
+    ogrenci = get_aktif_ogrenci()
+    if ogrenci:
+        return redirect(url_for('calisma_programi.haftalik_plan', ogrenci_id=ogrenci.id))
+    flash('Önce bir öğrenci seçin.', 'info')
+    return redirect(url_for('ogrenci_yonetimi.liste'))
+
+
 @calisma_programi_bp.route('/ogrenci/<int:ogrenci_id>/haftalik-plan', methods=['GET', 'POST'])
 @session_required
 @log_activity('haftalik_plan_goruntule', 'Öğrencinin haftalık ders planı görüntülendi')
