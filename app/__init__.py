@@ -148,7 +148,11 @@ def create_app(config=None):
                 user = User.query.filter_by(email=app.config["AUTO_LOGIN_EMAIL"].lower()).first()
                 if user and user.aktif:
                     login_user(user, remember=True)
-            except Exception:
+                    logging.debug("AUTO_LOGIN: Logged in %s", user.email)
+                else:
+                    logging.debug("AUTO_LOGIN: No active user found for %s", app.config["AUTO_LOGIN_EMAIL"].lower())
+            except Exception as e:
+                logging.exception("AUTO_LOGIN error: %s", e)
                 return None
     
     return app
