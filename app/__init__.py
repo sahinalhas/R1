@@ -44,29 +44,37 @@ def create_app(config=None):
     
     # Initialize extensions
     db.init_app(app)
-    
+
+    # Development auto-login configuration (disabled by default)
+    app.config["AUTO_LOGIN_ENABLED"] = str(os.environ.get("AUTO_LOGIN_ENABLED", "")).lower() in {"1", "true", "yes", "on"}
+    app.config["AUTO_LOGIN_EMAIL"] = os.environ.get("AUTO_LOGIN_EMAIL", "dev.admin@example.com")
+    app.config["AUTO_LOGIN_PASSWORD"] = os.environ.get("AUTO_LOGIN_PASSWORD", "devpass123")
+    app.config["AUTO_LOGIN_AD"] = os.environ.get("AUTO_LOGIN_AD", "Geliştirici")
+    app.config["AUTO_LOGIN_SOYAD"] = os.environ.get("AUTO_LOGIN_SOYAD", "Admin")
+    logging.debug("AUTO_LOGIN_ENABLED=%s, email=%s", app.config["AUTO_LOGIN_ENABLED"], app.config["AUTO_LOGIN_EMAIL"])
+
     # Initialize Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Lütfen giriş yapın.'
     login_manager.login_message_category = 'info'
-    
+
     @login_manager.user_loader
     def load_user(user_id):
         from app.blueprints.auth.models import User
         return User.query.get(int(user_id))
-    
+
     # Register template filters
     from app.utils.filters import register_filters
     register_filters(app)
-    
+
     # Register context processors
     @app.context_processor
     def inject_utilities():
         from app.utils.session import get_aktif_ogrenci
         return dict(get_aktif_ogrenci=get_aktif_ogrenci)
-    
+
     with app.app_context():
         # Import route modules BEFORE registering blueprints
         # to ensure routes are registered with the blueprint
@@ -83,7 +91,7 @@ def create_app(config=None):
         from app.blueprints.etkinlik_kayit import routes, etkinlik_kayit_bp
         from app.blueprints.anket_yonetimi import routes, anket_yonetimi_bp
         from app.blueprints.yapay_zeka_asistan import routes, yapay_zeka_asistan_bp
-        
+
         # Register blueprints
         app.register_blueprint(auth_bp, url_prefix='/auth')
         app.register_blueprint(ana_sayfa_bp)
@@ -98,13 +106,54 @@ def create_app(config=None):
         app.register_blueprint(etkinlik_kayit_bp, url_prefix='/etkinlik-kayit')
         app.register_blueprint(anket_yonetimi_bp, url_prefix='/anket-yonetimi')
         app.register_blueprint(yapay_zeka_asistan_bp, url_prefix='/yapay-zeka-asistan')
-        
+
         # Import all models to ensure they are created
         from app.blueprints.auth.models import User
         from app.blueprints.ogrenci_yonetimi.models import Ogrenci
         # Import other models as needed...
-        
+
         # Create all database tables
         db.create_all()
+
+        # Ensure a development user exists when auto-login is enabled
+        if app.config["AUTO_LOGIN_ENABLED"]:
+            try:
+                dev_user = User.query.filter_by(email=app.config["AUTO_LOGIN_EMAIL"].lower()).first()
+                if dev_user is None:
+                    dev_user = User(
+                        email=app.config["AUTO_LOGIN_EMAIL"].lower(),
+                        ad=app.config["AUTO_LOGIN_AD"],
+                        soyad=app.config["AUTO_LOGIN_SOYAD"],
+                        aktif=True,
+                    )
+                    dev_user.set_password(app.config["AUTO_LOGIN_PASSWORD"])
+                    db.session.add(dev_user)
+                    db.session.commit()
+            except Exception:
+                db.session.rollback()
+
+    # Auto-login for development if enabled
+    if app.config["AUTO_LOGIN_ENABLED"]:
+        @app.before_request
+        def _auto_login_dev_user():
+            from flask_login import current_user, login_user
+            # Skip static files and logout route to avoid interfering
+            if request.endpoint in {"static"}:
+                return None
+            if request.endpoint == 'auth.logout':
+                return None
+            if getattr(current_user, 'is_authenticated', False):
+                return None
+            try:
+                from app.blueprints.auth.models import User
+                user = User.query.filter_by(email=app.config["AUTO_LOGIN_EMAIL"].lower()).first()
+                if user and user.aktif:
+                    login_user(user, remember=True)
+                    logging.debug("AUTO_LOGIN: Logged in %s", user.email)
+                else:
+                    logging.debug("AUTO_LOGIN: No active user found for %s", app.config["AUTO_LOGIN_EMAIL"].lower())
+            except Exception as e:
+                logging.exception("AUTO_LOGIN error: %s", e)
+                return None
     
     return app
