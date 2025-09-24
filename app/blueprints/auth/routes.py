@@ -16,7 +16,16 @@ def login():
     
     # Login formu oluştur
     form = LoginForm()
-    
+
+    # Geliştirme sırasında otomatik doldurma
+    try:
+        from flask import current_app
+        if request.method == 'GET' and current_app.config.get('AUTO_LOGIN_ENABLED'):
+            form.email.data = current_app.config.get('AUTO_LOGIN_EMAIL')
+            form.password.data = current_app.config.get('AUTO_LOGIN_PASSWORD')
+    except Exception:
+        pass
+
     # POST istekleri için login işlemi
     if form.validate_on_submit():
         # Email'i normalize et
