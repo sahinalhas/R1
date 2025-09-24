@@ -51,6 +51,7 @@ def create_app(config=None):
     app.config["AUTO_LOGIN_PASSWORD"] = os.environ.get("AUTO_LOGIN_PASSWORD", "devpass123")
     app.config["AUTO_LOGIN_AD"] = os.environ.get("AUTO_LOGIN_AD", "Geliştirici")
     app.config["AUTO_LOGIN_SOYAD"] = os.environ.get("AUTO_LOGIN_SOYAD", "Admin")
+    logging.debug("AUTO_LOGIN_ENABLED=%s, email=%s", app.config["AUTO_LOGIN_ENABLED"], app.config["AUTO_LOGIN_EMAIL"])
 
     # Initialize Flask-Login
     login_manager = LoginManager()
