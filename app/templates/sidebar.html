@@ -95,8 +95,7 @@
             </li>
         </ul>
         
-        <!-- Alt kısımda hızlı arama - sadece öğrenci seçili değilse -->
-        {% if not get_aktif_ogrenci() %}
+        <!-- Hızlı arama -->
         <div class="sidebar-search">
             <form action="{{ url_for('ogrenci_yonetimi.hizli_ara') }}" method="GET">
                 <div class="search-input-group">
@@ -107,7 +106,6 @@
                 </div>
             </form>
         </div>
-        {% endif %}
     </div>
     
     <!-- Sidebar Toggle Button -->

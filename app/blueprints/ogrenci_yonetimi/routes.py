@@ -6,7 +6,8 @@ from app.blueprints.ogrenci_yonetimi.models import Ogrenci
 from app.blueprints.ders_konu_yonetimi.models import Konu, Ders
 from app.blueprints.calisma_programi.models import DersProgrami, DersIlerleme, KonuTakip
 from app.blueprints.deneme_sinavlari.models import DenemeSonuc
-from app.utils.session import set_aktif_ogrenci, get_aktif_ogrenci
+# Session management removed - imports commented out
+# from app.utils.session import set_aktif_ogrenci, get_aktif_ogrenci
 from app.blueprints.ogrenci_yonetimi.services import OgrenciService
 
 @ogrenci_yonetimi_bp.route('/')
@@ -206,15 +207,14 @@ def ekle():
             return redirect(url_for('ogrenci_yonetimi.ekle'))
         
         # Yeni öğrenciyi ekle
-        yeni_ogrenci = Ogrenci(
-            numara=numara,
-            ad=ad,
-            soyad=soyad,
-            sinif=sinif,
-            cinsiyet=cinsiyet,
-            telefon=telefon if telefon else None,
-            eposta=eposta if eposta else None
-        )
+        yeni_ogrenci = Ogrenci()
+        yeni_ogrenci.numara = numara
+        yeni_ogrenci.ad = ad
+        yeni_ogrenci.soyad = soyad
+        yeni_ogrenci.sinif = sinif
+        yeni_ogrenci.cinsiyet = cinsiyet
+        yeni_ogrenci.telefon = telefon if telefon else None
+        yeni_ogrenci.eposta = eposta if eposta else None
         
         # Veritabanına kaydet
         db.session.add(yeni_ogrenci)
@@ -230,8 +230,7 @@ def profil(ogrenci_id):
     """Öğrenci profil sayfası"""
     ogrenci = Ogrenci.query.get_or_404(ogrenci_id)
     
-    # Bu öğrenciyi aktif öğrenci olarak ayarla
-    set_aktif_ogrenci(ogrenci_id)
+    # Session management removed - student profiles are accessible directly
     
     # Öğrencinin ders ilerlemeleri
     ders_ilerlemeleri = DersIlerleme.query.filter_by(ogrenci_id=ogrenci_id).all()
@@ -313,10 +312,7 @@ def sil(ogrenci_id):
     ogrenci = Ogrenci.query.get_or_404(ogrenci_id)
     ogrenci_adi = f"{ogrenci.ad} {ogrenci.soyad}"
     
-    # Eğer silinen öğrenci aktif öğrenci ise, aktif öğrenci bilgisini temizle
-    aktif_ogrenci = get_aktif_ogrenci()
-    if aktif_ogrenci and aktif_ogrenci.id == ogrenci_id:
-        clear_aktif_ogrenci()
+    # Session management removed - proceed with deletion directly
     
     # Servis metodunu kullanarak tüm ilişkili verileri silme
     result = OgrenciService.delete_ogrenci(ogrenci_id)

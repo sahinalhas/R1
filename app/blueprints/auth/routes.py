@@ -30,7 +30,7 @@ def login():
     # POST istekleri için login işlemi
     if form.validate_on_submit():
         # Email'i normalize et
-        email = form.email.data.lower().strip()
+        email = form.email.data.lower().strip() if form.email.data else ""
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(form.password.data):
@@ -63,9 +63,9 @@ def register():
     if form.validate_on_submit():
         # Yeni kullanıcı oluştur
         user = User()
-        user.email = form.email.data.lower().strip()  # Email'i normalize et
-        user.ad = form.ad.data.strip()
-        user.soyad = form.soyad.data.strip()
+        user.email = form.email.data.lower().strip() if form.email.data else ""
+        user.ad = form.ad.data.strip() if form.ad.data else ""
+        user.soyad = form.soyad.data.strip() if form.soyad.data else ""
         user.set_password(form.password.data)
         
         try:
@@ -92,12 +92,11 @@ def dev_login():
         
         if not user:
             # Geliştirme kullanıcısı yoksa oluştur
-            user = User(
-                email=dev_email,
-                ad="Geliştirici",
-                soyad="Test",
-                aktif=True
-            )
+            user = User()
+            user.email = dev_email
+            user.ad = "Geliştirici"
+            user.soyad = "Test"
+            user.aktif = True
             user.set_password("123456")
             db.session.add(user)
             db.session.commit()
