@@ -322,7 +322,7 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar styles - Modern minimal design - Hareket sorunu düzeltildi */
+/* Sidebar styles - Clean modern design */
 .sidebar {
   width: var(--sidebar-width);
   position: fixed;
@@ -333,11 +333,9 @@ body {
   background: #ffffff;
   color: var(--text-color);
   border-right: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-family: 'Inter', system-ui, sans-serif;
-  /* Hareket sorunu tamamen önlendi */
-  transform: translateZ(0); /* GPU accelerated için */
-  will-change: auto; /* GPU optimizasyonu */
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-collapsed {
@@ -384,41 +382,38 @@ body {
 .sidebar-nav-link {
   display: flex;
   align-items: center;
-  padding: 0.875rem 1.5rem;
-  color: #374151;
+  padding: 12px 20px;
+  color: #64748b;
   text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 3px solid transparent;
-  cursor: pointer;
+  transition: all 0.2s ease;
   font-weight: 500;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
+  font-size: 14px;
+  line-height: 1.4;
+  border-radius: 8px;
+  margin: 4px 12px;
   position: relative;
-  border-radius: 0;
-  margin: 0;
 }
 
 
 .sidebar-nav-link:hover {
-  background-color: #f9fafb;
-  color: #1f2937;
+  background-color: #f1f5f9;
+  color: #334155;
+  transform: translateX(2px);
 }
 
 .sidebar-nav-link.active {
-  background-color: #f3f4f6;
-  color: #1f2937;
-  border-left-color: #3b82f6;
+  background-color: #3b82f6;
+  color: #ffffff;
   font-weight: 600;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);
 }
 
 .sidebar-nav-icon {
-  margin-right: 0.75rem;
-  width: 18px;
-  height: 18px;
-  text-align: center;
-  font-size: 1rem;
-  color: #6b7280;
+  margin-right: 12px;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -427,9 +422,12 @@ body {
 }
 
 
-.sidebar-nav-link:hover .sidebar-nav-icon,
-.sidebar-nav-link.active .sidebar-nav-icon {
+.sidebar-nav-link:hover .sidebar-nav-icon {
   color: #3b82f6;
+}
+
+.sidebar-nav-link.active .sidebar-nav-icon {
+  color: #ffffff;
 }
 
 .sidebar-nav-text {
@@ -595,31 +593,31 @@ body {
 
 /* Modern minimal welcome section */
 .modern-welcome {
-  padding: 1.5rem 1.5rem 1rem;
-  border-bottom: 1px solid #f3f4f6;
-  margin-bottom: 0;
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 .modern-user-icon {
-  font-size: 1.75rem;
-  color: #6b7280;
-  margin-bottom: 0.75rem;
-  opacity: 0.9;
+  font-size: 32px;
+  color: #3b82f6;
+  margin-bottom: 12px;
+  opacity: 0.8;
 }
 
 .modern-welcome-text {
   font-weight: 600;
-  color: #1f2937;
-  font-size: 0.875rem;
+  color: #1e293b;
+  font-size: 15px;
   line-height: 1.4;
-  letter-spacing: -0.01em;
-  margin-bottom: 0.25rem;
+  margin-bottom: 4px;
 }
 
 .modern-welcome-help {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  line-height: 1.4;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.3;
   font-weight: 400;
 }
 
