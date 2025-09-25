@@ -680,12 +680,12 @@
             min-height: 100vh;
             background-color: var(--bg-light);
             padding: 2rem;
-            margin-left: 260px;
+            margin-left: var(--sidebar-width, 260px);
             /* Transition kaldırıldı - hareket sorunu çözüldü */
         }
         
         .main-content-expanded {
-            margin-left: 70px;
+            margin-left: var(--sidebar-collapsed-width, 70px);
         }
         
         .main-content-fullwidth {
@@ -1229,16 +1229,7 @@
             // Preload sınıfını hemen kaldır - anında yükleme
             document.body.classList.remove('preload');
             
-            // Smooth page transitions için link interceptor
-            const links = document.querySelectorAll('a[href^="/"], .sidebar-nav-link');
-            links.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    const mainContent = document.querySelector('.main-content');
-                    if (mainContent && !this.hasAttribute('target')) {
-                        mainContent.classList.add('loading');
-                    }
-                });
-            });
+            // Click interceptor kaldırıldı - beyaz ekran sorununa neden oluyordu
             
             // Navbar scroll effect
             window.addEventListener('scroll', function() {

@@ -225,21 +225,7 @@
   transition: background-color 0.2s ease;
 }
 
-/* Optimized Page load animation - Smooth ve hızlı */
-.page-load {
-  animation: pageLoadFast 0.2s ease-out;
-}
-
-@keyframes pageLoadFast {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Page load animations kaldırıldı - beyaz ekran sorununa neden oluyordu */
 
 /* Smooth page transitions */
 .main-content {
@@ -248,10 +234,7 @@
   transition: opacity 0.15s ease-out, transform 0.15s ease-out;
 }
 
-.main-content.loading {
-  opacity: 0.7;
-  transform: translateY(2px);
-}
+/* .main-content.loading kaldırıldı - click interceptor artık yok */
 
 /* Instant sidebar navigation */
 .sidebar-nav-link {
