@@ -41,7 +41,7 @@ def login():
                 next_page = request.args.get('next')
                 if next_page and is_safe_url(next_page):
                     return redirect(next_page)
-                return redirect(url_for('ana_sayfa.index'))
+                return redirect(url_for('ana_sayfa.dashboard'))
             else:
                 flash('Hesabınız aktif değil. Lütfen yöneticiye başvurun.', 'warning')
         else:
@@ -104,7 +104,7 @@ def dev_login():
         if user.aktif:
             login_user(user, remember=True)
             flash(f'Geliştirici girişi başarılı! Hoş geldiniz {user.tam_ad}', 'success')
-            return redirect(url_for('ana_sayfa.index'))
+            return redirect(url_for('ana_sayfa.dashboard'))
         else:
             flash('Geliştirici hesabı aktif değil.', 'warning')
             

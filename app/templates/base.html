@@ -690,6 +690,11 @@
             margin-left: 70px;
         }
         
+        .main-content-fullwidth {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+        
         /* Dashboard cards */
         .dashboard-card {
             background-color: white;
@@ -1124,11 +1129,13 @@
         <!-- Mobil Overlay (mobil menü açılınca arkaplanı karartmak için) -->
         <div class="mobile-overlay"></div>
         
-        <!-- Sidebar -->
+        <!-- Sidebar (gizlenebilir) -->
+        {% if not hide_sidebar %}
         {% include "sidebar.html" %}
+        {% endif %}
         
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content{% if hide_sidebar %} main-content-fullwidth{% endif %}">
             <!-- Mobile Menu Button (yalnızca mobilde görünür) -->
             <div class="d-flex d-lg-none align-items-center justify-content-between w-100 mb-4">
                 <div class="d-flex align-items-center">

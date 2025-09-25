@@ -16,11 +16,11 @@
         <ul class="sidebar-nav">
             <!-- Aktif öğrenci gösterimi artık tab bar'da yapılıyor -->
             
-            <!-- Ana sayfa -->
+            <!-- Dashboard -->
             <li class="sidebar-nav-item">
-                <a class="sidebar-nav-link {% if request.endpoint == 'ana_sayfa.index' and 'ogrenci_yonetimi.profil' not in request.endpoint and 'calisma_programi.' not in request.endpoint and 'deneme.' not in request.endpoint and 'rapor.' not in request.endpoint and 'ders_konu_yonetimi.' not in request.endpoint and 'ogrenci_yonetimi.liste' not in request.endpoint %}active{% endif %}" href="{{ url_for('ana_sayfa.index') }}">
-                    <i class="fas fa-home sidebar-nav-icon"></i>
-                    <span class="sidebar-nav-text">Ana Sayfa</span>
+                <a class="sidebar-nav-link {% if request.endpoint == 'ana_sayfa.dashboard' %}active{% endif %}" href="{{ url_for('ana_sayfa.dashboard') }}">
+                    <i class="fas fa-chart-line sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-text">Dashboard</span>
                 </a>
             </li>
             

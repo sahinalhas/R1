@@ -44,35 +44,46 @@ def simple_index():
 
 @ana_sayfa_bp.route('/')
 def index():
-    """Ana sayfa - giriş yapmış kullanıcılar için dashboard, yapmamış için welcome + login"""
-    # Giriş yapmamış kullanıcılar için login formu oluştur
-    login_form = None
+    """Ana sayfa - giriş yapmamış kullanıcıları login'e yönlendir, giriş yapmışları dashboard'a"""
     if not current_user.is_authenticated:
-        login_form = LoginForm()
+        # Giriş yapmamış kullanıcıları direkt login sayfasına yönlendir
+        return redirect(url_for('auth.login'))
     
-    # İstatistik değerleri sadece giriş yapmış kullanıcılar için hesapla
-    ogrenci_sayisi = 0
-    ders_sayisi = 0
-    konu_sayisi = 0
+    # Giriş yapmış kullanıcıları dashboard'a yönlendir
+    return redirect(url_for('ana_sayfa.dashboard'))
+
+
+@ana_sayfa_bp.route('/dashboard')
+@session_required
+def dashboard():
+    """Dashboard - Ana kontrol paneli"""
+    from app.blueprints.ogrenci_yonetimi.models import Ogrenci
+    from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
+    from app.blueprints.calisma_programi.models import DersIlerleme
+    
+    # İstatistik değerleri
+    ogrenci_sayisi = Ogrenci.query.count()
+    ders_sayisi = Ders.query.count()
+    konu_sayisi = Konu.query.count()
+    
+    # Ortalama ilerleme
     ortalama_ilerleme = 0
+    ders_ilerlemeleri = DersIlerleme.query.all()
+    if ders_ilerlemeleri:
+        ortalama_ilerleme = sum(di.tamamlama_yuzdesi for di in ders_ilerlemeleri) / len(ders_ilerlemeleri)
     
-    if current_user.is_authenticated:
-        from app.blueprints.ogrenci_yonetimi.models import Ogrenci
-        from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
-        from app.blueprints.calisma_programi.models import DersIlerleme
-        
-        ogrenci_sayisi = Ogrenci.query.count()
-        ders_sayisi = Ders.query.count()
-        konu_sayisi = Konu.query.count()
-        
-        # Ortalama ilerleme
-        ders_ilerlemeleri = DersIlerleme.query.all()
-        if ders_ilerlemeleri:
-            ortalama_ilerleme = sum(di.tamamlama_yuzdesi for di in ders_ilerlemeleri) / len(ders_ilerlemeleri)
+    # Son eklenen 5 öğrenci
+    son_ogrenciler = Ogrenci.query.order_by(Ogrenci.id.desc()).limit(5).all()
     
-    return render_template('ana_sayfa/index.html',
+    # Okul bilgisi
+    from app.blueprints.parametre_yonetimi.models import OkulBilgi
+    okul_bilgisi = OkulBilgi.query.filter_by(aktif=True).first()
+    
+    return render_template('ana_sayfa/dashboard.html',
                           ogrenci_sayisi=ogrenci_sayisi,
                           ders_sayisi=ders_sayisi,
                           konu_sayisi=konu_sayisi,
                           ortalama_ilerleme=ortalama_ilerleme,
-                          login_form=login_form)
+                          son_ogrenciler=son_ogrenciler,
+                          okul_bilgisi=okul_bilgisi,
+                          hide_sidebar=True)
