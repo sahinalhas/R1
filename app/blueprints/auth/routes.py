@@ -81,6 +81,40 @@ def register():
     return render_template('auth/register.html', form=form)
 
 
+@auth_bp.route('/dev-login', methods=['POST'])
+def dev_login():
+    """Geliştirme aşaması için hızlı giriş"""
+    try:
+        # Geliştirme kullanıcısını bul veya oluştur
+        dev_email = "dev@test.com"
+        user = User.query.filter_by(email=dev_email).first()
+        
+        if not user:
+            # Geliştirme kullanıcısı yoksa oluştur
+            user = User(
+                email=dev_email,
+                ad="Geliştirici",
+                soyad="Test",
+                aktif=True
+            )
+            user.set_password("123456")
+            db.session.add(user)
+            db.session.commit()
+            
+        if user.aktif:
+            login_user(user, remember=True)
+            flash(f'Geliştirici girişi başarılı! Hoş geldiniz {user.tam_ad}', 'success')
+            return redirect(url_for('ana_sayfa.index'))
+        else:
+            flash('Geliştirici hesabı aktif değil.', 'warning')
+            
+    except Exception as e:
+        db.session.rollback()
+        flash('Geliştirici girişi sırasında hata oluştu.', 'danger')
+    
+    return redirect(url_for('auth.login'))
+
+
 @auth_bp.route('/logout', methods=['POST'])
 @login_required
 def logout():

@@ -63,6 +63,18 @@
                         </div>
                     </form>
                     
+                    <!-- Geliştirme Aşaması Hızlı Giriş -->
+                    <div class="text-center mb-3">
+                        <div class="alert alert-warning py-2">
+                            <small><i class="fas fa-code"></i> Geliştirme Modu</small>
+                        </div>
+                        <form method="POST" action="{{ url_for('auth.dev_login') }}" style="display: inline;">
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                <i class="fas fa-rocket"></i> Hızlı Geliştirici Girişi
+                            </button>
+                        </form>
+                    </div>
+                    
                     <div class="text-center">
                         <p class="text-muted">
                             Hesabınız yok mu? 
