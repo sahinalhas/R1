@@ -4,85 +4,41 @@ Bu modül, tüm blueprint'lerde tutarlı oturum yönetimi sağlamak için kullan
 """
 
 from functools import wraps
-from flask import session, redirect, url_for, flash, request, current_app
-from app.utils.session import get_aktif_ogrenci, set_aktif_ogrenci
-from app.blueprints.ogrenci_yonetimi.models import Ogrenci
+from flask import redirect, url_for, flash, request, current_app
+from urllib.parse import urlparse, urljoin
 
 def session_required(ogrenci_zorunlu=True):
     """
-    Oturum kontrolü için dekoratör
-    Eğer ogrenci_zorunlu=True ise aktif bir öğrenci seçili değilse kullanıcıyı öğrenci listesine yönlendirir
-    Eğer ogrenci_zorunlu=False ise öğrenci seçilmese bile sayfayı gösterir
-    
-    Args:
-        ogrenci_zorunlu: Öğrenci seçiminin zorunlu olup olmadığı (default: True)
-        
-    Returns:
-        Dekoratör fonksiyonu
+    Session management disabled - decorator bypassed for system compatibility
+    This decorator is no longer active as session management has been removed
     """
     def decorator(f):
         @wraps(f)
         def decorated_function(ogrenci_id=None, *args, **kwargs):
-            # Eğer oturum zorunlu değilse doğrudan işleme devam et
-            if current_app.config.get('SESSION_REQUIRED', True) is False:
-                return f(ogrenci_id, *args, **kwargs)
-                
-            # Url'den gelen ogrenci_id parametresi varsa, aktif öğrenciyi ayarla
-            if ogrenci_id:
-                set_aktif_ogrenci(ogrenci_id)
-                return f(ogrenci_id, *args, **kwargs)
-                
-            # Aktif öğrenci kontrolü
-            aktif_ogrenci = get_aktif_ogrenci()
-            
-            # Eğer öğrenci zorunlu değilse, öğrenci olmadan devam et
-            if not ogrenci_zorunlu:
-                return f(ogrenci_id=None, *args, **kwargs)
-                
-            # Öğrenci zorunlu ve aktif öğrenci yoksa
-            if not aktif_ogrenci:
-                flash('Lütfen bir öğrenci seçin.', 'warning')
-                return redirect(url_for('ogrenci_yonetimi.liste'))
-                
-            # Eğer url'de ogrenci_id yoksa ve aktif öğrenci varsa, aktif öğrenciyi kullan
-            return f(aktif_ogrenci.id, *args, **kwargs)
-        
+            # Session management disabled - pass through to function
+            return f(ogrenci_id, *args, **kwargs)
         return decorated_function
     
-    # Eğer dekoratör doğrudan bir fonksiyona uygulanmışsa (yaygın kullanım)
+    # Handle both decorator usages
     if callable(ogrenci_zorunlu):
         f = ogrenci_zorunlu
-        ogrenci_zorunlu = True
         return decorator(f)
     
-    # Parametreli kullanım için
     return decorator
 
 def ogrenci_required(f):
     """
-    Öğrenci kontrol dekoratörü
-    URL'den gelen öğrenci ID'sini kontrol eder ve öğrenciyi görünüme aktarır
-    
-    Args:
-        f: Dekorlanacak view fonksiyonu
-        
-    Returns:
-        Wrapper fonksiyonu
+    Student validation decorator - simplified version without session management
     """
     @wraps(f)
     def decorated_function(ogrenci_id=None, *args, **kwargs):
-        # Öğrenci ID'si kontrolü
         if not ogrenci_id:
             flash('Geçersiz öğrenci ID.', 'danger')
             return redirect(url_for('ogrenci_yonetimi.liste'))
-            
-        # Öğrenciyi veritabanından al
+        
+        # Import here to avoid circular import
+        from app.blueprints.ogrenci_yonetimi.models import Ogrenci
         ogrenci = Ogrenci.query.get_or_404(ogrenci_id)
-        
-        # Mevcut aktif öğrenciyi oturumda ayarla
-        set_aktif_ogrenci(ogrenci_id)
-        
-        # Fonksiyonu çağır ve öğrenciyi parametre olarak gönder
         kwargs['ogrenci'] = ogrenci
         return f(ogrenci_id, *args, **kwargs)
     
@@ -130,3 +86,17 @@ def log_activity(activity_type, description=None):
             return result
         return decorated_function
     return decorator
+
+def is_safe_url(target):
+    """
+    Check if a URL is safe for redirects (prevents open redirect attacks)
+    
+    Args:
+        target: URL to check
+        
+    Returns:
+        bool: True if URL is safe, False otherwise
+    """
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc

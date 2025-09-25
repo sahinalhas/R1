@@ -44,8 +44,6 @@ class Ogrenci(db.Model):
             return 0
         
         return sum(di.tamamlama_yuzdesi for di in self.ders_ilerlemeleri) / len(self.ders_ilerlemeleri)
-        
-# GorusmeKaydi ilişkisini Ogrenci sınıfının sonunda tanımla - döngüsel import problemini önlemek için
-from app.blueprints.gorusme_defteri.models import GorusmeKaydi
-Ogrenci.gorusme_kayitlari = relationship("GorusmeKaydi", back_populates="ogrenci", cascade="all, delete-orphan")
-GorusmeKaydi.ogrenci = relationship("Ogrenci", back_populates="gorusme_kayitlari")
+    
+    # Relationship to GorusmeKaydi - defined using string to avoid circular import
+    gorusme_kayitlari = relationship("GorusmeKaydi", back_populates="ogrenci", cascade="all, delete-orphan")

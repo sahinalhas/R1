@@ -45,7 +45,8 @@ class GorusmeKaydi(db.Model):
     mebbis_aktarildi = db.Column(db.Boolean, default=False)
     mebbis_aktarim_tarihi = db.Column(db.DateTime)
     
-    # İlişkiler - Öğrenci model ilişkisini burada tanımlayacağız
+    # İlişkiler - Öğrenci model ilişkisi
+    ogrenci = relationship("Ogrenci", back_populates="gorusme_kayitlari")
     
     def __repr__(self):
         return f"<GorusmeKaydi id={self.id} tarih={self.tarih} ogrenci_id={self.ogrenci_id}>"
