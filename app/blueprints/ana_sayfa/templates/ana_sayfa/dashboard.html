@@ -208,19 +208,19 @@
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="stats-icon" style="background: linear-gradient(45deg, #10b981, #059669);">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-comments"></i>
                     </div>
-                    <div class="stats-number">{{ ders_sayisi }}</div>
-                    <div class="stats-label">Toplam Ders</div>
+                    <div class="stats-number">{{ bu_ay_gorusme_sayisi }}</div>
+                    <div class="stats-label">Bu Ay Görüşmeler</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card">
                     <div class="stats-icon" style="background: linear-gradient(45deg, #f59e0b, #d97706);">
-                        <i class="fas fa-list"></i>
+                        <i class="fas fa-calendar-check"></i>
                     </div>
-                    <div class="stats-number">{{ konu_sayisi }}</div>
-                    <div class="stats-label">Toplam Konu</div>
+                    <div class="stats-number">{{ bu_ay_etkinlik_sayisi }}</div>
+                    <div class="stats-label">Bu Ay Etkinlikler</div>
                 </div>
             </div>
             <div class="col-md-3">
@@ -230,6 +230,106 @@
                     </div>
                     <div class="stats-number">%{{ "%.1f"|format(ortalama_ilerleme) }}</div>
                     <div class="stats-label">Ortalama İlerleme</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hatırlatıcılar ve Uyarılar -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="quick-actions">
+                    <h5 class="mb-3">
+                        <i class="fas fa-bell text-warning me-2"></i>Yaklaşan Görüşmeler
+                    </h5>
+                    {% if yaklasan_gorusmeler %}
+                        {% for gorusme in yaklasan_gorusmeler %}
+                        <div class="action-btn mb-2" style="display: block; cursor: default;">
+                            <i class="fas fa-calendar-alt text-primary"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ gorusme.gorusulen_kisi }}</strong><br>
+                                <small class="text-muted">{{ gorusme.tarih.strftime('%d.%m.%Y') }} - {{ gorusme.gorusme_konusu }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Bu hafta yaklaşan görüşme bulunmuyor.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="quick-actions">
+                    <h5 class="mb-3">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>Risk Altındaki Öğrenciler
+                    </h5>
+                    {% if risk_altindaki_ogrenciler %}
+                        {% for item in risk_altindaki_ogrenciler %}
+                        <a href="{{ url_for('ogrenci_yonetimi.profil', ogrenci_id=item.ogrenci.id) }}" class="action-btn mb-2">
+                            <i class="fas fa-user-times text-danger"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ item.ogrenci.ad }} {{ item.ogrenci.soyad }}</strong>
+                                <small class="ms-auto text-danger">%{{ "%.1f"|format(item.ilerleme) }} ilerleme</small>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-thumbs-up me-2"></i>
+                            Risk altında öğrenci bulunmuyor.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bu Hafta Etkinlikler ve Başarılı Öğrenciler -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="quick-actions">
+                    <h5 class="mb-3">
+                        <i class="fas fa-calendar-week text-info me-2"></i>Bu Hafta Etkinlikler
+                    </h5>
+                    {% if bu_hafta_etkinlikler %}
+                        {% for etkinlik in bu_hafta_etkinlikler %}
+                        <div class="action-btn mb-2" style="display: block; cursor: default;">
+                            <i class="fas fa-clipboard-list text-info"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ etkinlik.faaliyet_turu }}</strong><br>
+                                <small class="text-muted">{{ etkinlik.etkinlik_tarihi.strftime('%d.%m.%Y') }} - {{ etkinlik.calisma_yontemi }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-calendar-times me-2"></i>
+                            Bu hafta etkinlik planlanmamış.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="quick-actions">
+                    <h5 class="mb-3">
+                        <i class="fas fa-star text-success me-2"></i>Başarılı Öğrenciler
+                    </h5>
+                    {% if basarili_ogrenciler %}
+                        {% for item in basarili_ogrenciler %}
+                        <a href="{{ url_for('ogrenci_yonetimi.profil', ogrenci_id=item.ogrenci.id) }}" class="action-btn mb-2">
+                            <i class="fas fa-medal text-success"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ item.ogrenci.ad }} {{ item.ogrenci.soyad }}</strong>
+                                <small class="ms-auto text-success">%{{ "%.1f"|format(item.ilerleme) }} ilerleme</small>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-hourglass-half me-2"></i>
+                            Henüz yüksek performans gösteren öğrenci yok.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -249,20 +349,20 @@
                         <i class="fas fa-user-plus"></i>
                         Yeni Öğrenci Ekle
                     </a>
-                    <a href="{{ url_for('rapor_yonetimi.index') }}" class="action-btn">
-                        <i class="fas fa-file-alt"></i>
-                        Raporlar
+                    <a href="{{ url_for('calisma_programi.index') }}" class="action-btn">
+                        <i class="fas fa-calendar-alt"></i>
+                        Çalışma Programı
                     </a>
                     <a href="{{ url_for('parametre_yonetimi.index') }}" class="action-btn">
                         <i class="fas fa-cog"></i>
-                        Parametre Yönetimi
+                        Ayarlar
                     </a>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="quick-actions">
                     <h5 class="mb-3">
-                        <i class="fas fa-clock text-success me-2"></i>Son Eklenen Öğrenciler
+                        <i class="fas fa-user-plus text-success me-2"></i>Son Eklenen Öğrenciler
                     </h5>
                     {% if son_ogrenciler %}
                         {% for ogrenci in son_ogrenciler %}
