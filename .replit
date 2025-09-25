@@ -1,4 +1,4 @@
-modules = ["python-3.11", "web", "c-clang14", "cpp-clang14"]
+modules = ["python-3.11", "web", "c-clang14", "cpp-clang14", "python3"]
 [nix]
 channel = "stable-25_05"
 packages = ["cairo", "fontconfig", "ghostscript", "glib", "glibcLocales", "harfbuzz", "libxcrypt", "openssl", "pango", "pkg-config", "postgresql", "unzip", "xsimd"]
@@ -34,10 +34,6 @@ waitForPort = 5000
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 40719
-externalPort = 3001
 
 [[ports]]
 localPort = 46759

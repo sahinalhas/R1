@@ -1,0 +1,56 @@
+{
+  "login_test": "SUCCESS",
+  "page_loads": {
+    "Home Page": "SUCCESS",
+    "Dashboard": "SUCCESS",
+    "Student Management": "FAILED_404",
+    "Registration Form": "FAILED_404",
+    "Meeting Log": "FAILED_404",
+    "Event Registration": "FAILED_404",
+    "Subject Management": "FAILED_404",
+    "Survey Management": "FAILED_404",
+    "Report Management": "FAILED_404",
+    "Parameter Management": "FAILED_404",
+    "AI Assistant": "FAILED_404"
+  },
+  "sidebar_consistency": {
+    "Home Page": {
+      "sidebar_present": false,
+      "nav_links_present": false,
+      "modern_styling": false,
+      "responsive_classes": false,
+      "toggle_functionality": false,
+      "student_tabs": false
+    },
+    "Dashboard": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false
+    }
+  },
+  "navigation_functionality": {
+    "Dashboard": "SUCCESS",
+    "Student Management": "FAILED_404",
+    "Registration Form": "FAILED_404"
+  },
+  "response_times": {
+    "Home Page": 0.009805679321289062,
+    "Dashboard": 2.2603893280029297,
+    "Student Management": 0.004563093185424805,
+    "Registration Form": 0.004061460494995117,
+    "Meeting Log": 0.0034492015838623047,
+    "Event Registration": 0.003989696502685547,
+    "Subject Management": 0.0030667781829833984,
+    "Survey Management": 0.003321409225463867,
+    "Report Management": 0.004384756088256836,
+    "Parameter Management": 0.005322456359863281,
+    "AI Assistant": 0.003545522689819336
+  },
+  "errors": [],
+  "warnings": [
+    "Home Page: Limited modern styling"
+  ]
+}

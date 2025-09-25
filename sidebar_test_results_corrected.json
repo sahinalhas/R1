@@ -1,0 +1,346 @@
+{
+  "login_test": "SUCCESS",
+  "page_loads": {
+    "Home Page": "SUCCESS",
+    "Dashboard": "SUCCESS",
+    "Student Management": "SUCCESS",
+    "Registration Form": "SUCCESS",
+    "Meeting Log": "SUCCESS",
+    "Event Registration": "SUCCESS",
+    "Course Management": "SUCCESS",
+    "Survey Management": "SUCCESS",
+    "Report Management": "FAILED_404",
+    "Parameter Management": "SUCCESS",
+    "AI Assistant": "SUCCESS"
+  },
+  "sidebar_consistency": {
+    "Home Page": {
+      "sidebar_present": false,
+      "nav_links_present": false,
+      "modern_styling": false,
+      "responsive_classes": false,
+      "toggle_functionality": false,
+      "student_tabs": false,
+      "welcome_section": false,
+      "sidebar_icons": false
+    },
+    "Dashboard": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Student Management": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Registration Form": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Meeting Log": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Event Registration": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Course Management": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Survey Management": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "Parameter Management": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    },
+    "AI Assistant": {
+      "sidebar_present": true,
+      "nav_links_present": true,
+      "modern_styling": true,
+      "responsive_classes": true,
+      "toggle_functionality": true,
+      "student_tabs": false,
+      "welcome_section": true,
+      "sidebar_icons": true
+    }
+  },
+  "navigation_functionality": {},
+  "font_verification": {
+    "Home Page": {
+      "inter_font_declared": false,
+      "body_font_family": "",
+      "consistent_typography": false
+    },
+    "Dashboard": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Student Management": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Registration Form": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Meeting Log": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Event Registration": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Course Management": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Survey Management": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "Parameter Management": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    },
+    "AI Assistant": {
+      "inter_font_declared": true,
+      "body_font_family": "",
+      "consistent_typography": true
+    }
+  },
+  "responsive_elements": {
+    "Home Page": {
+      "mobile_menu_toggle": false,
+      "responsive_classes": false,
+      "mobile_overlay": false,
+      "responsive_grid": true
+    },
+    "Dashboard": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": true
+    },
+    "Student Management": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": false
+    },
+    "Registration Form": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": true
+    },
+    "Meeting Log": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": true
+    },
+    "Event Registration": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": false
+    },
+    "Course Management": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": false
+    },
+    "Survey Management": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": false
+    },
+    "Parameter Management": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": true
+    },
+    "AI Assistant": {
+      "mobile_menu_toggle": true,
+      "responsive_classes": true,
+      "mobile_overlay": true,
+      "responsive_grid": true
+    }
+  },
+  "student_tabs_integration": {},
+  "response_times": {
+    "Home Page": 0.017491817474365234,
+    "Dashboard": 2.1905081272125244,
+    "Student Management": 0.630650520324707,
+    "Registration Form": 0.7476303577423096,
+    "Meeting Log": 0.5868406295776367,
+    "Event Registration": 0.5854582786560059,
+    "Course Management": 0.5969722270965576,
+    "Survey Management": 0.6209533214569092,
+    "Report Management": 0.009775400161743164,
+    "Parameter Management": 1.0361542701721191,
+    "AI Assistant": 0.5899410247802734
+  },
+  "errors": [],
+  "warnings": [],
+  "detailed_findings": {
+    "Home Page": {
+      "total_nav_links": 0,
+      "active_nav_links": 0,
+      "sidebar_icons_count": 0,
+      "modern_elements": [],
+      "potential_issues": [
+        "No navigation links found",
+        "Sidebar not found"
+      ]
+    },
+    "Dashboard": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    },
+    "Student Management": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    },
+    "Registration Form": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    },
+    "Meeting Log": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome",
+        "modern-section",
+        "modern-action-btn"
+      ],
+      "potential_issues": []
+    },
+    "Event Registration": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    },
+    "Course Management": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    },
+    "Survey Management": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome",
+        "modern-section",
+        "modern-action-btn"
+      ],
+      "potential_issues": []
+    },
+    "Parameter Management": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    },
+    "AI Assistant": {
+      "total_nav_links": 10,
+      "active_nav_links": 1,
+      "sidebar_icons_count": 10,
+      "modern_elements": [
+        "modern-welcome"
+      ],
+      "potential_issues": []
+    }
+  }
+}
