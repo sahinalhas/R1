@@ -8,30 +8,21 @@ from app.blueprints.ders_konu_yonetimi.models import Ders, Konu
 from app.blueprints.calisma_programi.models import DersProgrami, DersIlerleme, KonuTakip
 from app.utils.program import generate_weekly_schedule, calculate_topic_schedule
 from app.blueprints.calisma_programi.services import ProgramService
-from app.utils.session import set_aktif_ogrenci, get_aktif_ogrenci
-from app.utils.auth import session_required, log_activity
+from app.utils.auth import log_activity
 from app.blueprints.calisma_programi import calisma_programi_bp
 
 
 @calisma_programi_bp.route('/')
 def index():
-    """Çalışma Programı ana girişi: aktif öğrenci varsa haftalık plana yönlendirir."""
-    ogrenci = get_aktif_ogrenci()
-    if ogrenci:
-        return redirect(url_for('calisma_programi.haftalik_plan', ogrenci_id=ogrenci.id))
-    flash('Önce bir öğrenci seçin.', 'info')
+    """Çalışma Programı ana girişi: öğrenci listesine yönlendirir."""
     return redirect(url_for('ogrenci_yonetimi.liste'))
 
 
 @calisma_programi_bp.route('/ogrenci/<int:ogrenci_id>/haftalik-plan', methods=['GET', 'POST'])
-@session_required
 @log_activity('haftalik_plan_goruntule', 'Öğrencinin haftalık ders planı görüntülendi')
 def haftalik_plan(ogrenci_id):
     """Öğrencinin haftalık ders planını görüntüleme ve düzenleme"""
     ogrenci = Ogrenci.query.get_or_404(ogrenci_id)
-    
-    # Mevcut aktif öğrenciyi oturumda ayarla
-    set_aktif_ogrenci(ogrenci_id)
     
     dersler = Ders.query.order_by(Ders.ad).all()
     
@@ -155,14 +146,10 @@ def haftalik_plan(ogrenci_id):
 
 
 @calisma_programi_bp.route('/ogrenci/<int:ogrenci_id>/konu-plani')
-@session_required
 @log_activity('konu_plani_goruntule', 'Öğrencinin konu bazlı çalışma planı görüntülendi')
 def konu_plani(ogrenci_id):
     """Öğrencinin konu bazlı çalışma planını görüntüleme"""
     ogrenci = Ogrenci.query.get_or_404(ogrenci_id)
-    
-    # Mevcut aktif öğrenciyi oturumda ayarla
-    set_aktif_ogrenci(ogrenci_id)
     
     # Konu planını hesapla
     konu_plani_string = calculate_topic_schedule(ogrenci_id)
@@ -187,7 +174,6 @@ def konu_plani(ogrenci_id):
 
 
 @calisma_programi_bp.route('/ogrenci/<int:ogrenci_id>/konu-takip', methods=['GET', 'POST'])
-@session_required
 @log_activity('konu_takip', 'Öğrencinin konu takibi görüntülendi veya güncellendi')
 def konu_takip(ogrenci_id):
     """Öğrencinin konu takiplerini görüntüleme ve güncelleme"""

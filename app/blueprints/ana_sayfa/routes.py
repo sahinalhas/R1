@@ -11,8 +11,7 @@ from app.blueprints.gorusme_defteri.services import GorusmeService
 from app.blueprints.etkinlik_kayit.services import EtkinlikService
 from app.blueprints.calisma_programi.services import CalismaService
 from app.blueprints.rapor_yonetimi.services import RaporService
-from app.utils.auth import session_required
-from app.utils.session import get_aktif_ogrenci
+# Session imports removed
 from datetime import datetime, timedelta
 
 # Basit ana sayfa fonksiyonu - ileride kullanılabilir
@@ -54,8 +53,7 @@ def index():
 
 
 @ana_sayfa_bp.route('/dashboard')
-@session_required
-def dashboard(aktif_ogrenci_id):
+def dashboard():
     """Dashboard - Ana kontrol paneli"""
     from app.blueprints.ogrenci_yonetimi.models import Ogrenci
     from app.blueprints.ders_konu_yonetimi.models import Ders, Konu

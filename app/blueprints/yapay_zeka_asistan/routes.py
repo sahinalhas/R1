@@ -5,28 +5,25 @@ Yapay Zeka Destekli Danışmanlık Asistanı blueprint'i için route tanımlamal
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from flask import current_app as app
 
-from app.utils.auth import session_required, ogrenci_required, admin_required
+from app.utils.auth import ogrenci_required, admin_required
 from app.blueprints.yapay_zeka_asistan import yapay_zeka_asistan_bp
 from app.blueprints.yapay_zeka_asistan.services import YapayZekaService
 from app.blueprints.ogrenci_yonetimi.services import OgrenciService
 
 @yapay_zeka_asistan_bp.route('/')
-@session_required
-def index(ogrenci_id=None):
+def index():
     """Yapay Zeka Asistanı ana sayfası"""
     modeller = YapayZekaService.get_modeller()
     return render_template('yapay_zeka_asistan/index.html', modeller=modeller)
 
 @yapay_zeka_asistan_bp.route('/modeller')
-@session_required
-def modeller(ogrenci_id=None):
+def modeller():
     """Yapay zeka modelleri listesi"""
     modeller = YapayZekaService.get_modeller()
     return render_template('yapay_zeka_asistan/modeller.html', modeller=modeller)
 
 @yapay_zeka_asistan_bp.route('/model/<int:model_id>')
-@session_required
-def model_detay(model_id, ogrenci_id=None):
+def model_detay(model_id):
     """Model detay sayfası"""
     model = YapayZekaService.get_model(model_id)
     if not model:
@@ -120,8 +117,7 @@ def ogrenci_analiz_yap(ogrenci_id, ogrenci=None):
                           urls=urls)
 
 @yapay_zeka_asistan_bp.route('/analiz/<int:analiz_id>/oneriler')
-@session_required
-def analiz_oneriler(analiz_id, ogrenci_id=None):
+def analiz_oneriler(analiz_id):
     """Analiz önerileri sayfası"""
     oneriler = YapayZekaService.get_analiz_onerileri(analiz_id)
 
@@ -130,8 +126,7 @@ def analiz_oneriler(analiz_id, ogrenci_id=None):
                           analiz_id=analiz_id)
 
 @yapay_zeka_asistan_bp.route('/oneri/<int:oneri_id>/guncelle', methods=['POST'])
-@session_required
-def oneri_guncelle(oneri_id, ogrenci_id=None):
+def oneri_guncelle(oneri_id):
     """Öneri uygulama durumunu güncelleme"""
     uygulamaya_alindi = request.form.get('uygulamaya_alindi') == 'true'
     uygulama_sonucu = request.form.get('uygulama_sonucu')
