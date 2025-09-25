@@ -5,6 +5,7 @@ from app.blueprints.auth import auth_bp
 from app.blueprints.auth.forms import LoginForm, RegisterForm, ChangePasswordForm
 from app.blueprints.auth.models import User
 from app.extensions import db
+from app.utils.auth import is_safe_url
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
