@@ -153,5 +153,4 @@ def dashboard():
                           bu_ay_gorusme_sayisi=bu_ay_gorusme_sayisi,
                           bu_ay_etkinlik_sayisi=bu_ay_etkinlik_sayisi,
                           # Diğer
-                          okul_bilgisi=okul_bilgisi,
-                          hide_sidebar=True)
+                          okul_bilgisi=okul_bilgisi)
