@@ -56,7 +56,7 @@ def create_app(config=None):
     # Initialize Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'auth.login'  # type: ignore
     login_manager.login_message = 'Lütfen giriş yapın.'
     login_manager.login_message_category = 'info'
 
@@ -120,12 +120,11 @@ def create_app(config=None):
             try:
                 dev_user = User.query.filter_by(email=app.config["AUTO_LOGIN_EMAIL"].lower()).first()
                 if dev_user is None:
-                    dev_user = User(
-                        email=app.config["AUTO_LOGIN_EMAIL"].lower(),
-                        ad=app.config["AUTO_LOGIN_AD"],
-                        soyad=app.config["AUTO_LOGIN_SOYAD"],
-                        aktif=True,
-                    )
+                    dev_user = User()
+                    dev_user.email = app.config["AUTO_LOGIN_EMAIL"].lower()
+                    dev_user.ad = app.config["AUTO_LOGIN_AD"]
+                    dev_user.soyad = app.config["AUTO_LOGIN_SOYAD"]
+                    dev_user.aktif = True
                     dev_user.set_password(app.config["AUTO_LOGIN_PASSWORD"])
                     db.session.add(dev_user)
                     db.session.commit()
