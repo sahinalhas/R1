@@ -322,7 +322,7 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar styles - Kurumsal ve kullanıcı dostu tasarım */
+/* Sidebar styles - Modern minimal design */
 .sidebar {
   width: var(--sidebar-width);
   position: fixed;
@@ -330,11 +330,12 @@ body {
   left: 0;
   height: 100vh;
   z-index: 1000;
-  background: #f8f9fa;
+  background: #ffffff;
   color: var(--text-color);
-  border-right: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.25s ease-in-out;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 .sidebar-collapsed {
@@ -343,13 +344,14 @@ body {
 
 .sidebar-content {
   padding: 0;
-  height: calc(100vh);
+  height: 100vh;
   overflow-y: auto;
   scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
 }
 
 .sidebar-content::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 .sidebar-content::-webkit-scrollbar-track {
@@ -357,68 +359,75 @@ body {
 }
 
 .sidebar-content::-webkit-scrollbar-thumb {
-  background: rgba(44, 62, 80, 0.3);
-  border-radius: 10px;
-  opacity: 0.5;
+  background: #d1d5db;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 .sidebar-nav {
   list-style: none;
-  padding: 0.5rem 0;
+  padding: 0;
   margin: 0;
 }
 
 .sidebar-nav-item {
-  margin: 0.3rem 0;
+  margin: 0;
   padding: 0;
 }
 
 .sidebar-nav-link {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1.25rem;
-  color: var(--text-color);
+  padding: 0.875rem 1.5rem;
+  color: #374151;
   text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border-left: 3px solid transparent;
   cursor: pointer;
   font-weight: 500;
-  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-  margin: 0 0.5rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
   position: relative;
+  border-radius: 0;
+  margin: 0;
 }
 
 
-.sidebar-nav-link:hover,
+.sidebar-nav-link:hover {
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
 .sidebar-nav-link.active {
-  background-color: rgba(44, 62, 80, 0.07);
-  color: var(--primary-color);
-  border-left-color: var(--primary-color);
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border-left-color: #3b82f6;
   font-weight: 600;
 }
 
-.sidebar-nav-link.active {
-  background-color: rgba(44, 62, 80, 0.1);
-  box-shadow: var(--shadow-sm);
-}
-
 .sidebar-nav-icon {
-  margin-right: 0.9rem;
-  width: 20px;
-  height: 20px;
+  margin-right: 0.75rem;
+  width: 18px;
+  height: 18px;
   text-align: center;
-  opacity: 0.95;
   font-size: 1rem;
-  color: var(--primary-color);
+  color: #6b7280;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: color 0.2s ease;
+  flex-shrink: 0;
 }
 
 
+.sidebar-nav-link:hover .sidebar-nav-icon,
 .sidebar-nav-link.active .sidebar-nav-icon {
-  color: var(--secondary-color);
+  color: #3b82f6;
 }
 
 .sidebar-nav-text {
@@ -426,8 +435,9 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   flex-grow: 1;
-  font-size: 0.9rem;
-  letter-spacing: 0.01em;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
 }
 
 .sidebar-collapsed .sidebar-nav-text,
@@ -436,27 +446,29 @@ body {
   display: none;
 }
 
-/* Aktif öğrenci container için özel stil */
+/* Active student container - cleaned up design */
 .active-student-container {
-  background-color: rgba(28, 55, 97, 0.05);
-  margin: 0.5rem 0.5rem 1rem 0.5rem !important;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(28, 55, 97, 0.08);
+  background-color: #f8fafc;
+  margin: 0 !important;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  box-shadow: none;
 }
 
 .active-student-container .sidebar-nav-link {
-  border-radius: 6px;
+  border-radius: 0;
   margin: 0;
-  background-color: rgba(28, 55, 97, 0.02);
-  border-left: none;
-  border-bottom: 1px solid rgba(28, 55, 97, 0.08);
-  color: var(--primary-color);
+  background-color: transparent;
+  border-left: 3px solid #3b82f6;
+  border-bottom: none;
+  color: #1f2937;
   font-weight: 600;
+  padding: 1rem 1.5rem;
 }
 
 .active-student-container .sidebar-nav-icon {
-  color: var(--secondary-color);
+  color: #3b82f6;
 }
 
 /* Alt menüler - Modern kullanıcı dostu stil */
@@ -516,12 +528,14 @@ body {
   margin-bottom: 0;
 }
 
-/* Sidebar içindeki arama container */
+/* Search container - simplified design */
 .sidebar-nav-item.search-container {
-  background-color: rgba(28, 55, 97, 0.02);
-  margin: 0.8rem 0.5rem !important;
-  border-radius: 8px;
-  border: 1px solid rgba(28, 55, 97, 0.08);
+  background-color: #f9fafb;
+  margin: 0 !important;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 /* Submenu icon stil */
@@ -538,29 +552,33 @@ body {
 
 .sidebar-toggle {
   position: fixed;
-  bottom: 16px;
-  left: calc(var(--sidebar-width) - 28px);
-  width: 28px;
-  height: 28px;
-  background: var(--primary-color);
-  color: white;
-  border-radius: 50%;
+  bottom: 20px;
+  left: calc(var(--sidebar-width) - 20px);
+  width: 32px;
+  height: 32px;
+  background: #ffffff;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   z-index: 1001;
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
-  font-size: 0.7rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-size: 0.875rem;
 }
 
 .sidebar-toggle:hover {
-  background: var(--primary-dark);
+  background: #f9fafb;
+  color: #374151;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-collapsed .sidebar-toggle {
-  left: calc(var(--sidebar-collapsed-width) - 14px);
+  left: calc(var(--sidebar-collapsed-width) - 16px);
 }
 
 /* Modern stil başlıkları */
@@ -573,52 +591,75 @@ body {
   opacity: 0.8;
 }
 
-/* Modern hoş geldiniz bölümü */
+/* Modern minimal welcome section */
 .modern-welcome {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(28, 55, 97, 0.1);
-  margin-bottom: 0.5rem;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 0;
 }
 
 .modern-user-icon {
-  font-size: 2.2rem;
-  color: var(--primary-color);
-  opacity: 0.8;
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  opacity: 0.9;
 }
 
 .modern-welcome-text {
   font-weight: 600;
-  color: var(--primary-color);
-  font-size: 0.9rem;
-  margin-bottom: 0.2rem;
+  color: #1f2937;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
 }
 
 .modern-welcome-help {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: #9ca3af;
+  line-height: 1.4;
+  font-weight: 400;
 }
 
-/* Modern form elemanları */
+/* Modern form elements - clean and minimal */
 .modern-form-label {
   font-size: 0.75rem;
-  color: var(--primary-color);
+  color: #374151;
   font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
 .modern-form-control {
-  border-color: var(--border-color);
-  border-radius: 4px;
-  font-size: 0.85rem;
+  border-color: #d1d5db;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modern-form-control:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
 }
 
 .modern-btn {
-  background-color: var(--primary-color);
-  border-color: var(--primary-dark);
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
 }
 
 .modern-btn:hover {
-  background-color: var(--primary-dark);
+  background-color: #2563eb;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-divider {
