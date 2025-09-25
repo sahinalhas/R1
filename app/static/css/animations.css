@@ -225,16 +225,40 @@
   transition: background-color 0.2s ease;
 }
 
-/* Page load animation */
+/* Optimized Page load animation - Smooth ve hızlı */
 .page-load {
-  animation: pageLoad 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  animation: pageLoadFast 0.2s ease-out;
 }
 
-@keyframes pageLoad {
+@keyframes pageLoadFast {
   from {
     opacity: 0;
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
+}
+
+/* Smooth page transitions */
+.main-content {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.main-content.loading {
+  opacity: 0.7;
+  transform: translateY(2px);
+}
+
+/* Instant sidebar navigation */
+.sidebar-nav-link {
+  transition: background-color 0.1s ease, color 0.1s ease, border-left-color 0.1s ease !important;
+}
+
+/* Hızlı hover effects */
+.btn:hover, .card:hover {
+  transition: all 0.15s ease !important;
 }

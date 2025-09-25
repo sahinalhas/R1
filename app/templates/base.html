@@ -26,15 +26,13 @@
     <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     
-    <!-- AOS CSS - Animate On Scroll -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- AOS kaldırıldı - performans için -->
     
-    <!-- Custom Styles -->
+    <!-- Custom Styles - Optimized loading -->
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/animations.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/minimal.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/student_tabs.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/modern_design.css') }}?v={% if current_user.is_authenticated %}auth{% else %}guest{% endif %}" rel="stylesheet">
+    <!-- Minimal ve modern_design CSS dosyaları çoğunlukla styles.css ile çakıştığı için kaldırıldı -->
     
     {% block extra_css %}{% endblock %}
     
@@ -682,8 +680,8 @@
             min-height: 100vh;
             background-color: var(--bg-light);
             padding: 2rem;
-            transition: all 0.3s ease;
             margin-left: 260px;
+            /* Transition kaldırıldı - hareket sorunu çözüldü */
         }
         
         .main-content-expanded {
@@ -1213,8 +1211,7 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- AOS kaldırıldı - performans optimizasyonu -->
     
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -1225,19 +1222,23 @@
     {% block extra_js %}{% endblock %}
     
     <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+        // AOS kaldırıldı - performans optimizasyonu
         
-        // Modern styling JS
+        // Ultra-fast page loading JS
         document.addEventListener('DOMContentLoaded', function() {
-            // Preload sınıfını kaldır
-            setTimeout(function() {
-                document.body.classList.remove('preload');
-            }, 300);
+            // Preload sınıfını hemen kaldır - anında yükleme
+            document.body.classList.remove('preload');
+            
+            // Smooth page transitions için link interceptor
+            const links = document.querySelectorAll('a[href^="/"], .sidebar-nav-link');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const mainContent = document.querySelector('.main-content');
+                    if (mainContent && !this.hasAttribute('target')) {
+                        mainContent.classList.add('loading');
+                    }
+                });
+            });
             
             // Navbar scroll effect
             window.addEventListener('scroll', function() {

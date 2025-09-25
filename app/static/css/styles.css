@@ -322,7 +322,7 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar styles - Modern minimal design */
+/* Sidebar styles - Modern minimal design - Hareket sorunu düzeltildi */
 .sidebar {
   width: var(--sidebar-width);
   position: fixed;
@@ -334,8 +334,10 @@ body {
   color: var(--text-color);
   border-right: 1px solid #e5e7eb;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Inter', system-ui, sans-serif;
+  /* Hareket sorunu tamamen önlendi */
+  transform: translateZ(0); /* GPU accelerated için */
+  will-change: auto; /* GPU optimizasyonu */
 }
 
 .sidebar-collapsed {
@@ -670,16 +672,16 @@ body {
   opacity: 0.6;
 }
 
-/* Main content styles - Google Material Design inspired */
+/* Main content styles - Google Material Design inspired - Hareket sorunu düzeltildi */
 .main-content {
   width: calc(100% - var(--sidebar-width));
   margin-left: var(--sidebar-width);
-  transition: all 0.25s ease-in-out;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-light);
-  padding-top: 0.5rem; /* Reduced top padding */
+  padding-top: 0.5rem;
+  /* Transition kaldırıldı - layout shift sorunu çözüldü */
 }
 
 .main-content-expanded {
