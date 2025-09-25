@@ -1,97 +1,257 @@
-/* Öğrenci Tab'ı Stilleri */
+/* Öğrenci Tab'ı Stilleri - Modern Tasarım ile Uyumlu */
+
+/* Student tabs container with modern styling */
 #student-tabs {
     padding-bottom: 0;
     margin-bottom: 0;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    border-radius: 0;
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* Tab navigation links with consistent styling */
 #student-tabs .nav-link {
-    color: #6c757d;
+    color: #374151;
     font-weight: 500;
+    font-size: 0.875rem;
     border: 1px solid transparent;
     border-bottom: 0;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     margin-right: 2px;
+    padding: 0.75rem 1rem;
+    border-radius: 0;
+    position: relative;
+    letter-spacing: -0.01em;
+    background-color: transparent;
 }
 
+/* Hover state matching sidebar hover behavior */
 #student-tabs .nav-link:hover {
-    color: #0d6efd;
-    background-color: #f8f9fa;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+    color: #1f2937;
+    background-color: #f9fafb;
+    border-color: transparent;
+    text-decoration: none;
 }
 
+/* Active tab state with consistent design */
 #student-tabs .nav-link.active {
-    color: #0d6efd;
-    background-color: #fff;
-    border-color: #dee2e6;
+    color: #1f2937;
+    background-color: #ffffff;
+    border-color: #e5e7eb;
     border-bottom-color: transparent;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: none;
+    border-left: 3px solid #3b82f6;
+    font-weight: 600;
 }
 
+/* Dropdown menu styling */
 #student-tabs .dropdown-menu {
-    border-radius: 0.25rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    padding: 0.25rem 0;
 }
 
 #student-tabs .dropdown-item {
     padding: 0.5rem 1rem;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 #student-tabs .dropdown-item:hover {
-    background-color: #f8f9fa;
+    background-color: #f9fafb;
+    color: #1f2937;
 }
 
-/* Öğrenci bilgi bölümü */
+#student-tabs .dropdown-item i {
+    width: 16px;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+#student-tabs .dropdown-item:hover i {
+    color: #3b82f6;
+}
+
+/* Student info header - modern styling */
 .student-info-header {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
+    padding: 1rem 0;
 }
 
 .student-avatar {
     width: 48px;
     height: 48px;
-    background-color: #0d6efd;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 1rem;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .student-details {
     flex: 1;
+    min-width: 0;
 }
 
 .student-name {
     font-weight: 600;
-    margin-bottom: 0;
+    margin-bottom: 0.25rem;
+    color: #1f2937;
+    font-size: 1.1rem;
+    line-height: 1.4;
 }
 
 .student-meta {
-    color: #6c757d;
+    color: #6b7280;
     font-size: 0.875rem;
+    font-weight: 400;
+    margin: 0;
 }
 
-/* Responsive Ayarlamalar */
+/* Tab container styling */
+.student-tabs-container {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 0;
+}
+
+/* Responsive design improvements */
 @media (max-width: 768px) {
     #student-tabs {
         flex-wrap: nowrap;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    #student-tabs::-webkit-scrollbar {
+        display: none;
     }
     
     #student-tabs .nav-item {
         white-space: nowrap;
+        flex-shrink: 0;
     }
     
     #student-tabs .nav-link {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.8rem;
+        margin-right: 1px;
     }
+    
+    .student-info-header {
+        padding: 0.75rem 0;
+        margin-bottom: 0.75rem;
+    }
+    
+    .student-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        margin-right: 0.75rem;
+    }
+    
+    .student-name {
+        font-size: 1rem;
+    }
+    
+    .student-meta {
+        font-size: 0.8rem;
+    }
+    
+    /* Mobile dropdown adjustments */
+    #student-tabs .dropdown-menu {
+        font-size: 0.8rem;
+        min-width: 200px;
+    }
+    
+    #student-tabs .dropdown-item {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 576px) {
+    #student-tabs .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .student-info-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .student-avatar {
+        margin-right: 0;
+    }
+    
+    .student-details {
+        text-align: left;
+    }
+}
+
+/* Focus states for accessibility */
+#student-tabs .nav-link:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+#student-tabs .dropdown-item:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: -2px;
+}
+
+/* Animation for smooth transitions */
+#student-tabs .nav-link,
+#student-tabs .dropdown-item {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Consistent border radius for modern look */
+.student-tabs-container {
+    border-radius: 0;
+}
+
+/* Icons in tabs */
+#student-tabs .nav-link i {
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+#student-tabs .nav-link:hover i,
+#student-tabs .nav-link.active i {
+    color: #3b82f6;
+}
+
+/* Dropdown toggle specific styling */
+#student-tabs .dropdown-toggle::after {
+    margin-left: 0.5rem;
+    border-top-color: #6b7280;
+}
+
+#student-tabs .nav-link.dropdown-toggle:hover::after {
+    border-top-color: #3b82f6;
 }
