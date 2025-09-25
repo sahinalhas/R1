@@ -1,4 +1,4 @@
-modules = ["python-3.11", "web", "c-clang14", "cpp-clang14", "python3"]
+modules = ["python-3.11", "web", "c-clang14", "cpp-clang14", "python3", "postgresql-16"]
 [nix]
 channel = "stable-25_05"
 packages = ["cairo", "fontconfig", "ghostscript", "glib", "glibcLocales", "harfbuzz", "libxcrypt", "openssl", "pango", "pkg-config", "postgresql", "unzip", "xsimd"]
