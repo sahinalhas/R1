@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, g, request
+from flask import Flask, g, request, send_from_directory
 from flask_login import LoginManager
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -160,5 +160,26 @@ def create_app(config=None):
             except Exception as e:
                 logging.exception("AUTO_LOGIN error: %s", e)
                 return None
+    
+    # Add React UI routes
+    @app.route('/ui')
+    @app.route('/ui/')
+    def react_index():
+        try:
+            return send_from_directory('../frontend/build', 'index.html')
+        except FileNotFoundError:
+            return "React build not found. Please run 'cd frontend && npm run build'", 404
+    
+    @app.route('/ui/<path:path>')
+    def react_static_or_route(path):
+        # First try to serve static files
+        try:
+            return send_from_directory('../frontend/build', path)
+        except FileNotFoundError:
+            # If file not found, serve index.html for React Router
+            try:
+                return send_from_directory('../frontend/build', 'index.html')
+            except FileNotFoundError:
+                return "React build not found. Please run 'cd frontend && npm run build'", 404
     
     return app

@@ -1,4 +1,4 @@
-modules = ["python-3.11", "web", "c-clang14", "cpp-clang14", "python3", "postgresql-16"]
+modules = ["python-3.11", "web", "c-clang14", "cpp-clang14", "python3", "postgresql-16", "nodejs-20"]
 [nix]
 channel = "stable-25_05"
 packages = ["cairo", "fontconfig", "ghostscript", "glib", "glibcLocales", "harfbuzz", "libxcrypt", "openssl", "pango", "pkg-config", "postgresql", "unzip", "xsimd"]
@@ -36,7 +36,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 43759
+localPort = 37811
 externalPort = 3000
 
 [deployment]
