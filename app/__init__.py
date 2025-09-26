@@ -69,6 +69,7 @@ def create_app(config=None):
     from app.utils.filters import register_filters
     register_filters(app)
 
+
     # Register context processors (session management removed)
 
     with app.app_context():

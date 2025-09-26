@@ -43,11 +43,7 @@
                                 Duygu Analizi</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">Metin Tabanlı Duygu Analizi</div>
                             <p class="mt-2">Öğrencilerin yazdığı metinlerin duygusal içeriğini analiz ederek psikolojik durumlarını değerlendirir.</p>
-                            {% if get_aktif_ogrenci() %}
-                            <a href="{{ url_for('yapay_zeka_asistan.duygu_analizi_yap', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-sm btn-primary mt-2">Duygu Analizi Yap</a>
-                            {% else %}
                             <button class="btn btn-sm btn-primary mt-2" disabled>Öğrenci Seçiniz</button>
-                            {% endif %}
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -67,11 +63,7 @@
                                 Analiz Sonuçları</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">Öğrenci Analizleri</div>
                             <p class="mt-2">Bir öğrenci için gerçekleştirilen tüm yapay zeka analiz sonuçlarını ve önerilerini görüntüleyin.</p>
-                            {% if get_aktif_ogrenci() %}
-                            <a href="{{ url_for('yapay_zeka_asistan.ogrenci_analizler', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-sm btn-success mt-2">Analizleri Görüntüle</a>
-                            {% else %}
                             <button class="btn btn-sm btn-success mt-2" disabled>Öğrenci Seçiniz</button>
-                            {% endif %}
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
@@ -121,9 +113,6 @@
                                     <td>{{ model.olusturma_tarihi|format_date }}</td>
                                     <td>
                                         <a href="{{ url_for('yapay_zeka_asistan.model_detay', model_id=model.id) }}" class="btn btn-sm btn-info">Detay</a>
-                                        {% if get_aktif_ogrenci() and model.aktif %}
-                                        <a href="{{ url_for('yapay_zeka_asistan.ogrenci_analiz_yap', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-sm btn-primary">Analiz Et</a>
-                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

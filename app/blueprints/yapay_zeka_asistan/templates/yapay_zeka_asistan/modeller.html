@@ -56,11 +56,6 @@
                                 <a href="{{ url_for('yapay_zeka_asistan.model_detay', model_id=model.id) }}" class="btn btn-sm btn-info">
                                     <i class="fas fa-info-circle"></i> Detay
                                 </a>
-                                {% if get_aktif_ogrenci() and model.aktif %}
-                                <a href="{{ url_for('yapay_zeka_asistan.ogrenci_analiz_yap', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-chart-pie"></i> Analiz Et
-                                </a>
-                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -106,15 +101,9 @@
                         <div class="card-body">
                             <p class="card-text">Duygu analizi, öğrencilerin yazdığı kompozisyonlar, anket cevapları veya görüşme notları gibi metinlerdeki duygusal içeriği analiz eder.</p>
                             <p class="card-text">Bu analiz, öğrencilerin duygusal durumlarını anlamak ve gerektiğinde psikolojik destek sağlamak için kullanılabilir.</p>
-                            {% if get_aktif_ogrenci() %}
-                            <a href="{{ url_for('yapay_zeka_asistan.duygu_analizi_yap', ogrenci_id=get_aktif_ogrenci().id) }}" class="btn btn-primary">
-                                <i class="fas fa-comments"></i> Duygu Analizi Yap
-                            </a>
-                            {% else %}
                             <button class="btn btn-primary" disabled>
                                 <i class="fas fa-comments"></i> Öğrenci Seçiniz
                             </button>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
