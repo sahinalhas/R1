@@ -56,6 +56,26 @@ class Etkinlik(db.Model):
         """Toplam katılımcı sayısını hesaplar (öğrenciler dahil)"""
         return (self.ogretmen_sayisi + self.veli_sayisi + 
                 self.diger_katilimci_sayisi + self.toplam_ogrenci_sayisi)
+    
+    def to_dict(self):
+        """Convert to dictionary for API serialization"""
+        return {
+            'id': self.id,
+            'etkinlik_tarihi': self.etkinlik_tarihi.isoformat() if self.etkinlik_tarihi else None,
+            'calisma_yontemi': self.calisma_yontemi,
+            'aciklama': self.aciklama,
+            'hedef_turu': self.hedef_turu,
+            'faaliyet_turu': self.faaliyet_turu,
+            'ogretmen_sayisi': self.ogretmen_sayisi,
+            'veli_sayisi': self.veli_sayisi,
+            'diger_katilimci_sayisi': self.diger_katilimci_sayisi,
+            'erkek_ogrenci_sayisi': self.erkek_ogrenci_sayisi,
+            'kiz_ogrenci_sayisi': self.kiz_ogrenci_sayisi,
+            'sinif_bilgisi': self.sinif_bilgisi,
+            'resmi_yazi_sayisi': self.resmi_yazi_sayisi,
+            'toplam_ogrenci_sayisi': self.toplam_ogrenci_sayisi,
+            'toplam_katilimci_sayisi': self.toplam_katilimci_sayisi
+        }
 
 # Etkinlik türleri (faaliyet türleri) için sabit tanımlar
 ETKINLIK_TURLERI = [

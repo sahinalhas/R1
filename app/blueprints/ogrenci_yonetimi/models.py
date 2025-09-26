@@ -47,3 +47,18 @@ class Ogrenci(db.Model):
     
     # Relationship to GorusmeKaydi - defined using string to avoid circular import
     gorusme_kayitlari = relationship("GorusmeKaydi", back_populates="ogrenci", cascade="all, delete-orphan")
+    
+    def to_dict(self):
+        """Convert to dictionary for API serialization"""
+        return {
+            'id': self.id,
+            'numara': self.numara,
+            'ad': self.ad,
+            'soyad': self.soyad,
+            'tam_ad': self.tam_ad,
+            'sinif': self.sinif,
+            'cinsiyet': self.cinsiyet,
+            'telefon': self.telefon,
+            'eposta': self.eposta,
+            'genel_ilerleme': self.genel_ilerleme()
+        }

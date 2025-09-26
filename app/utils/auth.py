@@ -4,8 +4,10 @@ Bu modül, tüm blueprint'lerde tutarlı oturum yönetimi sağlamak için kullan
 """
 
 from functools import wraps
-from flask import redirect, url_for, flash, request, current_app
+from flask import redirect, url_for, flash, request, current_app, jsonify
 from urllib.parse import urlparse, urljoin
+import jwt
+from datetime import datetime, timedelta
 
 def session_required(ogrenci_zorunlu=True):
     """
@@ -86,6 +88,60 @@ def log_activity(activity_type, description=None):
             return result
         return decorated_function
     return decorator
+
+def api_auth_required(f):
+    """
+    JWT authentication decorator for API routes
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = None
+        
+        # Get token from Authorization header
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            try:
+                token = auth_header.split(" ")[1]  # Bearer <token>
+            except IndexError:
+                return jsonify({'success': False, 'error': 'Invalid token format'}), 401
+        
+        if not token:
+            return jsonify({'success': False, 'error': 'Token is missing'}), 401
+        
+        try:
+            # Decode token
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            current_user_id = data['user_id']
+            
+            # Import here to avoid circular import
+            from app.blueprints.auth.models import User
+            current_user = User.query.get(current_user_id)
+            
+            if not current_user or not current_user.aktif:
+                return jsonify({'success': False, 'error': 'Invalid token'}), 401
+                
+            # Pass user to the route
+            kwargs['current_user'] = current_user
+            
+        except jwt.ExpiredSignatureError:
+            return jsonify({'success': False, 'error': 'Token has expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'success': False, 'error': 'Invalid token'}), 401
+            
+        return f(*args, **kwargs)
+    
+    return decorated_function
+
+def generate_jwt_token(user_id):
+    """
+    Generate JWT token for user
+    """
+    payload = {
+        'user_id': user_id,
+        'exp': datetime.utcnow() + timedelta(hours=24),  # Token expires in 24 hours
+        'iat': datetime.utcnow()
+    }
+    return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
 
 def is_safe_url(target):
     """

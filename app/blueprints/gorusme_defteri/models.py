@@ -50,3 +50,27 @@ class GorusmeKaydi(db.Model):
     
     def __repr__(self):
         return f"<GorusmeKaydi id={self.id} tarih={self.tarih} ogrenci_id={self.ogrenci_id}>"
+    
+    def to_dict(self):
+        """Convert to dictionary for API serialization"""
+        return {
+            'id': self.id,
+            'ogrenci_id': self.ogrenci_id,
+            'tarih': self.tarih.isoformat() if self.tarih else None,
+            'baslangic_saati': self.baslangic_saati.strftime('%H:%M') if self.baslangic_saati else None,
+            'bitis_saati': self.bitis_saati.strftime('%H:%M') if self.bitis_saati else None,
+            'gorusme_sayisi': self.gorusme_sayisi,
+            'gorusulen_kisi': self.gorusulen_kisi,
+            'kisi_rolu': self.kisi_rolu,
+            'yakinlik_derecesi': self.yakinlik_derecesi,
+            'gorusme_konusu': self.gorusme_konusu,
+            'calisma_alani': self.calisma_alani,
+            'calisma_kategorisi': self.calisma_kategorisi,
+            'hizmet_turu': self.hizmet_turu,
+            'kurum_isbirligi': self.kurum_isbirligi,
+            'gorusme_yeri': self.gorusme_yeri,
+            'disiplin_gorusmesi': self.disiplin_gorusmesi,
+            'adli_sevk': self.adli_sevk,
+            'calisma_yontemi': self.calisma_yontemi,
+            'ozet': self.ozet
+        }

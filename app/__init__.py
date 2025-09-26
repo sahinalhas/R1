@@ -2,6 +2,7 @@ import os
 import logging
 from flask import Flask, g, request
 from flask_login import LoginManager
+from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from app.extensions import db
 
@@ -44,6 +45,12 @@ def create_app(config=None):
     
     # Initialize extensions
     db.init_app(app)
+    
+    # Configure CORS for React frontend
+    CORS(app, 
+         origins=["http://localhost:3000", "http://localhost:5173"],  # React dev servers
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
     # Development auto-login configuration (disabled by default)
     app.config["AUTO_LOGIN_ENABLED"] = str(os.environ.get("AUTO_LOGIN_ENABLED", "")).lower() in {"1", "true", "yes", "on"}
@@ -88,6 +95,7 @@ def create_app(config=None):
         from app.blueprints.etkinlik_kayit import routes, etkinlik_kayit_bp
         from app.blueprints.anket_yonetimi import routes, anket_yonetimi_bp
         from app.blueprints.yapay_zeka_asistan import routes, yapay_zeka_asistan_bp
+        from app.api import routes, api_bp
 
         # Register blueprints
         app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -103,6 +111,7 @@ def create_app(config=None):
         app.register_blueprint(etkinlik_kayit_bp, url_prefix='/etkinlik-kayit')
         app.register_blueprint(anket_yonetimi_bp, url_prefix='/anket-yonetimi')
         app.register_blueprint(yapay_zeka_asistan_bp, url_prefix='/yapay-zeka-asistan')
+        app.register_blueprint(api_bp)  # API blueprint with built-in /api/v1 prefix
 
         # Import all models to ensure they are created
         from app.blueprints.auth.models import User
